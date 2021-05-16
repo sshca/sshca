@@ -17,8 +17,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 16.x
-    - run: yarn --frozen-lockfile --cwd web
-    - run: yarn build --if-present --cwd web
+    - run: yarn --cwd web --frozen-lockfile
+    - run: yarn build --cwd web --if-present
   server:
     runs-on: ubuntu-latest
     steps:
