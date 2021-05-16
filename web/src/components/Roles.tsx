@@ -40,13 +40,15 @@ const Roles = () => {
   const history = useHistory();
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log("hey");
     fetch("http://localhost:5000/web/addRole", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ name, subRoles }),
       credentials: "include",
     });
+    setDialogOpen(false);
+    setSubRoles([]);
+    setName("");
   }
 
   if (hostError || roleError) {
@@ -155,16 +157,7 @@ const Roles = () => {
               >
                 Cancel
               </Button>
-              <Button
-                onClick={() => {
-                  setDialogOpen(false);
-                  setSubRoles([]);
-                  setName("");
-                }}
-                color="primary"
-                variant="contained"
-                type="submit"
-              >
+              <Button color="primary" variant="contained" type="submit">
                 Add
               </Button>
             </DialogActions>

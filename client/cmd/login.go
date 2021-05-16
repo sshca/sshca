@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -63,8 +64,10 @@ var versionCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
-			bodyString := string(bodyBytes)
-			fmt.Println(bodyString)
+			err = ioutil.WriteFile("/tmp/sshca-key.pub", bodyBytes, fs.FileMode(0600))
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	},
 }

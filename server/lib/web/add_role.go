@@ -46,7 +46,6 @@ func Add_role(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.Unmarshal(body, &dat)
-	log.Print(dat)
 	subRoles := make([]db.Subrole, 0)
 	for i := 0; i < len(dat.SubRoles); i++ {
 		subRole := db.Subrole{Username: dat.SubRoles[i].Username, HostID: uint(dat.SubRoles[i].HostID)}
