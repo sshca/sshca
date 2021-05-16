@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: 16.x
     - run: yarn --cwd web --frozen-lockfile
-    - run: yarn build --cwd web --if-present
+    - run: yarn --cwd web build --if-present
   server:
     runs-on: ubuntu-latest
     steps:
