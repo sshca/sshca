@@ -17,14 +17,14 @@ const Host = () => {
     | undefined,
     any
   >(
-    "http://localhost:5000/web/host?" +
+    "/api/web/host?" +
       new URLSearchParams({
         id,
       }),
     fetcher
   );
   const { data: publicKey, error: keyError } = useSWR<string>(
-    "http://localhost:5000/web/getKey",
+    "/api/web/getKey",
     (url: string) =>
       fetch(url, { credentials: "include" }).then((res) => res.text())
   );

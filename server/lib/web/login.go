@@ -48,7 +48,6 @@ func Login_web(w http.ResponseWriter, r *http.Request) {
 		Value:    tokenString,
 		HttpOnly: true,
 		MaxAge:   2 * 60 * 60,
-		Domain:   "localhost",
 		Path:     "/",
 	})
 	fmt.Fprint(w, fmt.Sprint(user.ID))

@@ -54,7 +54,7 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("Error encoding JSON")
 		}
-		resp, err := http.Post("http://localhost:5000/cli/login", "application/json", bytes.NewBuffer(marshal))
+		resp, err := http.Post("http://localhost:5000/api/cli/login", "application/json", bytes.NewBuffer(marshal))
 		if err != nil {
 			log.Fatal("Http Request Failed")
 		}

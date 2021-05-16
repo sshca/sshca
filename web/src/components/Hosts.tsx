@@ -24,7 +24,7 @@ const Hosts = () => {
     error,
     mutate: mutateHosts,
   } = useSWR<{ Name: string; Hostname: string; ID: number }[] | undefined, any>(
-    "http://localhost:5000/web/hosts",
+    "/api/web/hosts",
     fetcher
   );
   const [name, setName] = React.useState("");
@@ -34,7 +34,7 @@ const Hosts = () => {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     console.log("hey");
-    fetch("http://localhost:5000/web/addHost", {
+    fetch("/api/web/addHost", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ name, hostname }),

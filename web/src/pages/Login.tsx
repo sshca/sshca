@@ -8,7 +8,7 @@ const Login = () => {
   const [cookies, setCookie] = useCookies(["id"]);
   const history = useHistory();
   const responseGoogle = ({ accessToken }: { accessToken: string }) => {
-    fetch("http://localhost:5000/web/login", {
+    fetch("/api/web/login", {
       method: "POST",
       credentials: "include",
       headers: {

@@ -24,11 +24,11 @@ const Roles = () => {
   const { data: roles, error: roleError } = useSWR<
     { Name: string; Subroles: string; ID: number }[] | undefined,
     any
-  >("http://localhost:5000/web/roles", fetcher);
+  >("/api/web/roles", fetcher);
   const { data: hosts, error: hostError } = useSWR<
     { Name: string; Hostname: string; ID: number }[] | undefined,
     any
-  >("http://localhost:5000/web/hosts", fetcher);
+  >("/api/web/hosts", fetcher);
   const [name, setName] = React.useState("");
   const [subRoles, setSubRoles] = React.useState<
     {
@@ -40,7 +40,7 @@ const Roles = () => {
   const history = useHistory();
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    fetch("http://localhost:5000/web/addRole", {
+    fetch("/api/web/addRole", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ name, subRoles }),

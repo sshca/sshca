@@ -22,14 +22,14 @@ const Users = () => {
   const { data: users, error } = useSWR<
     { Email: string; ID: number }[] | undefined,
     any
-  >("http://localhost:5000/web/users", fetcher);
+  >("/api/web/users", fetcher);
   const [email, setEmail] = React.useState("");
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const history = useHistory();
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     console.log("hey");
-    fetch("http://localhost:5000/web/addUser", {
+    fetch("/api/web/addUser", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ email }),

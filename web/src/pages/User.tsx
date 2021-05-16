@@ -21,7 +21,7 @@ const User = () => {
     },
     any
   >(
-    "http://localhost:5000/web/user?" +
+    "/api/web/user?" +
       new URLSearchParams({
         id,
       }),
@@ -34,7 +34,7 @@ const User = () => {
         Subroles: { ID: number; Username: string }[];
       }[],
     any
-  >("http://localhost:5000/web/roles", fetcher);
+  >("/api/web/roles", fetcher);
 
   function onSubmit({
     Roles,
@@ -46,7 +46,7 @@ const User = () => {
       Subroles: { ID: number; Username: string }[];
     }[];
   }) {
-    fetch("http://localhost:5000/web/changeRoles", {
+    fetch("/api/web/changeRoles", {
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
