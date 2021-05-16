@@ -1,5 +1,6 @@
 FROM golang:buster
 WORKDIR /go/src/project/
-RUN go get -u github.com/lavalleeale/sshca/server
+COPY . .
+RUN go build .
 EXPOSE 5000
-CMD ["server"]
+CMD ["/go/src/project/server"]
