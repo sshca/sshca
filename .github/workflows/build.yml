@@ -24,15 +24,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.15
-
     - name: Build
-      run: |
-        cd server
-        go build -v .
+      run: docker build server
   client:
     runs-on: ubuntu-latest
     steps:
