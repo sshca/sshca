@@ -2,7 +2,7 @@
 FROM node:16.1.0-alpine as build
 WORKDIR /app
 COPY . .
-RUN yarn
+RUN yarn --frozen-lockfile
 RUN yarn build
 # production environment
 FROM nginx:stable-alpine
