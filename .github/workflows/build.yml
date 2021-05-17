@@ -18,8 +18,8 @@ jobs:
       - uses: actions/cache@v2
         name: Cache Node Modules
         with:
-          path: "../web/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('../web/yarn.lock') }}
+          path: "web/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('web/yarn.lock') }}
       - name: Install modules
         run: yarn --frozen-lockfile
       - name: Run ESLint
@@ -96,8 +96,8 @@ jobs:
       - uses: actions/cache@v2
         name: Cache Node Modules
         with:
-          path: "../web/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('../web/yarn.lock') }}
+          path: "web/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('web/yarn.lock') }}
       - name: Install Dependencies
         run: yarn --cwd ../web --frozen-lockfile
       - name: Build Server

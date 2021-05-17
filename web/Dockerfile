@@ -3,6 +3,7 @@ FROM node:16.1.0-alpine as build
 WORKDIR /app
 COPY ./yarn.lock ./yarn.lock
 COPY ./package.json ./package.json
+COPY ./.yarnrc ./.yarnrc
 RUN yarn --frozen-lockfile
 COPY . .
 RUN yarn build

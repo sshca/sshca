@@ -33,7 +33,6 @@ const Hosts = () => {
   const history = useHistory();
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log("hey");
     fetch("/api/web/addHost", {
       method: "POST",
       headers: { "content-type": "application/json" },

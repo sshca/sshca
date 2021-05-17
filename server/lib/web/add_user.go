@@ -2,6 +2,7 @@ package web
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -45,5 +46,13 @@ func Add_user(w http.ResponseWriter, r *http.Request) {
 		log.Print("Failed to Unmarshal JSON")
 		return
 	}
-	db.Db.Create(&db.User{Email: dat.Email, Roles: make([]*db.Role, 0)})
+	newUser := &db.User{Email: dat.Email, Roles: make([]*db.Role, 0)}
+	db.Db.Create(&newUser)
+	marshal, err := json.Marshal(newUser)
+	if err != nil {
+		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
+		log.Print("Error: Failed to Marshal JSON")
+		return
+	}
+	fmt.Fprint(w, string(marshal))
 }

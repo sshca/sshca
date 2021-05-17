@@ -19,10 +19,14 @@ import useSWR from "swr";
 import fetcher from "../lib/fetcher";
 
 const Users = () => {
-  const { data: users, error } = useSWR<
-    { Email: string; ID: number }[] | undefined,
-    any
-  >("/api/web/users", fetcher);
+  const {
+    data: users,
+    error,
+    mutate: mutateUsers,
+  } = useSWR<{ Email: string; ID: number }[] | undefined, any>(
+    "/api/web/users",
+    fetcher
+  );
   const [email, setEmail] = React.useState("");
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const history = useHistory();
@@ -33,7 +37,13 @@ const Users = () => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ email }),
       credentials: "include",
-    });
+    }).then((response) =>
+      response.json().then((json) => {
+        if (users) {
+          mutateUsers([...users, json]);
+        }
+      })
+    );
   }
 
   if (error) {

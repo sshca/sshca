@@ -46,9 +46,10 @@ func Change_roles(w http.ResponseWriter, r *http.Request) {
 		log.Print("Failed to Unmarshal JSON")
 		return
 	}
-	db.Db.First(&user, dat.ID)
+	var changeUser db.User
+	db.Db.First(&changeUser, dat.ID)
 	var roles *db.Role
 	db.Db.First(&roles, dat.Roles)
-	user.Roles = append(user.Roles, roles)
-	db.Db.Model(&user).Update("Roles", roles)
+	changeUser.Roles = append(changeUser.Roles, roles)
+	db.Db.Model(&changeUser).Update("Roles", roles)
 }

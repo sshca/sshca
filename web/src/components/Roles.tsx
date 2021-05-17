@@ -21,10 +21,14 @@ import useSWR from "swr";
 import fetcher from "../lib/fetcher";
 
 const Roles = () => {
-  const { data: roles, error: roleError } = useSWR<
-    { Name: string; Subroles: string; ID: number }[] | undefined,
-    any
-  >("/api/web/roles", fetcher);
+  const {
+    data: roles,
+    error: roleError,
+    mutate: mutateRoles,
+  } = useSWR<{ Name: string; Subroles: string; ID: number }[] | undefined, any>(
+    "/api/web/roles",
+    fetcher
+  );
   const { data: hosts, error: hostError } = useSWR<
     { Name: string; Hostname: string; ID: number }[] | undefined,
     any
@@ -45,7 +49,13 @@ const Roles = () => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ name, subRoles }),
       credentials: "include",
-    });
+    }).then((response) =>
+      response.json().then((json) => {
+        if (roles) {
+          mutateRoles([...roles, json]);
+        }
+      })
+    );
     setDialogOpen(false);
     setSubRoles([]);
     setName("");
