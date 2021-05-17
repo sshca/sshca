@@ -7,20 +7,67 @@ on:
     branches: [master]
 
 jobs:
+  lintweb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Run ESLint
+        uses: sibiraj-s/action-eslint@v1
+        with:
+          eslintArgs: "--ignore-path=.gitignore --quiet"
+          extensions: "ts,tsx"
+          annotations: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  styleweb:
+    needs: lintweb
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prettify code
+        uses: creyD/prettier_action@v3.3
+        with:
+          prettier_options: --write ./web/**.{tsx}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   web:
+    needs: styleweb
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
       - run: docker build web
+  serverlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: server
   server:
+    needs: serverlint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Build
         run: docker build server
+  clientlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: client
   client:
+    needs: clientlint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
