@@ -136,7 +136,10 @@ jobs:
           tags: |
             ghcr.io/lavalleeale/sshca-server:latest
   publishclientartifacts:
-    needs: client
+    needs:
+      - web
+      - server
+      - client
     name: Publish Client Artifacts
     runs-on: ubuntu-latest
     strategy:
@@ -166,7 +169,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
-          path: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          path: ./client/sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
   # Create the release for the tag
   publishclientrelease:
     runs-on: ubuntu-latest
@@ -182,7 +185,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
@@ -191,6 +194,7 @@ jobs:
   # Add all the builds as assets to the release
   publishclientartifactsrelease:
     runs-on: ubuntu-latest
+    name: Add Client Artifacts to Release
     needs: [publishclientartifacts, publishclientrelease]
     strategy:
       matrix:
