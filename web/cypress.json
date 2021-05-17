@@ -5,6 +5,5 @@
     "googleClientSecret": "CLIENT_SECRET",
     "googleRefreshToken": "REFRESH_TOKEN"
   },
-  "defaultCommandTimeout": 20000,
   "projectId": "34w3c4"
 }

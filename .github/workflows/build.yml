@@ -118,6 +118,7 @@ jobs:
           wait-on: "http://localhost:3000, http://localhost:5000/api/ping"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          DEBUG: "cypress:*"
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
