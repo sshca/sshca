@@ -26,7 +26,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: -c ./src/**
+          prettier_options: -c ./web/src/**
           dry: true
   web:
     name: "Build Web"
@@ -95,8 +95,10 @@ jobs:
       - uses: actions/cache@v2
         name: Cache Node Modules
         with:
-          path: "web/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('web/yarn.lock') }}
+          path: |
+            "web/node_modules"
+            "~/.cache/Cypress"
+          key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
       - name: Install Dependencies
         run: yarn --cwd ../web --frozen-lockfile
       - name: Build Server
