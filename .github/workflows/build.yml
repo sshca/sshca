@@ -96,4 +96,5 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          start: yarn --cwd ./web start, ./server/server
+          start: yarn start, ../server/server
+          working-directory: web
