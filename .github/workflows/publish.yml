@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: yarn
+        run: yarn --cwd web
       - name: Run ESLint
         uses: sibiraj-s/action-eslint@v1
         with:
@@ -24,7 +24,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: ./web/**.{tsx}
+          prettier_options: -c ./web/**
           dry: true
   web:
     name: "Build Web"
