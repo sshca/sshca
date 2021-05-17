@@ -44,7 +44,8 @@ func Login_web(w http.ResponseWriter, r *http.Request) {
 			log.Print("Error: User Does Not Exist")
 			return
 		} else {
-			db.Db.Create(&db.User{Email: email, Roles: make([]*db.Role, 0)})
+			user = db.User{Email: email, Roles: make([]*db.Role, 0)}
+			db.Db.Create(&user)
 		}
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{

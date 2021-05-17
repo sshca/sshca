@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "env": {
+    "googleClientId": "CLIENT_ID",
+    "googleClientSecret": "CLIENT_SECRET",
+    "googleRefreshToken": "REFRESH_TOKEN"
+  }
+}

@@ -28,7 +28,6 @@ const Users = () => {
   const history = useHistory();
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log("hey");
     fetch("/api/web/addUser", {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -53,6 +52,7 @@ const Users = () => {
     return (
       <Paper className="paper">
         <IconButton
+          aria-label="Add User"
           style={{ float: "right" }}
           onClick={() => setDialogOpen(true)}
         >
