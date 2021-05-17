@@ -18,8 +18,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	db.Open()
-	db.Db.AutoMigrate(&db.Role{}, &db.User{}, &db.Subrole{}, &db.Host{})
+	err = db.Open()
+	if err != nil {
+		log.Fatal("Failed to Open DB")
+	}
+	err = db.Db.AutoMigrate(&db.Role{}, &db.User{}, &db.Subrole{}, &db.Host{})
+	if err != nil {
+		log.Fatal("Failed to Migrate DB")
+	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/cli/login", cli.Login_cli)
 	mux.HandleFunc("/api/web/login", web.Login_web)
@@ -34,5 +40,8 @@ func main() {
 	mux.HandleFunc("/api/web/user", web.User_web)
 	mux.HandleFunc("/api/web/changeRoles", web.Change_roles)
 	log.Println("Started Server")
-	http.ListenAndServe(":5000", mux)
+	err = http.ListenAndServe(":5000", mux)
+	if err != nil {
+		log.Fatal("Failed to Start HTTP Server")
+	}
 }

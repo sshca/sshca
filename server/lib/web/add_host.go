@@ -42,7 +42,11 @@ func Add_host(w http.ResponseWriter, r *http.Request) {
 		Name     string `json:"name"`
 		Hostname string `json:"hostname"`
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Print("Failed to Unmarshal JSON")
+		return
+	}
 	host := db.Host{Name: dat.Name, Hostname: dat.Hostname, Subroles: make([]db.Subrole, 0)}
 	db.Db.Create(&host)
 	marshal, err := json.Marshal(host)

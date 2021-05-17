@@ -29,7 +29,10 @@ func Login() string {
 
 	log.Println(color.CyanString("You will now be taken to your browser for authentication"))
 	time.Sleep(1 * time.Second)
-	open.Run(url)
+	err := open.Run(url)
+	if err != nil {
+		log.Fatal("Failed to Open url")
+	}
 
 	m := http.NewServeMux()
 	s := http.Server{Addr: ":9999", Handler: m}
@@ -37,9 +40,15 @@ func Login() string {
 	m.HandleFunc("/oauth/callback", func(w http.ResponseWriter, r *http.Request) {
 		callbackHandler(w, r, func(newCode string) {
 			code = newCode
-			s.Shutdown(context.Background())
+			err = s.Shutdown(context.Background())
+			if err != nil {
+				log.Fatal("Failed to Stop HTTP Server")
+			}
 		})
 	})
-	s.ListenAndServe()
+	err = s.ListenAndServe()
+	if err != nil {
+		log.Fatal("Failed to Start HTTP Server")
+	}
 	return code
 }

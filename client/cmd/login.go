@@ -39,7 +39,10 @@ var versionCmd = &cobra.Command{
 				text = filepath.Join(dir, text[2:])
 			}
 			viper.Set("keyLocation", text)
-			viper.WriteConfig()
+			err := viper.WriteConfig()
+			if err != nil {
+				log.Fatal("Failed to Write Config")
+			}
 		}
 		keyLocation := viper.GetString("keyLocation")
 		keyLocation = keyLocation[:len(keyLocation)-1]

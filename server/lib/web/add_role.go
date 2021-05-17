@@ -45,7 +45,11 @@ func Add_role(w http.ResponseWriter, r *http.Request) {
 		log.Print("Invalid Body")
 		return
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Print("Failed to Unmarshal JSON")
+		return
+	}
 	subRoles := make([]db.Subrole, 0)
 	for i := 0; i < len(dat.SubRoles); i++ {
 		subRole := db.Subrole{Username: dat.SubRoles[i].Username, HostID: uint(dat.SubRoles[i].HostID)}

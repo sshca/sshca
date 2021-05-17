@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -15,11 +16,14 @@ func Sign(publicKey ssh.PublicKey, email string, roles []string) (string, error)
 	privKey := os.Getenv("SSH_KEY")
 	key, err := ssh.ParsePrivateKey([]byte(privKey))
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return "", errors.New("invalid ssh key")
 	}
 	cert := generateCert(publicKey, email, roles)
-	cert.SignCert(rand.Reader, key)
+	err = cert.SignCert(rand.Reader, key)
+	if err != nil {
+		log.Println("Failed to Unmarshal JSON")
+	}
 	return string(marshalCert(cert)), nil
 }
 

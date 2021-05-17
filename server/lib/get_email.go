@@ -32,7 +32,11 @@ func GetToken(code string) (string, error) {
 	var dat struct {
 		Access_token string `json:"access_token"`
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Println("Failed to Unmarshal JSON")
+		return "", err
+	}
 	return dat.Access_token, nil
 }
 func GetEmail(token string) (string, error) {
@@ -56,6 +60,10 @@ func GetEmail(token string) (string, error) {
 	var dat struct {
 		Email string `json:"email"`
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Println("Failed to Unmarshal JSON")
+		return "", err
+	}
 	return dat.Email, nil
 }

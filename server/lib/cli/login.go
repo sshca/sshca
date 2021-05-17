@@ -24,7 +24,15 @@ func Login_cli(w http.ResponseWriter, r *http.Request) {
 		Code string `json:"code"`
 		Key  string `json:"key"`
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Println("Failed to Unmarshal JSON")
+		return
+	}
+	if err != nil {
+		log.Println("Failed to Unmarshal JSON")
+		return
+	}
 	token, err := lib.GetToken(dat.Code)
 	if err != nil {
 		log.Print("Error Getting Token")

@@ -1,7 +1,7 @@
 package db
 
 import (
-	"fmt"
+	"log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -40,7 +40,7 @@ func Open() error {
 
 	Db, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	return err

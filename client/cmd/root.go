@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
@@ -37,11 +39,16 @@ func initConfig() {
 	viper.AddConfigPath(home)
 	viper.SetConfigName(".sshca-client")
 	viper.SetConfigType("yaml")
-	viper.SafeWriteConfig()
+	err = viper.SafeWriteConfig()
+	if err != nil {
+		log.Fatal("Failed to Write Config")
+	}
 
 	viper.AutomaticEnv() // read in environment variables that match
-	viper.ReadInConfig()
 
 	// If a config file is found, read it in.
-	viper.ReadInConfig()
+	err = viper.ReadInConfig()
+	if err != nil {
+		log.Fatal("Failed to Read Config")
+	}
 }

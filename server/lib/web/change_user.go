@@ -41,7 +41,11 @@ func Change_roles(w http.ResponseWriter, r *http.Request) {
 		ID    int   `json:"id"`
 		Roles []int `json:"roles"`
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Print("Failed to Unmarshal JSON")
+		return
+	}
 	db.Db.First(&user, dat.ID)
 	var roles *db.Role
 	db.Db.First(&roles, dat.Roles)

@@ -25,7 +25,11 @@ func Login_web(w http.ResponseWriter, r *http.Request) {
 	var dat struct {
 		Code string `json:"code"`
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Print("Failed to Unmarshal JSON")
+		return
+	}
 	email, err := lib.GetEmail(dat.Code)
 	if err != nil {
 		http.Error(w, "Failed to get email", http.StatusInternalServerError)

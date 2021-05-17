@@ -40,6 +40,10 @@ func Add_user(w http.ResponseWriter, r *http.Request) {
 	var dat struct {
 		Email string `json:"email"`
 	}
-	json.Unmarshal(body, &dat)
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Print("Failed to Unmarshal JSON")
+		return
+	}
 	db.Db.Create(&db.User{Email: dat.Email, Roles: make([]*db.Role, 0)})
 }
