@@ -93,6 +93,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          build: go build .
+          build: cd ./server;go build .
           install: false
-          start: yarn --cwd ../web start & ./server
+          start: yarn --cwd ../web start, ./server
