@@ -9,10 +9,13 @@ jobs:
   lintweb:
     name: "Lint Web"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
-        run: yarn --cwd web --frozen-lockfile
+        run: yarn --frozen-lockfile
       - name: Run ESLint
         uses: sibiraj-s/action-eslint@v1
         with:
@@ -24,7 +27,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: -c ./web/src/**
+          prettier_options: -c ./src/**
           dry: true
   web:
     name: "Build Web"
@@ -76,9 +79,8 @@ jobs:
           go-version: 1.16
 
       - name: Build
-        run: |
-          cd client
-          go build -v .
+        run: go build -v .
+        working-directory: ./client
   publishweb:
     name: "Publish Web"
     needs:

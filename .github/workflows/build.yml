@@ -10,6 +10,9 @@ jobs:
   lintweb:
     name: "Lint Web"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
@@ -22,22 +25,14 @@ jobs:
           annotations: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  styleweb:
-    name: "Style Web"
-    needs: lintweb
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: --write ./web/**.{tsx}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          prettier_options: -c ./src/**
+          dry: true
   web:
     name: "Build Web"
-    needs: styleweb
+    needs: lintweb
     runs-on: ubuntu-latest
 
     steps:
@@ -85,6 +80,5 @@ jobs:
           go-version: 1.16
 
       - name: Build
-        run: |
-          cd client
-          go build -v .
+        run: go build -v .
+        working-directory: ./client
