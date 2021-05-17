@@ -18,13 +18,7 @@ jobs:
       - name: Install modules
         run: yarn --frozen-lockfile
       - name: Run ESLint
-        uses: sibiraj-s/action-eslint@v1
-        with:
-          eslintArgs: "--ignore-path=.gitignore --quiet"
-          extensions: "ts,tsx"
-          annotations: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: eslint . --ext .ts,.tsx
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
@@ -82,3 +76,23 @@ jobs:
       - name: Build
         run: go build -v .
         working-directory: ./client
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+    # needs:
+    #   - server
+    #   - web
+    name: "Run Tests With Cypress"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Dependancies
+        run: yarn --cwd ../web --frozen-lockfile
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          build: go build .
+          install: false
+          start: yarn --cwd ../web start & ./server
