@@ -92,11 +92,13 @@ jobs:
         run: yarn --cwd ../web --frozen-lockfile
       - name: Build Server
         run: go build .
+      - name: Start Server
+        run: ./server &
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
           install: false
-          start: yarn start, ../server/server
+          start: yarn start
           working-directory: web
           env: googleClientId=${{ secrets.GOOGLE_CLIENT_ID }},googleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }},googleRefreshToken=${{ secrets.GOOGLE_REFRESH_TOKEN }}
           wait-on: "http://localhost:3000"
