@@ -14,16 +14,15 @@ jobs:
         working-directory: ./web
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        name: Cache Node Modules
+        with:
+          path: "../web/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('../web/yarn.lock') }}
       - name: Install modules
         run: yarn --frozen-lockfile
       - name: Run ESLint
-        uses: sibiraj-s/action-eslint@v1
-        with:
-          eslintArgs: "--ignore-path=.gitignore --quiet"
-          extensions: "ts,tsx"
-          annotations: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn run eslint . --ext .ts,.tsx
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
@@ -81,6 +80,50 @@ jobs:
       - name: Build
         run: go build -v .
         working-directory: ./client
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
+    needs:
+      - server
+      - web
+    name: "Run Tests With Cypress"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        name: Cache Node Modules
+        with:
+          path: "../web/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('../web/yarn.lock') }}
+      - name: Install Dependencies
+        run: yarn --cwd ../web --frozen-lockfile
+      - name: Build Server
+        run: go build .
+      - name: Setup env
+        run: echo ${{ secrets.ENV_FILE }} > .env
+      - name: Start Server
+        run: ./server &
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          install: false
+          start: yarn start
+          working-directory: web
+          env: googleClientId=${{ secrets.GOOGLE_CLIENT_ID }},googleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }},googleRefreshToken=${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          wait-on: "http://localhost:3000, http://localhost:5000/api/ping"
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
   publishweb:
     name: "Publish Web"
     needs:

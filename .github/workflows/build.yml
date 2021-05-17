@@ -15,6 +15,11 @@ jobs:
         working-directory: ./web
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        name: Cache Node Modules
+        with:
+          path: "../web/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('../web/yarn.lock') }}
       - name: Install modules
         run: yarn --frozen-lockfile
       - name: Run ESLint
@@ -81,14 +86,19 @@ jobs:
     defaults:
       run:
         working-directory: ./server
-    # needs:
-    #   - server
-    #   - web
+    needs:
+      - server
+      - web
     name: "Run Tests With Cypress"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Install Dependancies
+      - uses: actions/cache@v2
+        name: Cache Node Modules
+        with:
+          path: "../web/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('../web/yarn.lock') }}
+      - name: Install Dependencies
         run: yarn --cwd ../web --frozen-lockfile
       - name: Build Server
         run: go build .
@@ -104,3 +114,14 @@ jobs:
           working-directory: web
           env: googleClientId=${{ secrets.GOOGLE_CLIENT_ID }},googleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }},googleRefreshToken=${{ secrets.GOOGLE_REFRESH_TOKEN }}
           wait-on: "http://localhost:3000, http://localhost:5000/api/ping"
+      - uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+      # Test run video was always captured, so this action uses "always()" condition
+      - uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: cypress/videos
