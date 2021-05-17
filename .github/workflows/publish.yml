@@ -21,22 +21,14 @@ jobs:
           annotations: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  styleweb:
-    name: "Style Web"
-    needs: lintweb
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: --write ./web/**.{tsx}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          prettier_options: ./web/**.{tsx}
+          dry: true
   web:
     name: "Build Web"
-    needs: styleweb
+    needs: lintweb
     runs-on: ubuntu-latest
 
     steps:
@@ -115,7 +107,6 @@ jobs:
           push: true
           tags: |
             ghcr.io/lavalleeale/sshca-web:latest
-            ghcr.io/lavalleeale/sshca-web:${GITHUB_REF##*v}
   publishserver:
     name: "Publish Server"
     needs:
@@ -144,13 +135,12 @@ jobs:
           push: true
           tags: |
             ghcr.io/lavalleeale/sshca-server:latest
-            ghcr.io/lavalleeale/sshca-server:${GITHUB_REF##*v}
   publishclient:
     name: "Publish Client"
     needs:
-      - client
-      - server
       - web
+      - server
+      - client
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -167,5 +157,5 @@ jobs:
       - name: "Create Relase"
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "client"
+          artifacts: "client/client"
           token: ${{ secrets.GITHUB_TOKEN }}
