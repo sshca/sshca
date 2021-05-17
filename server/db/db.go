@@ -1,8 +1,11 @@
 package db
 
 import (
+	"fmt"
 	"log"
+	"os"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -38,7 +41,13 @@ var Db *gorm.DB
 func Open() error {
 	var err error
 
-	Db, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if os.Getenv("APP_ENV") == "PRODUCTION" {
+		dsn := fmt.Sprintf("host=db user=gorm password=%s dbname=gorm port=5432 sslmode=disable TimeZone=america/los_angeles", os.Getenv("DB_PASSWD"))
+		Db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	} else {
+		Db, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}

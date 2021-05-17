@@ -22,7 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to Open DB")
 	}
-	err = db.Db.AutoMigrate(&db.Role{}, &db.User{}, &db.Subrole{}, &db.Host{})
+	err = db.Db.AutoMigrate(&db.Role{}, &db.User{}, &db.Host{}, &db.Subrole{})
 	if err != nil {
 		log.Fatal("Failed to Migrate DB")
 	}
