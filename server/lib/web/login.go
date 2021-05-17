@@ -38,6 +38,15 @@ func Login_web(w http.ResponseWriter, r *http.Request) {
 	}
 	var user db.User
 	db.Db.First(&user, "email = ?", email)
+	if user.ID == 0 {
+		db.Db.First(&user)
+		if user.ID != 0 {
+			log.Print("Error: User Does Not Exist")
+			return
+		} else {
+			db.Db.Create(&db.User{Email: email, Roles: make([]*db.Role, 0)})
+		}
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email": user.Email,
 	})
