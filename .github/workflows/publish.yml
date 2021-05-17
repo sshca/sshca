@@ -24,7 +24,7 @@ jobs:
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
-          prettier_options: -c ./web/**
+          prettier_options: -c ./web/src/**
           dry: true
   web:
     name: "Build Web"
@@ -135,27 +135,89 @@ jobs:
           push: true
           tags: |
             ghcr.io/lavalleeale/sshca-server:latest
-  publishclient:
-    name: "Publish Client"
-    needs:
-      - web
-      - server
-      - client
+  publishclientartifacts:
+    needs: client
+    name: Publish Client Artifacts
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          [
+            { "os": "darwin", "arch": "amd64" },
+            { "os": "darwin", "arch": "arm64" },
+            { "os": "linux", "arch": "amd64" },
+            { "os": "linux", "arch": "386" },
+            { "os": "windows", "arch": "amd64" },
+            { "os": "windows", "arch": "386" },
+          ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.16.3"
+
+      - name: Create Artifact
+        run: |
+          cd client
+          GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o sshca_client
+          zip -j -r sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip sshca_client
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
+          path: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+  # Create the release for the tag
+  publishclientrelease:
+    runs-on: ubuntu-latest
+    name: Publish Client Release
+    needs: publishclientartifacts
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
-          go-version: 1.16
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+  # Add all the builds as assets to the release
+  publishclientartifactsrelease:
+    runs-on: ubuntu-latest
+    needs: [publishclientartifacts, publishclientrelease]
+    strategy:
+      matrix:
+        target:
+          [
+            { "os": "darwin", "arch": "amd64" },
+            { "os": "darwin", "arch": "arm64" },
+            { "os": "linux", "arch": "amd64" },
+            { "os": "linux", "arch": "386" },
+            { "os": "windows", "arch": "amd64" },
+            { "os": "windows", "arch": "386" },
+          ]
 
-      - name: Build
-        run: |
-          cd client
-          go build -v .
-      - name: "Create Relase"
-        uses: ncipollo/release-action@v1
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
         with:
-          artifacts: "client/client"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
+
+      - name: Upload Artifact to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          asset_name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          asset_content_type: application/zip
