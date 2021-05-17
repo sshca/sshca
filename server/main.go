@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/lavalleeale/sshca/server/lib"
 	"github.com/lavalleeale/sshca/server/lib/web"
 
 	"github.com/lavalleeale/sshca/server/lib/cli"
@@ -39,6 +40,7 @@ func main() {
 	mux.HandleFunc("/api/web/host", web.Host_web)
 	mux.HandleFunc("/api/web/user", web.User_web)
 	mux.HandleFunc("/api/web/changeRoles", web.Change_roles)
+	mux.HandleFunc("/api/ping", lib.Ping)
 	log.Println("Started Server")
 	err = http.ListenAndServe(":5000", mux)
 	if err != nil {
