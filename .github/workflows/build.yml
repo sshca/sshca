@@ -98,3 +98,4 @@ jobs:
           install: false
           start: yarn start, ../server/server
           working-directory: web
+          env: googleClientId=${{ secrets.GOOGLE_CLIENT_ID }},googleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }},googleRefreshToken=${{ secrets.GOOGLE_REFRESH_TOKEN }}
