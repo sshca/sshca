@@ -5,5 +5,5 @@
     "googleClientSecret": "CLIENT_SECRET",
     "googleRefreshToken": "REFRESH_TOKEN"
   },
-  "defaultCommandTimeout": 10000
+  "defaultCommandTimeout": 20000
 }
