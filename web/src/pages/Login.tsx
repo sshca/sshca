@@ -32,7 +32,7 @@ const Login = () => {
         buttonText="Login"
         theme="dark"
         onSuccess={(e) => responseGoogle(e as GoogleLoginResponse)}
-        onFailure={responseGoogle}
+        onFailure={console.log}
       />
     </Paper>
   );
