@@ -18,7 +18,7 @@ jobs:
       - name: Install modules
         run: yarn --frozen-lockfile
       - name: Run ESLint
-        run: eslint . --ext .ts,.tsx
+        run: yarn run eslint . --ext .ts,.tsx
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
@@ -96,4 +96,4 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install: false
-          start: yarn --cwd ../web start, ./server
+          start: yarn --cwd ./web start, ./server/server
