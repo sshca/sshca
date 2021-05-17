@@ -9,6 +9,7 @@
 .env
 .env.development.local
 cypress.env.json
+web/cypress/videos
 .env.local
 .env.production.local
 .env.test.local
