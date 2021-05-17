@@ -1,0 +1,171 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  lintweb:
+    name: "Lint Web"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Run ESLint
+        uses: sibiraj-s/action-eslint@v1
+        with:
+          eslintArgs: "--ignore-path=.gitignore --quiet"
+          extensions: "ts,tsx"
+          annotations: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  styleweb:
+    name: "Style Web"
+    needs: lintweb
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prettify code
+        uses: creyD/prettier_action@v3.3
+        with:
+          prettier_options: --write ./web/**.{tsx}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  web:
+    name: "Build Web"
+    needs: styleweb
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build web
+  serverlint:
+    name: "Lint Server"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: server
+  server:
+    name: "Build Server"
+    needs: serverlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build
+        run: docker build server
+  clientlint:
+    name: "Lint Client"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: client
+  client:
+    name: "Build Client"
+    needs: clientlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Build
+        run: |
+          cd client
+          go build -v .
+  publishweb:
+    name: "Publish Web"
+    needs:
+      - web
+      - server
+      - client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./web
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/lavalleeale/sshca-web:latest
+            ghcr.io/lavalleeale/sshca-web:${GITHUB_REF##*v}
+  publishserver:
+    name: "Publish Server"
+    needs:
+      - web
+      - server
+      - client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./server
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/lavalleeale/sshca-server:latest
+            ghcr.io/lavalleeale/sshca-server:${GITHUB_REF##*v}
+  publishclient:
+    name: "Publish Client"
+    needs:
+      - client
+      - server
+      - web
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Build
+        run: |
+          cd client
+          go build -v .
+      - name: "Create Relase"
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "client"
+          token: ${{ secrets.GITHUB_TOKEN }}
