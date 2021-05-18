@@ -35,6 +35,7 @@ const AddUser = ({
         }
       })
     );
+    setEmail("");
   }
   return (
     <Dialog
@@ -58,7 +59,10 @@ const AddUser = ({
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => setDialogOpen(false)}
+            onClick={() => {
+              setDialogOpen(false);
+              setEmail("");
+            }}
             color="primary"
             variant="contained"
           >

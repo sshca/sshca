@@ -35,6 +35,8 @@ const AddHost = ({
         }
       })
     );
+    setName("");
+    setHostname("");
   }
   return (
     <Dialog
@@ -67,7 +69,11 @@ const AddHost = ({
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => setDialogOpen(false)}
+            onClick={() => {
+              setDialogOpen(false);
+              setName("");
+              setHostname("");
+            }}
             color="primary"
             variant="contained"
           >
