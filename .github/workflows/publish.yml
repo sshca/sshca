@@ -127,11 +127,14 @@ jobs:
           path: ./web/cypress/screenshots
       # Test run video was always captured, so this action uses "always()" condition
       - uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: cypress-videos
+          path: ./web/cypress/videos
   publishweb:
     name: "Publish Web"
     needs:
-      - web
-      - server
+      - tests
       - client
     runs-on: ubuntu-latest
     steps:
@@ -158,8 +161,7 @@ jobs:
   publishserver:
     name: "Publish Server"
     needs:
-      - web
-      - server
+      - tests
       - client
     runs-on: ubuntu-latest
     steps:
@@ -185,8 +187,7 @@ jobs:
             ghcr.io/lavalleeale/sshca-server:latest
   publishclientartifacts:
     needs:
-      - web
-      - server
+      - tests
       - client
     name: Publish Client Artifacts
     runs-on: ubuntu-latest
