@@ -1,8 +1,9 @@
-package web
+package users
 
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Users_web(w http.ResponseWriter, r *http.Request) {
+func Add(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -31,9 +32,23 @@ func Users_web(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: User Does Not Exist")
 		return
 	}
-	var users []db.User
-	db.Db.Find(&users)
-	marshal, err := json.Marshal(users)
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Invalid Body", http.StatusBadRequest)
+		log.Print("Invalid Body")
+		return
+	}
+	var dat struct {
+		Email string `json:"email"`
+	}
+	err = json.Unmarshal(body, &dat)
+	if err != nil {
+		log.Print("Failed to Unmarshal JSON")
+		return
+	}
+	newUser := &db.User{Email: dat.Email, Roles: make([]*db.Role, 0)}
+	db.Db.Create(&newUser)
+	marshal, err := json.Marshal(newUser)
 	if err != nil {
 		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
 		log.Print("Error: Failed to Marshal JSON")

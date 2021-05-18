@@ -1,8 +1,8 @@
-package web
+package hosts
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,7 +11,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Change_roles(w http.ResponseWriter, r *http.Request) {
+func Get(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -31,29 +31,18 @@ func Change_roles(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: User Does Not Exist")
 		return
 	}
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, "Invalid Body", http.StatusBadRequest)
-		log.Print("Invalid Body")
+	var host db.Host
+	db.Db.Preload("Subroles").First(&host, r.URL.Query().Get("id"))
+	if host.ID == 0 {
+		http.Error(w, "Failed to retrieve host", http.StatusInternalServerError)
+		log.Print("Error: Failed to retrieve host")
 		return
 	}
-	var dat struct {
-		ID    int   `json:"id"`
-		Roles []int `json:"roles"`
-	}
-	err = json.Unmarshal(body, &dat)
+	marshal, err := json.Marshal(host)
 	if err != nil {
-		log.Print("Failed to Unmarshal JSON")
+		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
+		log.Print("Error: Failed to Marshal JSON")
 		return
 	}
-	var changeUser db.User
-	db.Db.First(&changeUser, dat.ID)
-	var roles = make([]*db.Role, 0)
-	if len(dat.Roles) != 0 {
-		db.Db.Find(&roles, dat.Roles)
-	}
-	err = db.Db.Model(&changeUser).Association("Roles").Replace(roles)
-	if err != nil {
-		return
-	}
+	fmt.Fprint(w, string(marshal))
 }

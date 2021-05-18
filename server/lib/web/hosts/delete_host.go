@@ -1,7 +1,8 @@
-package web
+package hosts
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Change_roles(w http.ResponseWriter, r *http.Request) {
+func Delete(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -31,29 +32,20 @@ func Change_roles(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: User Does Not Exist")
 		return
 	}
+	var dat struct {
+		ID int `json:"id"`
+	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid Body", http.StatusBadRequest)
 		log.Print("Invalid Body")
 		return
 	}
-	var dat struct {
-		ID    int   `json:"id"`
-		Roles []int `json:"roles"`
-	}
 	err = json.Unmarshal(body, &dat)
 	if err != nil {
 		log.Print("Failed to Unmarshal JSON")
 		return
 	}
-	var changeUser db.User
-	db.Db.First(&changeUser, dat.ID)
-	var roles = make([]*db.Role, 0)
-	if len(dat.Roles) != 0 {
-		db.Db.Find(&roles, dat.Roles)
-	}
-	err = db.Db.Model(&changeUser).Association("Roles").Replace(roles)
-	if err != nil {
-		return
-	}
+	db.Db.Delete(&db.Host{}, dat.ID)
+	fmt.Fprint(w, "")
 }

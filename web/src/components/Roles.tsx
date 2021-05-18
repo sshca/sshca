@@ -39,7 +39,7 @@ const Roles = () => {
     <Paper className="paper">
       <IconButton
         aria-label="Add Role"
-        style={{ float: "right" }}
+        style={{ float: "right", marginLeft: -100 }}
         onClick={() => setDialogOpen(true)}
       >
         <Add />
@@ -53,7 +53,13 @@ const Roles = () => {
       <Typography>Roles:</Typography>
       <List style={{ overflow: "scroll", maxHeight: "30vh" }}>
         {roles.map((role) => (
-          <Role role={role} />
+          <Role
+            role={role}
+            key={role.ID}
+            mutate={() =>
+              mutateRoles(roles.filter((newRole) => newRole.ID !== role.ID))
+            }
+          />
         ))}
       </List>
     </Paper>

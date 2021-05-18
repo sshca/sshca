@@ -39,7 +39,7 @@ const Hosts = () => {
       <Paper className="paper">
         <IconButton
           aria-label="Add Host"
-          style={{ float: "right" }}
+          style={{ float: "right", marginLeft: -100 }}
           onClick={() => setDialogOpen(true)}
         >
           <Add />
@@ -53,7 +53,13 @@ const Hosts = () => {
         <Typography>Hosts:</Typography>
         <List style={{ overflow: "scroll", maxHeight: "30vh" }}>
           {hosts.map((host) => (
-            <Host host={host} />
+            <Host
+              host={host}
+              key={host.ID}
+              mutate={() =>
+                mutateHosts(hosts.filter((newHost) => newHost.ID !== host.ID))
+              }
+            />
           ))}
         </List>
       </Paper>

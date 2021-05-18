@@ -52,5 +52,8 @@ func Change_users(w http.ResponseWriter, r *http.Request) {
 	if len(dat.Users) != 0 {
 		db.Db.Find(&users, dat.Users)
 	}
-	db.Db.Model(&changeRole).Association("Users").Replace(users)
+	err = db.Db.Model(&changeRole).Association("Users").Replace(users)
+	if err != nil {
+		return
+	}
 }

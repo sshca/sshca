@@ -1,4 +1,4 @@
-package web
+package users
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Hosts_web(w http.ResponseWriter, r *http.Request) {
+func List(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -31,9 +31,9 @@ func Hosts_web(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: User Does Not Exist")
 		return
 	}
-	var hosts []db.Host
-	db.Db.Find(&hosts)
-	marshal, err := json.Marshal(hosts)
+	var users []db.User
+	db.Db.Find(&users)
+	marshal, err := json.Marshal(users)
 	if err != nil {
 		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
 		log.Print("Error: Failed to Marshal JSON")

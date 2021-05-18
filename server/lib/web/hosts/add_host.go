@@ -1,7 +1,8 @@
-package web
+package hosts
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Change_roles(w http.ResponseWriter, r *http.Request) {
+func Add(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -38,22 +39,21 @@ func Change_roles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var dat struct {
-		ID    int   `json:"id"`
-		Roles []int `json:"roles"`
+		Name     string `json:"name"`
+		Hostname string `json:"hostname"`
 	}
 	err = json.Unmarshal(body, &dat)
 	if err != nil {
 		log.Print("Failed to Unmarshal JSON")
 		return
 	}
-	var changeUser db.User
-	db.Db.First(&changeUser, dat.ID)
-	var roles = make([]*db.Role, 0)
-	if len(dat.Roles) != 0 {
-		db.Db.Find(&roles, dat.Roles)
-	}
-	err = db.Db.Model(&changeUser).Association("Roles").Replace(roles)
+	host := db.Host{Name: dat.Name, Hostname: dat.Hostname, Subroles: make([]db.Subrole, 0)}
+	db.Db.Create(&host)
+	marshal, err := json.Marshal(host)
 	if err != nil {
+		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
+		log.Print("Error: Failed to Marshal JSON")
 		return
 	}
+	fmt.Fprint(w, string(marshal))
 }

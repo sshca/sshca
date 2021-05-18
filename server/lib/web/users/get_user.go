@@ -1,4 +1,4 @@
-package web
+package users
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Roles_web(w http.ResponseWriter, r *http.Request) {
+func Get(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -20,8 +20,8 @@ func Roles_web(w http.ResponseWriter, r *http.Request) {
 	}
 	token, err := lib.Verify_jwt(cookie.Value)
 	if err != nil {
-		http.Error(w, "No Token", http.StatusUnauthorized)
 		log.Print(err)
+		http.Error(w, "No Token", http.StatusUnauthorized)
 		return
 	}
 	var user db.User
@@ -31,9 +31,14 @@ func Roles_web(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: User Does Not Exist")
 		return
 	}
-	var roles []db.Role
-	db.Db.Find(&roles)
-	marshal, err := json.Marshal(roles)
+	var returnUser db.User
+	db.Db.Preload("Roles").First(&returnUser, r.URL.Query().Get("id"))
+	if returnUser.ID == 0 {
+		http.Error(w, "Failed to retrieve uesr", http.StatusInternalServerError)
+		log.Print("Error: Failed to retrieve user")
+		return
+	}
+	marshal, err := json.Marshal(returnUser)
 	if err != nil {
 		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
 		log.Print("Error: Failed to Marshal JSON")

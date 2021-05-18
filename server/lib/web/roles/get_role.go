@@ -1,4 +1,4 @@
-package web
+package roles
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Host_web(w http.ResponseWriter, r *http.Request) {
+func Get(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -31,14 +31,14 @@ func Host_web(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: User Does Not Exist")
 		return
 	}
-	var host db.Host
-	db.Db.Preload("Subroles").First(&host, r.URL.Query().Get("id"))
-	if host.ID == 0 {
-		http.Error(w, "Failed to retrieve host", http.StatusInternalServerError)
-		log.Print("Error: Failed to retrieve host")
+	var role db.Role
+	db.Db.Preload("Subroles").Preload("Users").First(&role, r.URL.Query().Get("id"))
+	if role.ID == 0 {
+		http.Error(w, "Failed to retrieve role", http.StatusInternalServerError)
+		log.Print("Error: Failed to retrieve role")
 		return
 	}
-	marshal, err := json.Marshal(host)
+	marshal, err := json.Marshal(role)
 	if err != nil {
 		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
 		log.Print("Error: Failed to Marshal JSON")

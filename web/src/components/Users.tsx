@@ -39,7 +39,7 @@ const Users = () => {
       <Paper className="paper">
         <IconButton
           aria-label="Add User"
-          style={{ float: "right" }}
+          style={{ float: "right", marginLeft: -100 }}
           onClick={() => setDialogOpen(true)}
         >
           <Add />
@@ -53,7 +53,13 @@ const Users = () => {
         <Typography>Users:</Typography>
         <List style={{ overflow: "scroll", maxHeight: "30vh" }}>
           {users.map((user) => (
-            <User user={user} />
+            <User
+              user={user}
+              key={user.ID}
+              mutate={() =>
+                mutateUsers(users.filter((newUser) => newUser.ID !== user.ID))
+              }
+            />
           ))}
         </List>
       </Paper>

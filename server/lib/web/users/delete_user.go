@@ -1,4 +1,4 @@
-package web
+package users
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Add_host(w http.ResponseWriter, r *http.Request) {
+func Delete(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -32,28 +32,20 @@ func Add_host(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: User Does Not Exist")
 		return
 	}
+	var dat struct {
+		ID int `json:"id"`
+	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid Body", http.StatusBadRequest)
 		log.Print("Invalid Body")
 		return
 	}
-	var dat struct {
-		Name     string `json:"name"`
-		Hostname string `json:"hostname"`
-	}
 	err = json.Unmarshal(body, &dat)
 	if err != nil {
 		log.Print("Failed to Unmarshal JSON")
 		return
 	}
-	host := db.Host{Name: dat.Name, Hostname: dat.Hostname, Subroles: make([]db.Subrole, 0)}
-	db.Db.Create(&host)
-	marshal, err := json.Marshal(host)
-	if err != nil {
-		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
-		log.Print("Error: Failed to Marshal JSON")
-		return
-	}
-	fmt.Fprint(w, string(marshal))
+	db.Db.Delete(&db.User{}, dat.ID)
+	fmt.Fprint(w, "")
 }

@@ -1,4 +1,4 @@
-package web
+package roles
 
 import (
 	"encoding/json"
@@ -12,7 +12,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Add_role(w http.ResponseWriter, r *http.Request) {
+func Delete(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -33,11 +33,7 @@ func Add_role(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var dat struct {
-		Name     string `json:"name"`
-		SubRoles []struct {
-			Username string `json:"username"`
-			HostID   int    `json:"HostID"`
-		} `json:"subRoles"`
+		ID int `json:"id"`
 	}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -50,18 +46,6 @@ func Add_role(w http.ResponseWriter, r *http.Request) {
 		log.Print("Failed to Unmarshal JSON")
 		return
 	}
-	subRoles := make([]db.Subrole, 0)
-	for i := 0; i < len(dat.SubRoles); i++ {
-		subRole := db.Subrole{Username: dat.SubRoles[i].Username, HostID: uint(dat.SubRoles[i].HostID)}
-		subRoles = append(subRoles, subRole)
-	}
-	role := db.Role{Name: fmt.Sprint(dat.Name), Users: make([]*db.User, 0), Subroles: subRoles}
-	db.Db.Create(&role)
-	marshal, err := json.Marshal(role)
-	if err != nil {
-		http.Error(w, "Failed to generate response", http.StatusInternalServerError)
-		log.Print("Error: Failed to Marshal JSON")
-		return
-	}
-	fmt.Fprint(w, string(marshal))
+	db.Db.Delete(&db.Role{}, dat.ID)
+	fmt.Fprint(w, "")
 }
