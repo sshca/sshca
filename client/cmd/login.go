@@ -38,14 +38,23 @@ var versionCmd = &cobra.Command{
 			} else if strings.HasPrefix(text, "~/") {
 				text = filepath.Join(dir, text[2:])
 			}
-			viper.Set("keyLocation", text)
+			viper.Set("keyLocation", text[:len(text)-1])
+			err := viper.WriteConfig()
+			if err != nil {
+				log.Fatal("Failed to Write Config")
+			}
+		}
+		if viper.GetString("server") == "" {
+			reader := bufio.NewReader(os.Stdin)
+			fmt.Print("Enter SSHCA server address: ")
+			text, _ := reader.ReadString('\n')
+			viper.Set("server", text[:len(text)-1])
 			err := viper.WriteConfig()
 			if err != nil {
 				log.Fatal("Failed to Write Config")
 			}
 		}
 		keyLocation := viper.GetString("keyLocation")
-		keyLocation = keyLocation[:len(keyLocation)-1]
 		data, err := ioutil.ReadFile(keyLocation)
 		if err != nil {
 			log.Fatal("Error reading public key file")
@@ -57,13 +66,15 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal("Error encoding JSON")
 		}
-		resp, err := http.Post("http://localhost:5000/api/cli/login", "application/json", bytes.NewBuffer(marshal))
+		resp, err := http.Post(fmt.Sprintf("%s/api/cli/login", viper.GetString("server")), "application/json", bytes.NewBuffer(marshal))
 		if err != nil {
+			log.Print(fmt.Sprintf("%s/api/cli/login", viper.GetString("server")))
 			log.Fatal("Http Request Failed")
 		}
 		defer resp.Body.Close()
 		if resp.StatusCode == http.StatusOK {
 			bodyBytes, err := ioutil.ReadAll(resp.Body)
+			log.Print(string(bodyBytes) + "d")
 			if err != nil {
 				log.Fatal(err)
 			}

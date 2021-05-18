@@ -40,7 +40,7 @@ func Login_cli(w http.ResponseWriter, r *http.Request) {
 	}
 	email, err := lib.GetEmail(token)
 	if err != nil {
-		log.Print("Error Getting Email")
+		log.Print(err)
 		return
 	}
 	var user db.User

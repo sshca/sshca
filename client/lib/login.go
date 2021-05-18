@@ -48,7 +48,7 @@ func Login() string {
 	})
 	err = s.ListenAndServe()
 	if err != nil {
-		log.Fatal("Failed to Start HTTP Server")
+		log.Print(err)
 	}
 	return code
 }
