@@ -5,7 +5,7 @@ describe("View Host", () => {
   });
   it("Views Host", () => {
     cy.get(":nth-child(1) > .MuiList-root > .MuiButtonBase-root").click();
-    cy.get(".bash", { timeout: 50000 }).should("exist");
+    cy.get(".bash").should("exist");
     cy.contains("Host 1").should("exist");
     cy.contains("host1.local").should("exist");
   });
