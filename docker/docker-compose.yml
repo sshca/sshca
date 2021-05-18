@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: gorm
       POSTGRES_DB: gorm
       POSTGRES_PASSWORD: md5d4b8eb8ecefe02fddb2654d05b502492
-    ports: 
+    ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -29,9 +29,9 @@ services:
     build:
       context: ../server
       dockerfile: Dockerfile
-    environment: 
+    environment:
       APP_ENV: PRODUCTION
     volumes:
       - "../server/.env:/go/src/project/.env"
-volumes: 
+volumes:
   pgdata:
