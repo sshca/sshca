@@ -41,6 +41,7 @@ func main() {
 	mux.HandleFunc("/api/web/role", web.Role_web)
 	mux.HandleFunc("/api/web/user", web.User_web)
 	mux.HandleFunc("/api/web/changeRoles", web.Change_roles)
+	mux.HandleFunc("/api/web/changeUsers", web.Change_users)
 	mux.HandleFunc("/api/ping", lib.Ping)
 	log.Println("Started Server")
 	err = http.ListenAndServe(":5000", mux)

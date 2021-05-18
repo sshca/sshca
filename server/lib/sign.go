@@ -36,7 +36,6 @@ func generateCert(pub ssh.PublicKey, email string, roles []string) *ssh.Certific
 			"permit-user-rc":          "",
 		},
 	}
-	log.Print("F")
 	return &ssh.Certificate{
 		CertType: ssh.UserCert, Permissions: permissions, Key: pub, ValidAfter: uint64(time.Now().Unix()), ValidBefore: uint64(time.Now().AddDate(0, 0, 7).Unix()), KeyId: email, ValidPrincipals: roles,
 	}

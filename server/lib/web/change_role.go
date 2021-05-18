@@ -11,7 +11,7 @@ import (
 	"github.com/lavalleeale/sshca/server/db"
 )
 
-func Change_roles(w http.ResponseWriter, r *http.Request) {
+func Change_users(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
@@ -39,18 +39,18 @@ func Change_roles(w http.ResponseWriter, r *http.Request) {
 	}
 	var dat struct {
 		ID    int   `json:"id"`
-		Roles []int `json:"roles"`
+		Users []int `json:"users"`
 	}
 	err = json.Unmarshal(body, &dat)
 	if err != nil {
 		log.Print("Failed to Unmarshal JSON")
 		return
 	}
-	var changeUser db.User
-	db.Db.First(&changeUser, dat.ID)
-	var roles = make([]*db.Role, 0)
-	if len(dat.Roles) != 0 {
-		db.Db.Find(&roles, dat.Roles)
+	var changeRole db.Role
+	db.Db.First(&changeRole, dat.ID)
+	var users = make([]*db.User, 0)
+	if len(dat.Users) != 0 {
+		db.Db.Find(&users, dat.Users)
 	}
-	db.Db.Model(&changeUser).Association("Roles").Replace(roles)
+	db.Db.Model(&changeRole).Association("Users").Replace(users)
 }

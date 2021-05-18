@@ -1,4 +1,5 @@
-import { MenuItem, Paper, Select, Typography } from "@material-ui/core";
+import { Paper, TextField, Typography } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { useParams } from "react-router";
 import useSWR from "swr";
@@ -71,54 +72,29 @@ const User = () => {
   return (
     <Paper className="paper">
       <Typography>Email: {user.Email}</Typography>
-      {[
-        ...user.Roles,
-        {
-          ID: 0,
-          Name: "",
-          Subroles: [],
-        },
-      ].map((subRole, index) => (
-        <Select
-          fullWidth
-          key={index}
-          onChange={(e) => {
-            mutate(
-              {
-                ...user,
-                Roles: [
-                  ...user.Roles.slice(0, index),
-                  {
-                    ...user.Roles[index],
-                    ID: e.target.value as number,
-                    Name: roles.filter(
-                      (role) => role.ID === (e.target.value as number)
-                    )[0].Name,
-                    Subroles: [],
-                  },
-                  ...user.Roles.slice(index + 1),
-                ],
-              },
-              false
-            ).then((value) => {
-              if (value) {
-                onSubmit(value);
-              }
-            });
-          }}
-          required={subRole.ID !== 0}
-          style={{ marginTop: 10 }}
-          value={subRole.ID}
-          variant="outlined"
-        >
-          <MenuItem value={0}>None</MenuItem>
-          {roles.map((role) => (
-            <MenuItem key={role.ID} value={role.ID}>
-              {role.Name}
-            </MenuItem>
-          ))}
-        </Select>
-      ))}
+      <Autocomplete
+        multiple
+        options={roles.map((role) => role.Name)}
+        value={user.Roles.map((role) => role.Name)}
+        onChange={(_, value) => {
+          mutate(
+            {
+              ...user,
+              Roles: value.map(
+                (name) => roles.filter((role) => role.Name === name)[0]
+              ),
+            },
+            false
+          ).then((newValue) => {
+            if (newValue) {
+              onSubmit(newValue);
+            }
+          });
+        }}
+        renderInput={(params) => (
+          <TextField {...params} variant="outlined" label="Roles" />
+        )}
+      />
     </Paper>
   );
 };

@@ -1,4 +1,5 @@
-import { MenuItem, Paper, Select, Typography } from "@material-ui/core";
+import { Paper, TextField, Typography } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { useParams } from "react-router";
 import useSWR from "swr";
@@ -47,11 +48,11 @@ const Role = () => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         id: parseInt(id, 10),
-        roles: Users.map((user) => user.ID),
+        users: Users.map((user) => user.ID),
       }),
     });
   }
-  console.log(role);
+
   if (roleError || usersError)
     return (
       <Paper className="paper">
@@ -69,52 +70,29 @@ const Role = () => {
       <Typography>Name: {role.Name}</Typography>
       <Typography>Permissions:</Typography>
       <Typography>Users:</Typography>
-      {[
-        ...role.Users,
-        {
-          ID: 0,
-          Email: "",
-        },
-      ].map((user, index) => (
-        <Select
-          fullWidth
-          key={index}
-          onChange={(e) => {
-            mutate(
-              {
-                ...role,
-                Users: [
-                  ...role.Users.slice(0, index),
-                  {
-                    ...role.Subroles[index],
-                    ID: e.target.value as number,
-                    Email: users.filter(
-                      (user) => user.ID === (e.target.value as number)
-                    )[0].Email,
-                  },
-                  ...role.Users.slice(index + 1),
-                ],
-              },
-              false
-            ).then((value) => {
-              if (value) {
-                onSubmit(value);
-              }
-            });
-          }}
-          required={user.ID !== 0}
-          style={{ marginTop: 10 }}
-          value={user.ID}
-          variant="outlined"
-        >
-          <MenuItem value={0}>None</MenuItem>
-          {users.map((user) => (
-            <MenuItem key={user.ID} value={user.ID}>
-              {user.Email}
-            </MenuItem>
-          ))}
-        </Select>
-      ))}
+      <Autocomplete
+        multiple
+        options={users.map((user) => user.Email)}
+        value={role.Users.map((user) => user.Email)}
+        onChange={(_, value) => {
+          mutate(
+            {
+              ...role,
+              Users: value.map(
+                (email) => users.filter((user) => user.Email === email)[0]
+              ),
+            },
+            false
+          ).then((newValue) => {
+            if (newValue) {
+              onSubmit(newValue);
+            }
+          });
+        }}
+        renderInput={(params) => (
+          <TextField {...params} variant="outlined" label="Users" />
+        )}
+      />
     </Paper>
   );
 };
