@@ -74,7 +74,6 @@ var versionCmd = &cobra.Command{
 		defer resp.Body.Close()
 		if resp.StatusCode == http.StatusOK {
 			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			log.Print(string(bodyBytes) + "d")
 			if err != nil {
 				log.Fatal(err)
 			}
