@@ -18,6 +18,7 @@ const Hosts = lazy(() => import("./pages/HostsPage"));
 const UsersPage = lazy(() => import("./pages/UsersPage"));
 const Host = lazy(() => import("./pages/Host"));
 const User = lazy(() => import("./pages/User"));
+const Role = lazy(() => import("./pages/Role"));
 
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 const darkTheme = createMuiTheme({
@@ -87,6 +88,11 @@ function App() {
         <Route exact path="/user/:id">
           <Suspense fallback={<Loading />}>
             <User />
+          </Suspense>
+        </Route>
+        <Route exact path="/role/:id">
+          <Suspense fallback={<Loading />}>
+            <Role />
           </Suspense>
         </Route>
       </Switch>

@@ -59,10 +59,10 @@ rm -rf /etc/ssh/sshca
 mkdir -p /etc/ssh/sshca/auth_principals
 echo "${publicKey.replace("\n", "")}" > /etc/ssh/sshca/ca.pub
 echo "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" > /etc/ssh/sshca/sshca_config
-echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" > /etc/ssh/sshca/sshca_config
+echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" >> /etc/ssh/sshca/sshca_config
 ${host.Subroles.map(
   (subrole) =>
-    `echo "sshca_subrole_${subrole.ID}" > /etc/sshca/auth_pricipals/${subrole.Username}`
+    `echo "sshca_subrole_${subrole.ID}" > /etc/ssh/sshca/auth_pricipals/${subrole.Username}`
 )}`}
       </Highlight>
     </Paper>

@@ -180,7 +180,7 @@ const Roles = () => {
             <ListItem
               key={role.ID}
               button
-              onClick={() => history.push(`/role/${role.Name}`)}
+              onClick={() => history.push(`/role/${role.ID}`)}
             >
               <ListItemText primary={role.Name} />
             </ListItem>

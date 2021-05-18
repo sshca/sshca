@@ -8,7 +8,7 @@ describe("View User", () => {
     cy.contains("test@example.com").should("exist");
     cy.contains("Role 1").should("not.exist");
     cy.get(".MuiSelect-root").click();
-    cy.get('.MuiList-root > [tabindex="-1"]').click();
+    cy.contains("Role 1").click();
     cy.reload();
     cy.contains("Role 1").should("be.visible");
   });
