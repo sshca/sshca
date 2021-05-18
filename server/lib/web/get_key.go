@@ -14,6 +14,7 @@ func Get_key(w http.ResponseWriter, r *http.Request) {
 	key, err := ssh.ParsePrivateKey([]byte(privKey))
 	if err != nil {
 		log.Println(err)
+		// http.Error(w, "Error getting public key", http.StatusInternalServerError)
 		return
 	}
 	fmt.Fprint(w, string(ssh.MarshalAuthorizedKey(key.PublicKey())))

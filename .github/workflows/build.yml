@@ -105,7 +105,8 @@ jobs:
       - name: Build Server
         run: go build .
       - name: Setup env
-        run: echo ${{ secrets.ENV_FILE }} > .env
+        run: |
+          echo ${{ secrets.ENV_FILE }} > .env
       - name: Start Server
         run: ./server &
       - name: Cypress run
