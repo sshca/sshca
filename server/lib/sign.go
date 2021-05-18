@@ -28,8 +28,15 @@ func Sign(publicKey ssh.PublicKey, email string, roles []string) (string, error)
 func generateCert(pub ssh.PublicKey, email string, roles []string) *ssh.Certificate {
 	permissions := ssh.Permissions{
 		CriticalOptions: map[string]string{},
-		Extensions:      map[string]string{},
+		Extensions: map[string]string{
+			"permit-X11-forwarding":   "",
+			"permit-agent-forwarding": "",
+			"permit-port-forwarding":  "",
+			"permit-pty":              "",
+			"permit-user-rc":          "",
+		},
 	}
+	log.Print("F")
 	return &ssh.Certificate{
 		CertType: ssh.UserCert, Permissions: permissions, Key: pub, ValidAfter: uint64(time.Now().Unix()), ValidBefore: uint64(time.Now().AddDate(0, 0, 7).Unix()), KeyId: email, ValidPrincipals: roles,
 	}
