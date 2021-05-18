@@ -5,6 +5,8 @@
 *.out
 *.so
 *.test
+server/server
+client/client
 .DS_Store
 .env
 .env.development.local
