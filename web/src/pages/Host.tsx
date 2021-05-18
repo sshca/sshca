@@ -37,9 +37,7 @@ const Host = () => {
   if (!host || !publicKey)
     return (
       <Paper className="paper">
-        <Typography>
-          Getting Host {JSON.stringify({ publicKey, host })}
-        </Typography>
+        <Typography>Getting Host</Typography>
       </Paper>
     );
   return (

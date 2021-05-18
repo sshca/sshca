@@ -3,7 +3,6 @@ package lib
 import (
 	"crypto/rand"
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -12,7 +11,6 @@ import (
 )
 
 func Sign(publicKey ssh.PublicKey, email string, roles []string) (string, error) {
-	fmt.Println(roles)
 	privKey := os.Getenv("SSH_KEY")
 	key, err := ssh.ParsePrivateKey([]byte(privKey))
 	if err != nil {

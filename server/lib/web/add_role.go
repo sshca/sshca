@@ -55,7 +55,6 @@ func Add_role(w http.ResponseWriter, r *http.Request) {
 		subRole := db.Subrole{Username: dat.SubRoles[i].Username, HostID: uint(dat.SubRoles[i].HostID)}
 		subRoles = append(subRoles, subRole)
 	}
-	log.Print(subRoles)
 	role := db.Role{Name: fmt.Sprint(dat.Name), Users: make([]*db.User, 0), Subroles: subRoles}
 	db.Db.Create(&role)
 	marshal, err := json.Marshal(role)
