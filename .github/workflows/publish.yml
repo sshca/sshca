@@ -154,7 +154,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./web
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: |
             ghcr.io/lavalleeale/sshca-web:latest
