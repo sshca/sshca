@@ -49,21 +49,25 @@ const Host = () => {
         Usernames: {host.Subroles.map((subrole) => subrole.Username).join(", ")}
       </Typography>
       <Highlight language="bash">
-        {`if grep -Fxq "Include /etc/ssh/sshca/sshca_config" /etc/ssh/sshd_config
+        {`rm -rf /etc/ssh/sshca
+if grep -Fxq "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" /etc/ssh/sshd_config
 then
-    :
+  :
 else
-    echo "Include /etc/ssh/sshca/sshca_config" >> /etc/ssh/sshd_config
+  echo "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" >> /etc/ssh/sshd_config
 fi
-rm -rf /etc/ssh/sshca
+if grep -Fxq "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" /etc/ssh/sshd_config
+then
+  :
+else
+  echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" >> /etc/ssh/sshd_config
+fi
 mkdir -p /etc/ssh/sshca/auth_principals
 echo "${publicKey.replace("\n", "")}" > /etc/ssh/sshca/ca.pub
-echo "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" > /etc/ssh/sshca/sshca_config
-echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" >> /etc/ssh/sshca/sshca_config
 ${host.Subroles.map(
   (subrole) =>
-    `echo "sshca_subrole_${subrole.ID}" > /etc/ssh/sshca/auth_pricipals/${subrole.Username}`
-)}`}
+    `echo "sshca_subrole_${subrole.ID}" > /etc/ssh/sshca/auth_principals/${subrole.Username}`
+).join("\n")}`}
       </Highlight>
     </Paper>
   );

@@ -47,8 +47,10 @@ func Login_cli(w http.ResponseWriter, r *http.Request) {
 	db.Db.Preload("Roles").First(&user, "email = ?", email)
 	publicKey, _, _, _, _ := ssh.ParseAuthorizedKey([]byte(dat.Key))
 	var roleList []string
-	for _, x := range user.Roles {
-		roleList = append(roleList, fmt.Sprintf("sshca_subrole_%v", x.ID))
+	for _, role := range user.Roles {
+		for _, subrole := range role.Subroles {
+			roleList = append(roleList, fmt.Sprintf("sshca_subrole_%v", subrole.ID))
+		}
 	}
 	signed, err := lib.Sign(
 		publicKey,
