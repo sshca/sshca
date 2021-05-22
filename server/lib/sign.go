@@ -3,12 +3,38 @@ package lib
 import (
 	"crypto/rand"
 	"errors"
+	"io"
 	"log"
 	"os"
 	"time"
 
 	"golang.org/x/crypto/ssh"
 )
+
+type sshAlgorithmSigner struct {
+	algorithm string
+	signer    ssh.AlgorithmSigner
+}
+
+func (s *sshAlgorithmSigner) PublicKey() ssh.PublicKey {
+	return s.signer.PublicKey()
+}
+
+func (s *sshAlgorithmSigner) Sign(rand io.Reader, data []byte) (*ssh.Signature, error) {
+	return s.signer.SignWithAlgorithm(rand, data, s.algorithm)
+}
+
+func NewAlgorithmSignerFromSigner(sshSigner ssh.Signer, algorithm string) (ssh.Signer, error) {
+	algorithmSigner, ok := sshSigner.(ssh.AlgorithmSigner)
+	if !ok {
+		return nil, errors.New("unable to cast to ssh.AlgorithmSigner")
+	}
+	s := sshAlgorithmSigner{
+		signer:    algorithmSigner,
+		algorithm: algorithm,
+	}
+	return &s, nil
+}
 
 func Sign(publicKey ssh.PublicKey, email string, roles []string) (string, error) {
 	privKey := os.Getenv("SSH_KEY")
@@ -18,10 +44,8 @@ func Sign(publicKey ssh.PublicKey, email string, roles []string) (string, error)
 		return "", errors.New("invalid ssh key")
 	}
 	cert := generateCert(publicKey, email, roles)
-	err = cert.SignCert(rand.Reader, key)
-	if err != nil {
-		log.Println("Failed to Unmarshal JSON")
-	}
+	sshAlgorithmSigner, _ := NewAlgorithmSignerFromSigner(key, ssh.SigAlgoRSASHA2256)
+	cert.SignCert(rand.Reader, sshAlgorithmSigner)
 	return string(marshalCert(cert)), nil
 }
 
