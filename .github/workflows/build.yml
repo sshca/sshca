@@ -76,10 +76,6 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           working-directory: client
-      - uses: actions/upload-artifact@v2
-        with:
-          name: client
-          path: ./client/client
   client:
     name: "Build Client"
     needs: clientlint
@@ -95,8 +91,21 @@ jobs:
       - name: Build
         run: go build -v .
         working-directory: ./client
+      - uses: actions/upload-artifact@v2
+        with:
+          name: client
+          path: ./client/client
   tests:
     runs-on: ubuntu-latest
+    strategy:
+      # when one test fails, DO NOT cancel the other
+      # containers, because this will kill Cypress processes
+      # leaving the Dashboard hanging ...
+      # https://github.com/cypress-io/github-action/issues/48
+      fail-fast: false
+      matrix:
+        # run 3 copies of the current job in parallel
+        containers: [1, 2, 3]
     defaults:
       run:
         working-directory: ./server
@@ -119,7 +128,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: server
-          path: ./server/server
+          path: ./server
       - name: Setup env
         run: echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: Start Server
@@ -127,6 +136,9 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          record: true
+          parallel: true
+          group: "Github Actions"
           install: false
           start: yarn start
           working-directory: web

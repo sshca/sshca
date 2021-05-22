@@ -118,7 +118,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: server
-          path: ./server/server
+          path: ./server
       - name: Setup env
         run: echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: Start Server
