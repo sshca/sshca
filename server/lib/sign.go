@@ -45,7 +45,10 @@ func Sign(publicKey ssh.PublicKey, email string, roles []string) (string, error)
 	}
 	cert := generateCert(publicKey, email, roles)
 	sshAlgorithmSigner, _ := NewAlgorithmSignerFromSigner(key, ssh.SigAlgoRSASHA2256)
-	cert.SignCert(rand.Reader, sshAlgorithmSigner)
+	err = cert.SignCert(rand.Reader, sshAlgorithmSigner)
+	if err != nil {
+		return "", errors.New("failed to sign cert")
+	}
 	return string(marshalCert(cert)), nil
 }
 
