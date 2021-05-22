@@ -1,4 +1,4 @@
-module github.com/lavalleeale/sshca/client
+module github.com/lavalleeale/sshca/sshca-client
 
 go 1.16
 

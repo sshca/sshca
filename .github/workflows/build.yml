@@ -65,7 +65,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          working-directory: client
+          working-directory: sshca-client
   client:
     name: "Build Client"
     needs: clientlint
@@ -80,11 +80,11 @@ jobs:
 
       - name: Build
         run: go build -v .
-        working-directory: ./client
+        working-directory: ./sshca-client
       - uses: actions/upload-artifact@v2
         with:
           name: client
-          path: ./client/client
+          path: ./sshca-client/sshca-client
   tests:
     runs-on: ubuntu-latest
     strategy:

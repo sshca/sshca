@@ -64,7 +64,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          working-directory: client
+          working-directory: sshca-client
   client:
     name: "Build Client"
     needs: clientlint
@@ -79,11 +79,11 @@ jobs:
 
       - name: Build
         run: go build -v .
-        working-directory: ./client
+        working-directory: ./sshca-client
       - uses: actions/upload-artifact@v2
         with:
           name: client
-          path: ./client/client
+          path: ./sshca-client/sshca-client
   tests:
     runs-on: ubuntu-latest
     strategy:
@@ -227,14 +227,14 @@ jobs:
 
       - name: Create Artifact
         run: |
-          cd client
+          cd sshca-client
           GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o sshca_client
           zip -j -r sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip sshca_client
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
-          path: ./client/sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          path: ./sshca-client/sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
   # Create the release for the tag
   publishclientrelease:
     runs-on: ubuntu-latest
