@@ -44,7 +44,7 @@ func Login_cli(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var user db.User
-	db.Db.Preload("Roles").First(&user, "email = ?", email)
+	db.Db.Preload("Roles.Subroles").First(&user, "email = ?", email)
 	publicKey, _, _, _, _ := ssh.ParseAuthorizedKey([]byte(dat.Key))
 	var roleList []string
 	for _, role := range user.Roles {

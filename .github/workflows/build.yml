@@ -54,18 +54,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.16
-
       - name: Build
-        run: go build -v .
-        working-directory: ./server
-      - uses: actions/upload-artifact@v2
-        with:
-          name: server
-          path: ./server/server
+        run: docker build server
   clientlint:
     name: "Lint Client"
     runs-on: ubuntu-latest
@@ -125,10 +115,8 @@ jobs:
           key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
       - name: Install Dependencies
         run: yarn --cwd ../web --frozen-lockfile
-      - uses: actions/download-artifact@v2
-        with:
-          name: server
-          path: ./server
+      - name: Build Server
+        run: go build .
       - name: Setup env
         run: echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: Start Server
