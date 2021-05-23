@@ -22,5 +22,5 @@ An SSH Certificate Authority with a simple web interface and easy-to-use command
 
 1. run `go install github.com/sshca/sshca/sshca-client@latest`
 2. Add `CertificateFile /tmp/sshca-key.pub` to `~/.ssh/config`
-3. run `client login`
+3. run `sshclient login`
 4. SSH into target server
