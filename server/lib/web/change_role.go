@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/lavalleeale/sshca/server/lib"
+	"github.com/sshca/sshca/server/lib"
 
-	"github.com/lavalleeale/sshca/server/db"
+	"github.com/sshca/sshca/server/db"
 )
 
 func Change_users(w http.ResponseWriter, r *http.Request) {

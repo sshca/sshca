@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/lavalleeale/sshca/server/db"
+	"github.com/sshca/sshca/server/db"
 
-	"github.com/lavalleeale/sshca/server/lib"
+	"github.com/sshca/sshca/server/lib"
 
 	"github.com/dgrijalva/jwt-go"
 )

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/lavalleeale/sshca/sshca-client/cmd"
+import "github.com/sshca/sshca/sshca-client/cmd"
 
 func main() {
 	cmd.Execute()

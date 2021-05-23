@@ -1,4 +1,4 @@
-module github.com/lavalleeale/sshca/server
+module github.com/sshca/sshca/server
 
 go 1.16
 

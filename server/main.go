@@ -4,15 +4,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/lavalleeale/sshca/server/lib"
-	"github.com/lavalleeale/sshca/server/lib/web"
-	"github.com/lavalleeale/sshca/server/lib/web/hosts"
-	"github.com/lavalleeale/sshca/server/lib/web/roles"
-	"github.com/lavalleeale/sshca/server/lib/web/users"
+	"github.com/sshca/sshca/server/lib"
+	"github.com/sshca/sshca/server/lib/web"
+	"github.com/sshca/sshca/server/lib/web/hosts"
+	"github.com/sshca/sshca/server/lib/web/roles"
+	"github.com/sshca/sshca/server/lib/web/users"
 
-	"github.com/lavalleeale/sshca/server/lib/cli"
+	"github.com/sshca/sshca/server/lib/cli"
 
-	"github.com/lavalleeale/sshca/server/db"
+	"github.com/sshca/sshca/server/db"
 
 	"github.com/joho/godotenv"
 )
