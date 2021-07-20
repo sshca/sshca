@@ -18,7 +18,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: Failed to get cookie")
 		return
 	}
-	token, err := lib.Verify_jwt(cookie.Value)
+	token, err := lib.VerifyJwt(cookie.Value)
 	if err != nil {
 		log.Print(err)
 		http.Error(w, "No Token", http.StatusUnauthorized)
@@ -34,7 +34,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	var returnUser db.User
 	db.Db.Preload("Roles").First(&returnUser, r.URL.Query().Get("id"))
 	if returnUser.ID == 0 {
-		http.Error(w, "Failed to retrieve uesr", http.StatusInternalServerError)
+		http.Error(w, "Failed to retrieve user", http.StatusInternalServerError)
 		log.Print("Error: Failed to retrieve user")
 		return
 	}
@@ -44,5 +44,5 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: Failed to Marshal JSON")
 		return
 	}
-	fmt.Fprint(w, string(marshal))
+	_, _ = fmt.Fprint(w, string(marshal))
 }

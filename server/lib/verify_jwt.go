@@ -7,7 +7,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func Verify_jwt(cookie string) (string, error) {
+func VerifyJwt(cookie string) (string, error) {
 	token, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -16,6 +16,9 @@ func Verify_jwt(cookie string) (string, error) {
 
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
+	if err != nil {
+		return "", err
+	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return fmt.Sprint(claims["email"]), nil
 	} else {

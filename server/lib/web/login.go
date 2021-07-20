@@ -15,7 +15,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func Login_web(w http.ResponseWriter, r *http.Request) {
+func LoginWeb(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid Body", http.StatusBadRequest)
@@ -64,5 +64,5 @@ func Login_web(w http.ResponseWriter, r *http.Request) {
 		MaxAge:   2 * 60 * 60,
 		Path:     "/",
 	})
-	fmt.Fprint(w, fmt.Sprint(user.ID))
+	_, _ = fmt.Fprint(w, fmt.Sprint(user.ID))
 }

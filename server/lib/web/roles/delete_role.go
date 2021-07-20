@@ -19,7 +19,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: Failed to get cookie")
 		return
 	}
-	token, err := lib.Verify_jwt(cookie.Value)
+	token, err := lib.VerifyJwt(cookie.Value)
 	if err != nil {
 		log.Print(err)
 		http.Error(w, "No Token", http.StatusUnauthorized)
@@ -47,5 +47,5 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	db.Db.Delete(&db.Role{}, dat.ID)
-	fmt.Fprint(w, "")
+	_, _ = fmt.Fprint(w, "")
 }

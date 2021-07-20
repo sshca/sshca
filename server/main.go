@@ -32,10 +32,10 @@ func main() {
 	}
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/cli/login", cli.Login_cli)
-	mux.HandleFunc("/api/web/login", web.Login_web)
-	mux.HandleFunc("/api/web/getKey", web.Get_key)
-	mux.HandleFunc("/api/web/changeRoles", web.Change_roles)
-	mux.HandleFunc("/api/web/changeUsers", web.Change_users)
+	mux.HandleFunc("/api/web/login", web.LoginWeb)
+	mux.HandleFunc("/api/web/getKey", web.GetKey)
+	mux.HandleFunc("/api/web/changeRoles", web.ChangeRoles)
+	mux.HandleFunc("/api/web/changeUsers", web.ChangeUsers)
 	mux.HandleFunc("/api/ping", lib.Ping)
 
 	mux.HandleFunc("/api/web/users", users.List)

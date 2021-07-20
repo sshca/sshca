@@ -30,14 +30,14 @@ func GetToken(code string) (string, error) {
 		return "", errors.New("error decoding response")
 	}
 	var dat struct {
-		Access_token string `json:"access_token"`
+		AccessToken string `json:"access_token"`
 	}
 	err = json.Unmarshal(body, &dat)
 	if err != nil {
 		log.Println("Failed to Unmarshal JSON")
 		return "", err
 	}
-	return dat.Access_token, nil
+	return dat.AccessToken, nil
 }
 func GetEmail(token string) (string, error) {
 	req, err := http.NewRequest("GET", "https://www.googleapis.com/oauth2/v3/userinfo", nil)
@@ -66,7 +66,7 @@ func GetEmail(token string) (string, error) {
 		return "", err
 	}
 	if dat.Email == "" {
-		return "", errors.New("User did not authorize email")
+		return "", errors.New("user did not authorize email")
 	}
 	return dat.Email, nil
 }

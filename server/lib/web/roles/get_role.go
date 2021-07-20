@@ -18,7 +18,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: Failed to get cookie")
 		return
 	}
-	token, err := lib.Verify_jwt(cookie.Value)
+	token, err := lib.VerifyJwt(cookie.Value)
 	if err != nil {
 		log.Print(err)
 		http.Error(w, "No Token", http.StatusUnauthorized)
@@ -44,5 +44,5 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		log.Print("Error: Failed to Marshal JSON")
 		return
 	}
-	fmt.Fprint(w, string(marshal))
+	_, _ = fmt.Fprint(w, string(marshal))
 }

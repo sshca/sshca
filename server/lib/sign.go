@@ -37,8 +37,8 @@ func NewAlgorithmSignerFromSigner(sshSigner ssh.Signer, algorithm string) (ssh.S
 }
 
 func Sign(publicKey ssh.PublicKey, email string, roles []string) (string, error) {
-	privKey := os.Getenv("SSH_KEY")
-	key, err := ssh.ParsePrivateKey([]byte(privKey))
+	privateKey := os.Getenv("SSH_KEY")
+	key, err := ssh.ParsePrivateKey([]byte(privateKey))
 	if err != nil {
 		log.Println(err)
 		return "", errors.New("invalid ssh key")

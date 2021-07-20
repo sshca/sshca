@@ -9,7 +9,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-func Get_key(w http.ResponseWriter, r *http.Request) {
+func GetKey(w http.ResponseWriter, _ *http.Request) {
 	privKey := os.Getenv("SSH_KEY")
 	key, err := ssh.ParsePrivateKey([]byte(privKey))
 	if err != nil {
@@ -17,5 +17,5 @@ func Get_key(w http.ResponseWriter, r *http.Request) {
 		// http.Error(w, "Error getting public key", http.StatusInternalServerError)
 		return
 	}
-	fmt.Fprint(w, string(ssh.MarshalAuthorizedKey(key.PublicKey())))
+	_, _ = fmt.Fprint(w, string(ssh.MarshalAuthorizedKey(key.PublicKey())))
 }

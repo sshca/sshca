@@ -11,14 +11,14 @@ import (
 	"github.com/sshca/sshca/server/db"
 )
 
-func Change_users(w http.ResponseWriter, r *http.Request) {
+func ChangeUsers(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("token")
 	if err != nil {
 		http.Error(w, "Failed To Get Cookie", http.StatusUnauthorized)
 		log.Print("Error: Failed to get cookie")
 		return
 	}
-	token, err := lib.Verify_jwt(cookie.Value)
+	token, err := lib.VerifyJwt(cookie.Value)
 	if err != nil {
 		log.Print(err)
 		http.Error(w, "No Token", http.StatusUnauthorized)
