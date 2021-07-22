@@ -124,7 +124,9 @@ jobs:
           yarn --cwd ../web --frozen-lockfile
           yarn --cwd ../server --frozen-lockfile
       - name: Build Server
-        run: NODE_ENV=production yarn build
+        run: |
+          yarn run prisma migrate dev --name ""
+          NODE_ENV=production yarn build
       - name: Setup env
         run: echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: Start Server
