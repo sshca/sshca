@@ -139,7 +139,7 @@ jobs:
           start: yarn start
           working-directory: web
           env: googleClientId=${{ secrets.GOOGLE_CLIENT_ID }},googleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }},googleRefreshToken=${{ secrets.GOOGLE_REFRESH_TOKEN }}
-          wait-on: "http://localhost:3000, http://localhost:4000"
+          wait-on: "http://localhost:3000, http://localhost:3000/api/graphql"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
