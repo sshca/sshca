@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Button,
   Dialog,
@@ -7,34 +8,38 @@ import {
   TextField,
 } from "@material-ui/core";
 import React from "react";
+import { CREATE_HOST } from "./__generated__/CREATE_HOST";
+
+const CREATE_HOST_MUTATION = gql`
+  mutation CREATE_HOST($name: String!, $hostname: String!) {
+    createHost(name: $name, hostname: $hostname) {
+      id
+      hostname
+      name
+    }
+  }
+`;
 
 const AddHost = ({
   dialogOpen,
   setDialogOpen,
-  mutateHosts,
-  hosts,
+  refetch,
 }: {
   dialogOpen: boolean;
   setDialogOpen(value: boolean): void;
-  mutateHosts(value: typeof hosts): void;
-  hosts: { Name: string; Hostname: string; ID: number }[] | undefined;
+  refetch(): void;
 }) => {
   const [name, setName] = React.useState("");
   const [hostname, setHostname] = React.useState("");
+  const [addHost] = useMutation<CREATE_HOST>(CREATE_HOST_MUTATION, {
+    variables: { name, hostname },
+  });
+
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    fetch("/api/web/addHost", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name, hostname }),
-      credentials: "include",
-    }).then((response) =>
-      response.json().then((json) => {
-        if (hosts) {
-          mutateHosts([...hosts, json]);
-        }
-      })
-    );
+    addHost().then(() => {
+      refetch();
+    });
     setName("");
     setHostname("");
   }

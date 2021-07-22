@@ -24,3 +24,5 @@ npm-debug.log*
 test.db
 yarn-debug.log*
 yarn-error.log*
+dist
+*.db

@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   IconButton,
   ListItem,
@@ -7,29 +8,37 @@ import {
 import { Delete } from "@material-ui/icons";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { DELETE_ROLE } from "./__generated__/DELETE_ROLE";
+
+const DELETE_ROLE_MUTATION = gql`
+  mutation DELETE_ROLE($id: ID!) {
+    deleteRole(id: $id) {
+      id
+    }
+  }
+`;
 
 const Role = ({
   role,
-  mutate,
+  remove,
 }: {
-  role: { Name: string; Subroles: string; ID: number };
-  mutate(): void;
+  role: { name: string; id: string };
+  remove(): void;
 }) => {
   const history = useHistory();
+  const [deleteRole] = useMutation<DELETE_ROLE>(DELETE_ROLE_MUTATION, {
+    variables: { id: role.id },
+  });
   return (
-    <ListItem button onClick={() => history.push(`/role/${role.ID}`)}>
-      <ListItemText primary={role.Name} />
+    <ListItem button onClick={() => history.push(`/role/${role.id}`)}>
+      <ListItemText primary={role.name} />
       <ListItemSecondaryAction>
         <IconButton
           edge="end"
           aria-label="delete"
-          onClick={() => {
-            fetch("/api/web/deleteRole", {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({ id: role.ID }),
-              credentials: "include",
-            }).then(() => mutate());
+          onClick={async () => {
+            await deleteRole();
+            remove();
           }}
         >
           <Delete />

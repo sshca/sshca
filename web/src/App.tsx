@@ -5,6 +5,7 @@ import {
   CssBaseline,
   Typography,
 } from "@material-ui/core";
+import { ComponentsProps } from "@material-ui/core/styles/props";
 import { ThemeProvider } from "@material-ui/styles";
 import { lazy, Suspense, useState } from "react";
 import { useCookies } from "react-cookie";
@@ -21,12 +22,23 @@ const User = lazy(() => import("./pages/User"));
 const Role = lazy(() => import("./pages/Role"));
 
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+const props: ComponentsProps = {
+  MuiTextField: {
+    variant: "outlined",
+    fullWidth: true,
+  },
+  MuiButton: {
+    variant: "outlined",
+  },
+};
 const darkTheme = createMuiTheme({
+  props,
   palette: {
     type: "dark",
   },
 });
 const lightTheme = createMuiTheme({
+  props,
   palette: {
     type: "light",
   },
@@ -47,7 +59,7 @@ function App() {
   });
   const history = useHistory();
   const [cookies] = useCookies();
-  if (!cookies.id && history.location.pathname !== "/") {
+  if (!cookies.token && history.location.pathname !== "/") {
     history.push("/");
   }
   return (

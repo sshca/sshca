@@ -1,0 +1,54 @@
+type User {
+  id: ID!
+  email: String!
+  roles: [Role!]!
+}
+type Role {
+  id: ID!
+  name: String!
+  users: [User!]!
+  subroles: [Subrole!]!
+}
+type Host {
+  id: ID!
+  name: String!
+  hostname: String!
+  subroles: [Subrole!]!
+}
+type Subrole {
+  id: ID!
+  username: String!
+  role: Role!
+  host: Host!
+}
+input SubroleInput {
+  username: String!
+  hostId: ID!
+}
+type AuthPayload {
+  id: String!
+}
+type Query {
+  allRoles: [Role!]!
+  allHosts: [Host!]!
+  allUsers: [User!]!
+  user(id: ID!): User
+  role(id: ID!): Role
+  host(id: ID!): Host
+  isFirstUser: Boolean!
+}
+type DeletionReturn {
+  id: ID!
+}
+type Mutation {
+  login(email: String!, password: String!): AuthPayload
+  firstUser(email: String!, password: String!): AuthPayload
+  createHost(name: String!, hostname: String!): Host
+  createUser(email: String!, password: String!): User
+  createRole(name: String!, subroles: [SubroleInput!]!): Role
+  deleteHost(id: ID!): DeletionReturn
+  deleteUser(id: ID!): DeletionReturn
+  deleteRole(id: ID!): DeletionReturn
+  editUserRoles(id: ID!, roleIds: [ID!]!): User
+  editRoleUsers(id: ID!, userIds: [ID!]!): Role
+}
