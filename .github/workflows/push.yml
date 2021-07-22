@@ -13,15 +13,6 @@ jobs:
         working-directory: ./web
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        name: Cache Node Modules
-        with:
-          path: "web/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('web/yarn.lock') }}
-      - name: Install modules
-        run: yarn --frozen-lockfile
-      - name: Run ESLint
-        run: yarn run eslint . --ext .ts,.tsx
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
