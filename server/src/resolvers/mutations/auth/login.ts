@@ -1,18 +1,14 @@
-import prisma from "../../../prisma";
-import { hashSync, compareSync } from "bcrypt";
-import jwt from "jsonwebtoken";
+import { AuthenticationError } from "apollo-server-express";
+import { compareSync } from "bcrypt";
 import { Response } from "express";
-import { UserInputError } from "apollo-server-express";
-import { verifyAuth } from "../../../verifyauth";
+import jwt from "jsonwebtoken";
+import prisma from "../../../prisma";
 
 export const login = async (
   _: any,
   { email, password }: { email: string; password: string },
-  { res, user }: { res: Response; user: { id?: string } }
+  { res }: { res: Response }
 ) => {
-  if (!verifyAuth(user)) {
-    throw new UserInputError("Invalid Auth");
-  }
   const userData = await prisma.user.findFirst({
     where: { email },
   });
@@ -32,4 +28,5 @@ export const login = async (
       return { id: userData.id };
     }
   }
+  throw new AuthenticationError("Invalid Username Or Password");
 };

@@ -1,7 +1,4 @@
-import { UserInputError } from "apollo-server-express";
-import { compareSync, hashSync } from "bcrypt";
-import { Response } from "express";
-import jwt from "jsonwebtoken";
+import { AuthenticationError, UserInputError } from "apollo-server-express";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
 
@@ -15,8 +12,11 @@ export const deleteUser = async (
   { user }: { user: { id?: string } }
 ) => {
   if (!verifyAuth(user)) {
-    throw new UserInputError("Invalid Auth");
+    throw new AuthenticationError("Invalid Auth");
   }
-  prisma.user.delete({ where: { id: userId } });
+  if (userId === user.id) {
+    throw new UserInputError("Cannot delete yourself");
+  }
+  await prisma.user.delete({ where: { id: userId } });
   return { id: userId };
 };

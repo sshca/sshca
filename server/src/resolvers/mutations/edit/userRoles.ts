@@ -1,7 +1,4 @@
-import { UserInputError } from "apollo-server-express";
-import { compareSync, hashSync } from "bcrypt";
-import { Response } from "express";
-import jwt from "jsonwebtoken";
+import { AuthenticationError } from "apollo-server-express";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
 
@@ -17,11 +14,11 @@ export const editUserRoles = async (
   { user }: { user: { id?: string } }
 ) => {
   if (!verifyAuth(user)) {
-    throw new UserInputError("Invalid Auth");
+    throw new AuthenticationError("Invalid Auth");
   }
   const userData = await prisma.user.update({
     where: { id: userId },
-    data: { roles: { connect: roleIds.map((id) => ({ id })) } },
+    data: { roles: { set: roleIds.map((id) => ({ id })) } },
   });
 
   return userData;

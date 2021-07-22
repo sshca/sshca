@@ -1,8 +1,9 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Paper, TextField, Typography } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { useParams } from "react-router";
+import { EDIT_USER_ROLES } from "./__generated__/EDIT_USER_ROLES";
 import { GET_USER_ROLES_DETAILS } from "./__generated__/GET_USER_ROLES_DETAILS";
 
 const GET_USER_QUERY = gql`
@@ -11,10 +12,18 @@ const GET_USER_QUERY = gql`
       email
       roles {
         name
+        id
       }
     }
     allRoles {
       name
+      id
+    }
+  }
+`;
+const EDIT_USER_ROLES_MUTATION = gql`
+  mutation EDIT_USER_ROLES($id: ID!, $roleIds: [ID!]!) {
+    editUserRoles(id: $id, roleIds: $roleIds) {
       id
     }
   }
@@ -25,6 +34,9 @@ const User = () => {
   const { loading, error, data, refetch } = useQuery<GET_USER_ROLES_DETAILS>(
     GET_USER_QUERY,
     { variables: { id } }
+  );
+  const [editRoleUsers] = useMutation<EDIT_USER_ROLES>(
+    EDIT_USER_ROLES_MUTATION
   );
 
   if (error)
@@ -44,9 +56,13 @@ const User = () => {
       <Typography>Email: {data.user.email}</Typography>
       <Autocomplete
         multiple
-        options={data.allRoles.map((role) => role.name)}
-        value={data.user.roles.map((role) => role.name)}
-        onChange={(_, value) => {
+        options={data.allRoles}
+        value={data.user.roles}
+        getOptionLabel={(option) => option.name}
+        onChange={async (_, value) => {
+          await editRoleUsers({
+            variables: { id, roleIds: value.map((role) => role.id) },
+          });
           refetch();
         }}
         renderInput={(params) => (

@@ -1,11 +1,20 @@
 describe("Many Roles", () => {
-  before("Login", () => {
-    //@ts-ignore
-    cy.loginByGoogleApi();
+  before("Log In", () => {
+    cy.visit("/");
+    cy.contains("Login").should("exist");
+    cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
+      "test@example.com"
+    );
+    cy.get(":nth-child(2) > .MuiInputBase-root > .MuiInputBase-input").type(
+      "development"
+    );
+    cy.get("form > .MuiButtonBase-root").click();
+    cy.url().should("include", "/dash");
+    cy.contains("test@example.com").should("exist");
   });
 
-  beforeEach("Retain Login", () => {
-    Cypress.Cookies.preserveOnce("id", "token");
+  beforeEach("Go To Main Page", () => {
+    Cypress.Cookies.preserveOnce("token");
     cy.visit("/dash");
   });
 
@@ -30,7 +39,7 @@ describe("Many Roles", () => {
       cy.get(`[aria-label="Add Role"]`).click();
       cy.contains("Create Role").should("be.visible");
       cy.get(
-        ".MuiFormControl-fullWidth > .MuiInputBase-root > .MuiInputBase-input"
+        ".MuiDialogContent-root > :nth-child(1) > .MuiInputBase-root > .MuiInputBase-input"
       ).type(`Role ${index}`);
       cy.get(
         ":nth-child(5) > .MuiFormControl-root > .MuiInputBase-root > .MuiInputBase-input"

@@ -1,3 +1,1 @@
-export function verifyAuth(user: { id?: string }) {
-  return user.id !== undefined;
-}
+export const verifyAuth = (user: { id?: string }): boolean => Boolean(user.id);

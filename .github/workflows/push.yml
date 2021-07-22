@@ -2,9 +2,7 @@ name: Build
 
 on:
   push:
-    branches: [master]
   pull_request:
-    branches: [master]
 
 jobs:
   lintweb:
@@ -40,13 +38,25 @@ jobs:
   serverlint:
     name: "Lint Server"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
     steps:
       - uses: actions/checkout@v2
-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+      - uses: actions/cache@v2
+        name: Cache Node Modules
         with:
-          working-directory: server
+          path: "server/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('web/yarn.lock') }}
+      - name: Install modules
+        run: yarn --frozen-lockfile
+      - name: Run ESLint
+        run: yarn run eslint . --ext .ts,.tsx
+      - name: Prettify code
+        uses: creyD/prettier_action@v3.3
+        with:
+          prettier_options: -c ./server/src/**
+          dry: true
   server:
     name: "Build Server"
     needs: serverlint
@@ -113,14 +123,21 @@ jobs:
             "web/node_modules"
             "~/.cache/Cypress"
           key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
+      - uses: actions/cache@v2
+        name: Cache Server Node Modules
+        with:
+          path: "server/node_modules"
+          key: ${{ runner.os }}-modules-v1-${{ hashFiles('server/yarn.lock') }}
       - name: Install Dependencies
-        run: yarn --cwd ../web --frozen-lockfile
+        run: |
+          yarn --cwd ../web --frozen-lockfile
+          yarn --cwd ../server --frozen-lockfile
       - name: Build Server
-        run: go build .
+        run: yarn build .
       - name: Setup env
         run: echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: Start Server
-        run: ./server &
+        run: yarn start &
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
@@ -131,7 +148,7 @@ jobs:
           start: yarn start
           working-directory: web
           env: googleClientId=${{ secrets.GOOGLE_CLIENT_ID }},googleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }},googleRefreshToken=${{ secrets.GOOGLE_REFRESH_TOKEN }}
-          wait-on: "http://localhost:3000, http://localhost:5000/api/ping"
+          wait-on: "http://localhost:3000, http://localhost:4000"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly

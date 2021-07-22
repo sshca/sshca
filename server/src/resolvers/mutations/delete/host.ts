@@ -1,4 +1,4 @@
-import { UserInputError } from "apollo-server-express";
+import { AuthenticationError } from "apollo-server-express";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
 
@@ -12,9 +12,9 @@ export const deleteHost = async (
   { user }: { user: { id?: string } }
 ) => {
   if (!verifyAuth(user)) {
-    throw new UserInputError("Invalid Auth");
+    throw new AuthenticationError("Invalid Auth");
   }
   await prisma.subrole.deleteMany({ where: { hostId } });
-  prisma.host.delete({ where: { id: hostId } });
+  await prisma.host.delete({ where: { id: hostId } });
   return { id: hostId };
 };

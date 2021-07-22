@@ -1,28 +1,26 @@
 // @ts-expect-error
-import typeDefs from "./schema/types.gql";
 import { ApolloServer } from "apollo-server-express";
-import { resolvers } from "./resolvers";
 import cookieParser from "cookie-parser";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import express from "express";
+import { resolvers } from "./resolvers";
+import typeDefs from "./schema/types.gql";
 
 async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: (ctx) => {
-      return {
-        ...ctx,
-        user: {
-          id: ctx.req.cookies.token
-            ? (jwt.verify(
-                ctx.req.cookies.token,
-                process.env.JWT_SECRET
-              ) as JwtPayload)
-            : undefined,
-        },
-      };
-    },
+    context: (ctx) => ({
+      ...ctx,
+      user: {
+        id: ctx.req.cookies.token
+          ? (jwt.verify(
+              ctx.req.cookies.token,
+              process.env.JWT_SECRET
+            ) as JwtPayload.id)
+          : undefined,
+      },
+    }),
   });
   await server.start();
   const app = express();

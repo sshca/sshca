@@ -10,6 +10,7 @@
 export interface GET_USER_ROLES_DETAILS_user_roles {
   __typename: "Role";
   name: string;
+  id: string;
 }
 
 export interface GET_USER_ROLES_DETAILS_user {

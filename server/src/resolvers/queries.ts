@@ -59,7 +59,5 @@ export const Query = {
       include: { subroles: { include: { role: true } } },
     });
   },
-  isFirstUser: async () => {
-    return (await prisma.user.count()) === 0;
-  },
+  isFirstUser: async () => (await prisma.user.count()) === 0,
 };

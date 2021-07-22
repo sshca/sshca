@@ -1,11 +1,20 @@
 describe("Normal Interaction", () => {
-  before("Login", () => {
-    //@ts-ignore
-    cy.loginByGoogleApi();
+  before("Log In", () => {
+    cy.visit("/");
+    cy.contains("Login").should("exist");
+    cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
+      "test@example.com"
+    );
+    cy.get(":nth-child(2) > .MuiInputBase-root > .MuiInputBase-input").type(
+      "development"
+    );
+    cy.get("form > .MuiButtonBase-root").click();
+    cy.url().should("include", "/dash");
+    cy.contains("test@example.com").should("exist");
   });
 
-  beforeEach("Retain Login", () => {
-    Cypress.Cookies.preserveOnce("id", "token");
+  beforeEach("Go To Main Page", () => {
+    Cypress.Cookies.preserveOnce("token");
     cy.visit("/dash");
   });
 
@@ -28,9 +37,14 @@ describe("Normal Interaction", () => {
     cy.get(`[aria-label="Add User"]`).click();
     cy.contains("Add User").should("be.visible");
 
-    cy.get(".MuiInputBase-input").type("test@example.com");
+    cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
+      "test2@example.com"
+    );
+    cy.get(":nth-child(2) > .MuiInputBase-root > .MuiInputBase-input").type(
+      "development"
+    );
     cy.get('[type="submit"]').click();
-    cy.contains("test@example.com").should("exist");
+    cy.contains("test2@example.com").should("exist");
   });
 
   it("Add Role", () => {
@@ -38,7 +52,7 @@ describe("Normal Interaction", () => {
     cy.get(`[aria-label="Add Role"]`).click();
     cy.contains("Create Role").should("be.visible");
     cy.get(
-      ".MuiFormControl-fullWidth > .MuiInputBase-root > .MuiInputBase-input"
+      ".MuiDialogContent-root > :nth-child(1) > .MuiInputBase-root > .MuiInputBase-input"
     ).type("Role 1");
     cy.get(
       ":nth-child(5) > .MuiFormControl-root > .MuiInputBase-root > .MuiInputBase-input"
