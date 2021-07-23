@@ -121,6 +121,8 @@ jobs:
       - name: Setup env
         run: echo ${{ secrets.ENV_FILE }} | base64 -d > .env
       - name: Start Server
+        env:
+          JWT_SECRET: development
         run: yarn start &
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -130,7 +132,6 @@ jobs:
           install: false
           start: yarn start
           working-directory: web
-          env: googleClientId=${{ secrets.GOOGLE_CLIENT_ID }},googleClientSecret=${{ secrets.GOOGLE_CLIENT_SECRET }},googleRefreshToken=${{ secrets.GOOGLE_REFRESH_TOKEN }}
           wait-on: "http://localhost:3000, http://localhost:3000/api/graphql"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

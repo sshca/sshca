@@ -11,6 +11,7 @@ describe("Normal Interaction", () => {
     );
     cy.get("form > .MuiButtonBase-root").click();
     cy.url().should("include", "/dash");
+    cy.contains("test@example.com").should("exist");
   });
   it("Logs In Normally", () => {
     cy.visit("/");
