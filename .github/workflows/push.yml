@@ -31,10 +31,23 @@ jobs:
     name: "Build Web"
     needs: lintweb
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: ./web
     steps:
       - uses: actions/checkout@v2
-      - run: docker build web
+      - uses: actions/cache@v2
+        name: Cache Node Modules
+        with:
+          path: |
+            "web/node_modules"
+          key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build Web
+        env:
+          NODE_ENV: production
+        run: yarn build
   serverlint:
     name: "Lint Server"
     runs-on: ubuntu-latest
@@ -52,11 +65,23 @@ jobs:
     name: "Build Server"
     needs: serverlint
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
     steps:
       - uses: actions/checkout@v2
-
-      - name: Build
-        run: docker build server
+      - uses: actions/cache@v2
+        name: Cache Node Modules
+        with:
+          path: |
+            "server/node_modules"
+          key: ${{ runner.os }}-modules-v1-${{ hashFiles('server/yarn.lock') }}
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build Server
+        env:
+          NODE_ENV: production
+        run: yarn build
   clientlint:
     name: "Lint Client"
     runs-on: ubuntu-latest
