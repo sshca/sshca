@@ -151,9 +151,10 @@ jobs:
       - name: Build Server
         env:
           DATABASE_URL: file:./dev.db
+          NODE_ENV: development
         run: |
-          yarn run prisma migrate dev --name ""
-          NODE_ENV=production yarn build
+          yarn run prisma migrate deploy
+          yarn build
       - name: Start Server
         env:
           DATABASE_URL: file:./dev.db
