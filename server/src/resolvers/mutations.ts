@@ -8,6 +8,7 @@ import { deleteUser } from "./mutations/delete/user";
 import { deleteRole } from "./mutations/delete/role";
 import { editUserRoles } from "./mutations/edit/userRoles";
 import { editRoleUsers } from "./mutations/edit/roleUsers";
+import { generateKey } from "./mutations/auth/generateKey";
 
 export const Mutation = {
   firstUser,
@@ -20,4 +21,5 @@ export const Mutation = {
   deleteRole,
   editUserRoles,
   editRoleUsers,
+  generateKey,
 };

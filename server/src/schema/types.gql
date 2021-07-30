@@ -41,6 +41,7 @@ type DeletionReturn {
   id: ID!
 }
 type Mutation {
+  generateKey(key: String!): String!
   login(email: String!, password: String!): AuthPayload
   firstUser(email: String!, password: String!): AuthPayload
   createHost(name: String!, hostname: String!): Host
