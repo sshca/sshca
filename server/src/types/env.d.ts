@@ -4,5 +4,6 @@ declare namespace NodeJS {
     JWT_PRIVATE: string;
     JWT_PUBLIC: string;
     DOMAIN: string;
+    DATABASE_URL: string;
   }
 }
