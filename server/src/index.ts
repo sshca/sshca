@@ -15,10 +15,9 @@ async function startApolloServer() {
       user: {
         id: ctx.req.cookies.token
           ? (
-              jwt.verify(
-                ctx.req.cookies.token,
-                process.env.JWT_SECRET
-              ) as JwtPayload
+              jwt.verify(ctx.req.cookies.token, process.env.JWT_PUBLIC, {
+                algorithms: ["RS256"],
+              }) as JwtPayload
             ).id
           : undefined,
       },

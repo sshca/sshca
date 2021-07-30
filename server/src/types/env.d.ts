@@ -1,5 +1,7 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    JWT_SECRET: string;
+    SSH_KEY: string;
+    JWT_PRIVATE: string;
+    JWT_PUBLIC: string;
   }
 }

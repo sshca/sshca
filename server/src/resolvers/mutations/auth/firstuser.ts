@@ -20,8 +20,9 @@ export const firstUser = async (
     });
     res.cookie(
       "token",
-      jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      jwt.sign({ id: user.id }, process.env.JWT_PRIVATE, {
         expiresIn: "2 days",
+        algorithm: "RS256",
       }),
       {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2),

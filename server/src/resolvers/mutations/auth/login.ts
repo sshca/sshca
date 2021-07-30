@@ -16,11 +16,11 @@ export const login = async (
     if (compareSync(password, userData.password)) {
       res.cookie(
         "token",
-        jwt.sign({ id: userData.id }, process.env.JWT_SECRET, {
+        jwt.sign({ id: userData.id }, process.env.JWT_PRIVATE, {
           expiresIn: "2 days",
+          algorithm: "RS256",
         }),
         {
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2),
           domain: "localhost",
           httpOnly: true,
         }
