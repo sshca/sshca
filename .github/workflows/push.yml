@@ -155,6 +155,7 @@ jobs:
       - name: Start Server
         env:
           DOMAIN: localhost
+          DATABASE_URL: file:./dev.db
           JWT_PRIVATE: |
             -----BEGIN RSA PRIVATE KEY-----
             MIICXAIBAAKBgQCvpnrazDsPg816ILJsUwOAsR/YDvBOhIHaTGwKxME29wnGKv+D
