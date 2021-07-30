@@ -46,7 +46,7 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build Web
         env:
-          NODE_ENV: production
+          NODE_ENV: development
         run: yarn build
   serverlint:
     name: "Lint Server"
@@ -153,11 +153,12 @@ jobs:
           DATABASE_URL: file:./dev.db
           NODE_ENV: development
         run: |
-          yarn run prisma migrate deploy
+          yarn run prisma migrate dev --name ""
           yarn build
       - name: Start Server
         env:
           DATABASE_URL: file:./dev.db
+          NODE_ENV: development
           DOMAIN: localhost
           JWT_PRIVATE: |
             -----BEGIN RSA PRIVATE KEY-----
