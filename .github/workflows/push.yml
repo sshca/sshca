@@ -149,13 +149,15 @@ jobs:
           yarn --cwd ../web --frozen-lockfile
           yarn --cwd ../server --frozen-lockfile
       - name: Build Server
+        env:
+          DATABASE_URL: file:./dev.db
         run: |
           yarn run prisma migrate dev --name ""
           NODE_ENV=production yarn build
       - name: Start Server
         env:
-          DOMAIN: localhost
           DATABASE_URL: file:./dev.db
+          DOMAIN: localhost
           JWT_PRIVATE: |
             -----BEGIN RSA PRIVATE KEY-----
             MIICXAIBAAKBgQCvpnrazDsPg816ILJsUwOAsR/YDvBOhIHaTGwKxME29wnGKv+D
