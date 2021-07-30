@@ -154,7 +154,29 @@ jobs:
           NODE_ENV=production yarn build
       - name: Start Server
         env:
-          JWT_SECRET: development
+          JWT_PRIVATE: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIICXAIBAAKBgQCvpnrazDsPg816ILJsUwOAsR/YDvBOhIHaTGwKxME29wnGKv+D
+            IDfQpmFJZjK/v2jCWbr6/ZpyPGbKn8EZ6FjABnVNeUWjECAcDyzzhwRXOd6SQvKL
+            GenMzEskQE0EA+hG31kmJrp/Qawf1QDR1ksdxSTX4xugSM0cwzzeC+3LxwIDAQAB
+            AoGADhph1tt7Cn3cq6ega84mg9i049YfOU6uVma4bgzqLo2bPUwKg+68TIZvXUNV
+            Y8vsj15BAxIFqpJq9m3pRTlAlthgbEcVwQKccTQNkPbE1cxrneQeO7KuRHfjcP4b
+            NfoZmog5CtOWiep8bbqp1vU/of4c0E4mPG8RSeTr4qG+PfECQQDVIPAugEBRSZIe
+            2wEjA3B0hUdHOM4E1KtpWGJsYEasrrLLEy89R8BUuUWM/8GWjlzdiIIwi4NN3dT3
+            rBmrhurrAkEA0vuX/R97cTfZaO+4YfhPsrIEQhGDb3orsWCqNKHpKO4KsrNgpdrI
+            /rzv7SVHK9vtSVv/ifZAVaIS2l20ob7zlQJBAI73S2ZGDd75VRVxn2+XTQY8qTWz
+            ey9uYZWG/m7onkAT6EelFNksmm264lbU8U1HLjBE8+AQlgHTvpptTcLr/AUCQE9y
+            Gctg3XTGmQFgs0eA31HkoqHWQm3pzSYfxjfHeCrHaBPeY9hQSDtUHexoiyJC0Fk9
+            YT4sEhGs0/iSLIBzjPkCQFeqMJi2JjsUxtZwWi4utHVDr/7UbIeLQlN5HqPdK4KM
+            v2baez1xCVMzSIYjgcEjtTzkQtKZ8nJZpRHGCWTiWdw=
+            -----END RSA PRIVATE KEY-----
+          JWT_PUBLIC: |
+            -----BEGIN PUBLIC KEY-----
+            MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvpnrazDsPg816ILJsUwOAsR/Y
+            DvBOhIHaTGwKxME29wnGKv+DIDfQpmFJZjK/v2jCWbr6/ZpyPGbKn8EZ6FjABnVN
+            eUWjECAcDyzzhwRXOd6SQvKLGenMzEskQE0EA+hG31kmJrp/Qawf1QDR1ksdxSTX
+            4xugSM0cwzzeC+3LxwIDAQAB
+            -----END PUBLIC KEY-----
         run: yarn start &
       - name: Cypress run
         uses: cypress-io/github-action@v2
