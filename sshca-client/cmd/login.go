@@ -96,7 +96,7 @@ var versionCmd = &cobra.Command{
 		}
 		fmt.Printf("Logged in with id: %v\n", login.Login.Id)
 		var generateKey struct {
-			generateKey graphql.String `graphql:"generateKey(key: $key)"`
+			GenerateKey graphql.String `graphql:"generateKey(key: $key)"`
 		}
 		generateKeyVariables := map[string]interface{}{
 			"key": graphql.String(data),
@@ -106,7 +106,7 @@ var versionCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = ioutil.WriteFile("/tmp/sshca-key.pub", []byte(generateKey.generateKey), fs.FileMode(0600))
+		err = ioutil.WriteFile("/tmp/sshca-key.pub", []byte(generateKey.GenerateKey), fs.FileMode(0600))
 		if err != nil {
 			log.Fatal(err)
 		}
