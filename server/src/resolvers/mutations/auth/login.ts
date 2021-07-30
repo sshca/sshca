@@ -21,8 +21,9 @@ export const login = async (
           algorithm: "RS256",
         }),
         {
-          domain: "localhost",
+          domain: process.env.DOMAIN,
           httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
         }
       );
       return { id: userData.id };

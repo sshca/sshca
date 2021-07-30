@@ -3,5 +3,6 @@ declare namespace NodeJS {
     SSH_KEY: string;
     JWT_PRIVATE: string;
     JWT_PUBLIC: string;
+    DOMAIN: string;
   }
 }

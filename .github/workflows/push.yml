@@ -154,6 +154,7 @@ jobs:
           NODE_ENV=production yarn build
       - name: Start Server
         env:
+          DOMAIN: localhost
           JWT_PRIVATE: |
             -----BEGIN RSA PRIVATE KEY-----
             MIICXAIBAAKBgQCvpnrazDsPg816ILJsUwOAsR/YDvBOhIHaTGwKxME29wnGKv+D

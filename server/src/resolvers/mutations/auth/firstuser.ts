@@ -25,9 +25,9 @@ export const firstUser = async (
         algorithm: "RS256",
       }),
       {
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2),
-        domain: "localhost",
+        domain: process.env.DOMAIN,
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
       }
     );
     return { id: user.id };
