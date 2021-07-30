@@ -6,12 +6,13 @@ services:
     environment:
       POSTGRES_USER: sshca
       POSTGRES_DB: sshca
-      POSTGRES_PASSWORD: md5d4b8eb8ecefe02fddb2654d05b502492
+      POSTGRES_PASSWORD: md5a490a675897fb83b0fade1e4a0810d39 #development
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
   backend:
+    ports: "4000:4000"
     depends_on:
       db:
         condition: service_started
@@ -19,8 +20,8 @@ services:
       context: ../server
       dockerfile: Dockerfile
     environment:
-      APP_ENV: PRODUCTION
+      NODE_ENV: PRODUCTION
     volumes:
-      - "../server/.env:/go/src/project/.env"
+      - "../server/.env:/src/app/.env"
 volumes:
   pgdata:
