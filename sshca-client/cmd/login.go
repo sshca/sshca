@@ -2,8 +2,7 @@ package cmd
 
 import (
 	"bufio"
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -12,11 +11,15 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
+
+	"net/http/cookiejar"
 
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/sshca/sshca/sshca-client/lib"
+	"golang.org/x/term"
 )
 
 func init() {
@@ -54,33 +57,58 @@ var versionCmd = &cobra.Command{
 				log.Fatal("Failed to Write Config")
 			}
 		}
+		if viper.GetString("username") == "" {
+			reader := bufio.NewReader(os.Stdin)
+			fmt.Print("Enter SSHCA username: ")
+			text, _ := reader.ReadString('\n')
+			viper.Set("username", text[:len(text)-1])
+			err := viper.WriteConfig()
+			if err != nil {
+				log.Fatal("Failed to Write Config")
+			}
+		}
 		keyLocation := viper.GetString("keyLocation")
 		data, err := ioutil.ReadFile(keyLocation)
 		if err != nil {
 			log.Fatal("Error reading public key file")
 		}
-		var dat = map[string]string{}
-		dat["code"] = lib.Login()
-		dat["key"] = string(data)
-		marshal, err := json.Marshal(dat)
+		jar, err := cookiejar.New(nil)
 		if err != nil {
-			log.Fatal("Error encoding JSON")
+			log.Fatal(err)
 		}
-		resp, err := http.Post(fmt.Sprintf("%s/api/cli/login", viper.GetString("server")), "application/json", bytes.NewBuffer(marshal))
+		client := graphql.NewClient(fmt.Sprintf("%s/api/graphql", viper.GetString("server")), &http.Client{
+			Jar: jar,
+		})
+		var login struct {
+			Login struct {
+				Id graphql.String
+			} `graphql:"login(email: $email, password: $password)"`
+		}
+		fmt.Print("Enter Password: \n")
+		text, _ := term.ReadPassword(int(syscall.Stdin))
+		loginVariables := map[string]interface{}{
+			"email":    graphql.String(viper.GetString("username")),
+			"password": graphql.String(text),
+		}
+		err = client.Mutate(context.Background(), &login, loginVariables)
 		if err != nil {
-			log.Print(fmt.Sprintf("%s/api/cli/login", viper.GetString("server")))
-			log.Fatal("Http Request Failed")
+			log.Fatal(err)
 		}
-		defer resp.Body.Close()
-		if resp.StatusCode == http.StatusOK {
-			bodyBytes, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				log.Fatal(err)
-			}
-			err = ioutil.WriteFile("/tmp/sshca-key.pub", bodyBytes, fs.FileMode(0600))
-			if err != nil {
-				log.Fatal(err)
-			}
+		fmt.Printf("Logged in with id: %v\n", login.Login.Id)
+		var generateKey struct {
+			generateKey graphql.String `graphql:"generateKey(key: $key)"`
+		}
+		generateKeyVariables := map[string]interface{}{
+			"key": graphql.String(data),
+		}
+		err = client.Mutate(context.Background(), &generateKey, generateKeyVariables)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = ioutil.WriteFile("/tmp/sshca-key.pub", []byte(generateKey.generateKey), fs.FileMode(0600))
+		if err != nil {
+			log.Fatal(err)
 		}
 	},
 }
