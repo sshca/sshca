@@ -169,7 +169,7 @@ jobs:
           yarn --cwd ../server --frozen-lockfile
       - name: Build Server
         env:
-          DATABASE_URL: postgresql://sshca:development@postgres:5432/sshca
+          DATABASE_URL: postgresql://sshca:development@localhost:5432/sshca
           NODE_ENV: development
         run: |
           yarn run prisma migrate dev --name ""
