@@ -13,9 +13,6 @@ services:
       - pgdata:/var/lib/postgresql/data
   backend:
     ports: "4000:4000"
-    depends_on:
-      db:
-        condition: service_started
     build:
       context: ../server
       dockerfile: Dockerfile
