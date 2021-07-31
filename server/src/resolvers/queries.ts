@@ -1,4 +1,5 @@
 import { UserInputError } from "apollo-server-express";
+import sshpk from "sshpk";
 import prisma from "../prisma";
 import { verifyAuth } from "../verifyauth";
 export const Query = {
@@ -60,4 +61,9 @@ export const Query = {
     });
   },
   isFirstUser: async () => (await prisma.user.count()) === 0,
+  key: async () =>
+    sshpk
+      .parsePrivateKey(process.env.SSH_KEY, "ssh")
+      .toPublic()
+      .toString("ssh"),
 };

@@ -36,6 +36,7 @@ type Query {
   role(id: ID!): Role
   host(id: ID!): Host
   isFirstUser: Boolean!
+  key: String!
 }
 type DeletionReturn {
   id: ID!

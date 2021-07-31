@@ -3,10 +3,10 @@ import { Paper, Typography } from "@material-ui/core";
 import React from "react";
 import Highlight from "react-highlight.js";
 import { useParams } from "react-router";
-import { GET_HOST_DETAILS } from "./__generated__/GET_HOST_DETAILS";
+import { GET_HOST_KEY } from "./__generated__/GET_HOST_KEY";
 
-const GET_HOST_QUERY = gql`
-  query GET_HOST_DETAILS($id: ID!) {
+const GET_HOST_KEY_QUERY = gql`
+  query GET_HOST_KEY($id: ID!) {
     host(id: $id) {
       subroles {
         role {
@@ -18,14 +18,14 @@ const GET_HOST_QUERY = gql`
       hostname
       name
     }
+    key
   }
 `;
 
 const Host = () => {
   const { id } = useParams<{ id: string }>();
-  const publicKey = "key";
 
-  const { loading, error, data } = useQuery<GET_HOST_DETAILS>(GET_HOST_QUERY, {
+  const { loading, error, data } = useQuery<GET_HOST_KEY>(GET_HOST_KEY_QUERY, {
     variables: { id },
   });
 
@@ -67,7 +67,7 @@ else
   echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" >> /etc/ssh/sshd_config
 fi
 mkdir -p /etc/ssh/sshca/auth_principals
-echo "${publicKey.replace("\n", "")}" > /etc/ssh/sshca/ca.pub
+echo "${data.key.replace("\n", "")}" > /etc/ssh/sshca/ca.pub
 ${data.host.subroles
   .map(
     (subrole) =>
