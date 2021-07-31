@@ -1,13 +1,22 @@
 import {
+  createHttpLink,
+  ApolloClient,
+  InMemoryCache,
+  from,
+  ApolloProvider,
+} from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
+import {
   Card,
   CircularProgress,
   createMuiTheme,
   CssBaseline,
   Typography,
 } from "@material-ui/core";
+import { ComponentsProps } from "@material-ui/core/styles/props";
 import { ThemeProvider } from "@material-ui/styles";
+import React from "react";
 import { lazy, Suspense, useState } from "react";
-import { useCookies } from "react-cookie";
 import { Route, Switch, useHistory } from "react-router-dom";
 import Header from "./components/Header";
 
@@ -20,13 +29,33 @@ const Host = lazy(() => import("./pages/Host"));
 const User = lazy(() => import("./pages/User"));
 const Role = lazy(() => import("./pages/Role"));
 
+const link = createHttpLink({
+  uri: "/api/graphql",
+  credentials: "same-origin",
+});
+const client = new ApolloClient({
+  link,
+  cache: new InMemoryCache(),
+});
+
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+const props: ComponentsProps = {
+  MuiTextField: {
+    variant: "outlined",
+    fullWidth: true,
+  },
+  MuiButton: {
+    variant: "outlined",
+  },
+};
 const darkTheme = createMuiTheme({
+  props,
   palette: {
     type: "dark",
   },
 });
 const lightTheme = createMuiTheme({
+  props,
   palette: {
     type: "light",
   },
@@ -46,57 +75,67 @@ function App() {
     setDarkMode(evt.matches);
   });
   const history = useHistory();
-  const [cookies] = useCookies();
-  if (!cookies.id && history.location.pathname !== "/") {
-    history.push("/");
-  }
+  React.useEffect(() => {
+    const errorLink = onError(({ graphQLErrors }) => {
+      if (graphQLErrors)
+        graphQLErrors.forEach(({ message }) => {
+          if (message === "Invalid Auth") {
+            history.push("");
+          }
+        });
+    });
+
+    client.setLink(from([errorLink, link]));
+  }, [history]);
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <CssBaseline />
-      <Header />
-      <Switch>
-        <Route exact path="/">
-          <Suspense fallback={<Loading />}>
-            <Login />
-          </Suspense>
-        </Route>
-        <Route exact path="/dash">
-          <Suspense fallback={<Loading />}>
-            <Dash />
-          </Suspense>
-        </Route>
-        <Route exact path="/roles">
-          <Suspense fallback={<Loading />}>
-            <Roles />
-          </Suspense>
-        </Route>
-        <Route exact path="/hosts">
-          <Suspense fallback={<Loading />}>
-            <Hosts />
-          </Suspense>
-        </Route>
-        <Route exact path="/users">
-          <Suspense fallback={<Loading />}>
-            <UsersPage />
-          </Suspense>
-        </Route>
-        <Route exact path="/host/:id">
-          <Suspense fallback={<Loading />}>
-            <Host />
-          </Suspense>
-        </Route>
-        <Route exact path="/user/:id">
-          <Suspense fallback={<Loading />}>
-            <User />
-          </Suspense>
-        </Route>
-        <Route exact path="/role/:id">
-          <Suspense fallback={<Loading />}>
-            <Role />
-          </Suspense>
-        </Route>
-      </Switch>
-    </ThemeProvider>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+        <CssBaseline />
+        <Header />
+        <Switch>
+          <Route exact path="/">
+            <Suspense fallback={<Loading />}>
+              <Login />
+            </Suspense>
+          </Route>
+          <Route exact path="/dash">
+            <Suspense fallback={<Loading />}>
+              <Dash />
+            </Suspense>
+          </Route>
+          <Route exact path="/roles">
+            <Suspense fallback={<Loading />}>
+              <Roles />
+            </Suspense>
+          </Route>
+          <Route exact path="/hosts">
+            <Suspense fallback={<Loading />}>
+              <Hosts />
+            </Suspense>
+          </Route>
+          <Route exact path="/users">
+            <Suspense fallback={<Loading />}>
+              <UsersPage />
+            </Suspense>
+          </Route>
+          <Route exact path="/host/:id">
+            <Suspense fallback={<Loading />}>
+              <Host />
+            </Suspense>
+          </Route>
+          <Route exact path="/user/:id">
+            <Suspense fallback={<Loading />}>
+              <User />
+            </Suspense>
+          </Route>
+          <Route exact path="/role/:id">
+            <Suspense fallback={<Loading />}>
+              <Role />
+            </Suspense>
+          </Route>
+        </Switch>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }
 

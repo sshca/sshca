@@ -1,95 +1,69 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { Paper, TextField, Typography } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { useParams } from "react-router";
-import useSWR from "swr";
-import fetcher from "../lib/fetcher";
+import { EDIT_USER_ROLES } from "./__generated__/EDIT_USER_ROLES";
+import { GET_USER_ROLES_DETAILS } from "./__generated__/GET_USER_ROLES_DETAILS";
+
+const GET_USER_QUERY = gql`
+  query GET_USER_ROLES_DETAILS($id: ID!) {
+    user(id: $id) {
+      email
+      roles {
+        name
+        id
+      }
+    }
+    allRoles {
+      name
+      id
+    }
+  }
+`;
+const EDIT_USER_ROLES_MUTATION = gql`
+  mutation EDIT_USER_ROLES($id: ID!, $roleIds: [ID!]!) {
+    editUserRoles(id: $id, roleIds: $roleIds) {
+      id
+    }
+  }
+`;
 
 const User = () => {
   const { id } = useParams<{ id: string }>();
-  const {
-    data: user,
-    error: userError,
-    mutate,
-  } = useSWR<
-    {
-      Email: string;
-      Roles: {
-        ID: number;
-        Name: string;
-        Subroles: { ID: number; Username: string }[];
-      }[];
-    },
-    any
-  >(
-    "/api/web/user?" +
-      new URLSearchParams({
-        id,
-      }),
-    fetcher
+  const { loading, error, data, refetch } = useQuery<GET_USER_ROLES_DETAILS>(
+    GET_USER_QUERY,
+    { variables: { id } }
   );
-  const { data: roles, error: rolesError } = useSWR<
-    | {
-        Name: string;
-        ID: number;
-        Subroles: { ID: number; Username: string }[];
-      }[],
-    any
-  >("/api/web/roles", fetcher);
+  const [editRoleUsers] = useMutation<EDIT_USER_ROLES>(
+    EDIT_USER_ROLES_MUTATION
+  );
 
-  function onSubmit({
-    Roles,
-  }: {
-    Email: string;
-    Roles: {
-      ID: number;
-      Name: string;
-      Subroles: { ID: number; Username: string }[];
-    }[];
-  }) {
-    fetch("/api/web/changeRoles", {
-      method: "POST",
-      credentials: "include",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        id: parseInt(id, 10),
-        roles: Roles.map((role) => role.ID),
-      }),
-    });
-  }
-  if (userError || rolesError)
+  if (error)
     return (
       <Paper className="paper">
         <Typography>Error Getting User</Typography>
       </Paper>
     );
-  if (!user || !roles)
+  if (loading || !data || !data.user || !data.allRoles)
     return (
       <Paper className="paper">
-        <Typography>Getting User</Typography>
+        <Typography>Getting User...</Typography>
       </Paper>
     );
   return (
     <Paper className="paper">
-      <Typography>Email: {user.Email}</Typography>
+      <Typography>Email: {data.user.email}</Typography>
       <Autocomplete
         multiple
-        options={roles.map((role) => role.Name)}
-        value={user.Roles.map((role) => role.Name)}
-        onChange={(_, value) => {
-          mutate(
-            {
-              ...user,
-              Roles: value.map(
-                (name) => roles.filter((role) => role.Name === name)[0]
-              ),
-            },
-            false
-          ).then((newValue) => {
-            if (newValue) {
-              onSubmit(newValue);
-            }
+        options={data.allRoles}
+        value={data.user.roles}
+        getOptionLabel={(option) => option.name}
+        onChange={async (_, value) => {
+          await editRoleUsers({
+            variables: { id, roleIds: value.map((role) => role.id) },
           });
+          refetch();
         }}
         renderInput={(params) => (
           <TextField {...params} variant="outlined" label="Roles" />

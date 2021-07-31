@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Dialog,
   DialogTitle,
@@ -7,34 +8,36 @@ import {
   Button,
 } from "@material-ui/core";
 import React from "react";
+import { CREATE_USER } from "./__generated__/CREATE_USER";
+
+const CREATE_USER_MUTATION = gql`
+  mutation CREATE_USER($email: String!, $password: String!) {
+    createUser(email: $email, password: $password) {
+      email
+    }
+  }
+`;
 
 const AddUser = ({
   dialogOpen,
   setDialogOpen,
-  mutateUsers,
-  users,
+  refetch,
 }: {
   dialogOpen: boolean;
   setDialogOpen(value: boolean): void;
-  mutateUsers(value: typeof users): void;
-  users: { Email: string; ID: number }[] | undefined | undefined;
+  refetch(): void;
 }) => {
   const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [addUser] = useMutation<CREATE_USER>(CREATE_USER_MUTATION, {
+    variables: { email, password },
+  });
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    fetch("/api/web/addUser", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email }),
-      credentials: "include",
-    }).then((response) =>
-      response.json().then((json) => {
-        if (users) {
-          mutateUsers([...users, json]);
-        }
-      })
-    );
+    await addUser();
+    refetch();
+    setPassword("");
     setEmail("");
   }
   return (
@@ -54,6 +57,15 @@ const AddUser = ({
             onChange={(e) => setEmail(e.target.value)}
             required
             value={email}
+            variant="outlined"
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            type="password"
+            value={password}
             variant="outlined"
           />
         </DialogContent>

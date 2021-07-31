@@ -1,3 +1,4 @@
+import { gql, useQuery } from "@apollo/client";
 import {
   Button as IconButton,
   List,
@@ -6,29 +7,31 @@ import {
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import React from "react";
-import useSWR from "swr";
-import fetcher from "../lib/fetcher";
 import AddRole from "./AddRole";
 import Role from "./Role";
+import { GET_ROLES_DETAILS } from "./__generated__/GET_ROLES_DETAILS";
+
+const GET_ROLES_QUERY = gql`
+  query GET_ROLES_DETAILS {
+    allRoles {
+      id
+      name
+    }
+  }
+`;
 
 const Roles = () => {
-  const {
-    data: roles,
-    error: roleError,
-    mutate: mutateRoles,
-  } = useSWR<{ Name: string; Subroles: string; ID: number }[] | undefined, any>(
-    "/api/web/roles",
-    fetcher
-  );
+  const { loading, error, data, refetch } =
+    useQuery<GET_ROLES_DETAILS>(GET_ROLES_QUERY);
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
-  if (roleError) {
+  if (error) {
     return (
       <Paper className="paper">
         <Typography>Error Getting Roles</Typography>
       </Paper>
     );
-  } else if (!roles) {
+  } else if (loading || !data) {
     return (
       <Paper className="paper">
         <Typography>Getting Roles...</Typography>
@@ -47,19 +50,15 @@ const Roles = () => {
       <AddRole
         dialogOpen={dialogOpen}
         setDialogOpen={setDialogOpen}
-        roles={roles}
-        mutateRoles={mutateRoles}
+        refetch={() => {
+          setDialogOpen(false);
+          refetch();
+        }}
       />
       <Typography>Roles:</Typography>
       <List style={{ overflow: "scroll", maxHeight: "30vh" }}>
-        {roles.map((role) => (
-          <Role
-            role={role}
-            key={role.ID}
-            mutate={() =>
-              mutateRoles(roles.filter((newRole) => newRole.ID !== role.ID))
-            }
-          />
+        {data.allRoles.map((role) => (
+          <Role role={role} key={role.id} remove={refetch} />
         ))}
       </List>
     </Paper>

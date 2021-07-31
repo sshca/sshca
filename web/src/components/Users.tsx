@@ -1,3 +1,4 @@
+import { gql, useQuery } from "@apollo/client";
 import {
   Button as IconButton,
   List,
@@ -6,20 +7,22 @@ import {
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import React from "react";
-import useSWR from "swr";
-import fetcher from "../lib/fetcher";
 import AddUser from "./AddUser";
 import User from "./User";
+import { GET_USERS_DETAILS } from "./__generated__/GET_USERS_DETAILS";
+
+const GET_USERS_QUERY = gql`
+  query GET_USERS_DETAILS {
+    allUsers {
+      id
+      email
+    }
+  }
+`;
 
 const Users = () => {
-  const {
-    data: users,
-    error,
-    mutate: mutateUsers,
-  } = useSWR<{ Email: string; ID: number }[] | undefined, any>(
-    "/api/web/users",
-    fetcher
-  );
+  const { loading, error, data, refetch } =
+    useQuery<GET_USERS_DETAILS>(GET_USERS_QUERY);
   const [dialogOpen, setDialogOpen] = React.useState(false);
 
   if (error) {
@@ -28,7 +31,7 @@ const Users = () => {
         <Typography>Error Getting Users</Typography>
       </Paper>
     );
-  } else if (!users) {
+  } else if (loading || !data) {
     return (
       <Paper className="paper">
         <Typography>Getting Users...</Typography>
@@ -47,19 +50,15 @@ const Users = () => {
         <AddUser
           dialogOpen={dialogOpen}
           setDialogOpen={setDialogOpen}
-          mutateUsers={mutateUsers}
-          users={users}
+          refetch={() => {
+            setDialogOpen(false);
+            refetch();
+          }}
         />
         <Typography>Users:</Typography>
         <List style={{ overflow: "scroll", maxHeight: "30vh" }}>
-          {users.map((user) => (
-            <User
-              user={user}
-              key={user.ID}
-              mutate={() =>
-                mutateUsers(users.filter((newUser) => newUser.ID !== user.ID))
-              }
-            />
+          {data.allUsers.map((user) => (
+            <User user={user} key={user.id} remove={refetch} />
           ))}
         </List>
       </Paper>

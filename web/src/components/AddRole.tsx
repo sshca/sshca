@@ -1,3 +1,4 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Dialog,
   DialogTitle,
@@ -11,61 +12,65 @@ import {
   Paper,
 } from "@material-ui/core";
 import React from "react";
-import useSWR from "swr";
-import fetcher from "../lib/fetcher";
+import { CREATE_ROLE } from "./__generated__/CREATE_ROLE";
+import { GET_HOSTS } from "./__generated__/GET_HOSTS";
+
+const GET_HOSTS_QUERY = gql`
+  query GET_HOSTS {
+    allHosts {
+      id
+      name
+    }
+  }
+`;
+
+const CREATE_ROLE_MUTATION = gql`
+  mutation CREATE_ROLE($name: String!, $subroles: [SubroleInput!]!) {
+    createRole(name: $name, subroles: $subroles) {
+      id
+    }
+  }
+`;
 
 const AddRole = ({
   dialogOpen,
   setDialogOpen,
-  roles,
-  mutateRoles,
+  refetch,
 }: {
   dialogOpen: boolean;
   setDialogOpen(value: boolean): void;
-  roles: { Name: string; Subroles: string; ID: number }[] | undefined;
-  mutateRoles(value: typeof roles): void;
+  refetch(): void;
 }) => {
   const [name, setName] = React.useState("");
-  const [subRoles, setSubRoles] = React.useState<
+  const [subroles, setSubroles] = React.useState<
     {
-      Username: string;
-      HostID: number;
+      username: string;
+      hostId: number;
     }[]
   >([]);
 
-  const { data: hosts, error: hostError } = useSWR<
-    { Name: string; Hostname: string; ID: number }[] | undefined,
-    any
-  >("/api/web/hosts", fetcher);
+  const { loading, error, data } = useQuery<GET_HOSTS>(GET_HOSTS_QUERY);
+  const [addRole] = useMutation<CREATE_ROLE>(CREATE_ROLE_MUTATION, {
+    variables: { name, subroles },
+  });
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    fetch("/api/web/addRole", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name, subRoles }),
-      credentials: "include",
-    }).then((response) =>
-      response.json().then((json) => {
-        if (roles) {
-          mutateRoles([...roles, json]);
-        }
-      })
-    );
-    setDialogOpen(false);
-    setSubRoles([]);
+    await addRole();
+    refetch();
+    setSubroles([]);
     setName("");
   }
-  if (hostError) {
+  if (error) {
     return (
       <Paper className="paper">
-        <Typography>Error Getting Roles</Typography>
+        <Typography>Error Getting Hosts</Typography>
       </Paper>
     );
-  } else if (!hosts) {
+  } else if (loading || !data) {
     return (
       <Paper className="paper">
-        <Typography>Getting Roles...</Typography>
+        <Typography>Getting Hosts...</Typography>
       </Paper>
     );
   }
@@ -91,50 +96,50 @@ const AddRole = ({
           <Typography style={{ marginTop: 10 }}>Permissions:</Typography>
           <Typography style={{ float: "right" }}>Host:</Typography>
           <Typography align="left">Username:</Typography>
-          {[...subRoles, { Username: "", HostID: 0 }].map((subRole, index) => (
+          {[...subroles, { username: "", hostId: 0 }].map((subRole, index) => (
             <div key={index}>
               <TextField
                 label="Username"
                 onChange={(e) => {
-                  setSubRoles([
-                    ...subRoles.slice(0, index),
+                  setSubroles([
+                    ...subroles.slice(0, index),
                     {
-                      ...subRoles[index],
-                      Username: e.target.value,
-                      HostID: subRole.HostID || 0,
+                      ...subroles[index],
+                      username: e.target.value,
+                      hostId: subRole.hostId || 0,
                     },
-                    ...subRoles.slice(index + 1),
+                    ...subroles.slice(index + 1),
                   ]);
                 }}
-                required={subRole.HostID !== 0 || subRole.Username !== ""}
+                required={subRole.hostId !== 0 || subRole.username !== ""}
                 style={{
                   marginTop: 10,
                   width: "47.5%",
                   marginRight: "5%",
                 }}
-                value={subRole.Username}
+                value={subRole.username}
                 variant="outlined"
               />
               <Select
-                required={subRole.HostID !== 0 || subRole.Username !== ""}
+                required={subRole.hostId !== 0 || subRole.username !== ""}
                 variant="outlined"
                 style={{ marginTop: 10, width: "47.5%" }}
-                value={subRole.HostID}
+                value={subRole.hostId}
                 onChange={(e) => {
-                  setSubRoles([
-                    ...subRoles.slice(0, index),
+                  setSubroles([
+                    ...subroles.slice(0, index),
                     {
-                      ...subRoles[index],
-                      HostID: e.target.value as number,
+                      ...subroles[index],
+                      hostId: e.target.value as number,
                     },
-                    ...subRoles.slice(index + 1),
+                    ...subroles.slice(index + 1),
                   ]);
                 }}
               >
                 <MenuItem value={0}>None</MenuItem>
-                {hosts.map((host) => (
-                  <MenuItem key={host.ID} value={host.ID}>
-                    {host.Name}
+                {data.allHosts.map((host) => (
+                  <MenuItem key={host.id} value={host.id}>
+                    {host.name}
                   </MenuItem>
                 ))}
               </Select>
@@ -145,7 +150,7 @@ const AddRole = ({
           <Button
             onClick={() => {
               setDialogOpen(false);
-              setSubRoles([]);
+              setSubroles([]);
               setName("");
             }}
             color="primary"
