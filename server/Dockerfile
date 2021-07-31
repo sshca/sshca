@@ -4,4 +4,4 @@ COPY . .
 RUN yarn install --frozen-lockfile
 ENV NODE_ENV=production
 RUN yarn build
-CMD ["node", "dist/server.js"]
+CMD ["yarn", "start"]

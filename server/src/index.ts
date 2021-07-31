@@ -5,6 +5,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { resolvers } from "./resolvers";
 //@ts-expect-error
 import typeDefs from "./schema/types.gql";
+import { config } from "dotenv-safe";
+config();
 
 async function startApolloServer() {
   const server = new ApolloServer({
