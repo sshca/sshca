@@ -129,24 +129,6 @@ jobs:
       - server
       - web
     name: "Run Tests With Cypress"
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
-        env:
-          POSTGRES_USER: sshca
-          POSTGRES_DB: sshca
-          POSTGRES_PASSWORD: development
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -168,14 +150,15 @@ jobs:
           yarn --cwd ../server --frozen-lockfile
       - name: Build Server
         env:
-          DATABASE_URL: postgresql://sshca:development@localhost:5432/sshca
+          DATABASE_URL: file:./dev.db
           NODE_ENV: development
         run: |
-          yarn run prisma migrate deploy
+          sed -i -e 's/postgres/sqlite/' prisma/schema.prisma
+          yarn run prisma migrate dev --name ""
           yarn build
       - name: Start Server
         env:
-          DATABASE_URL: postgresql://sshca:development@localhost:5432/sshca
+          DATABASE_URL: file:./dev.db
           NODE_ENV: development
           DOMAIN: localhost
           JWT_PRIVATE: |
