@@ -1,7 +1,7 @@
 import { AuthenticationError } from "apollo-server-express";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
-import sshpk from "sshpk";
+import sshpk, { SSHBuffer } from "sshpk";
 
 export const generateKey = async (
   _: any,
@@ -32,20 +32,24 @@ export const generateKey = async (
   }
   const privateKey = sshpk.parsePrivateKey(process.env.SSH_KEY, "ssh");
   const userKey = sshpk.parseKey(key, "ssh");
-  const certificate = sshpk.createCertificate(
+  const cert = sshpk.createCertificate(
     principals,
     userKey,
     sshpk.identityForUser("sshca"),
     privateKey
   );
-  certificate.signatures.openssh.exts = [
+  cert.signatures.openssh.exts = [
     "permit-X11-forwarding",
     "permit-agent-forwarding",
     "permit-port-forwarding",
     "permit-pty",
     "permit-user-rc",
   ].map((r) => ({ name: r, critical: false, data: Buffer.from("") }));
-  certificate.signWith(privateKey);
-
-  return certificate.toString("openssh");
+  const signer = privateKey.createSign("sha512");
+  // @ts-expect-error
+  const blob = sshpk.Certificate.formats.openssh.toBuffer(cert, true);
+  signer.write(blob);
+  // @ts-expect-error
+  cert.signatures.openssh.signature = signer.sign();
+  return cert.toString("openssh");
 };
