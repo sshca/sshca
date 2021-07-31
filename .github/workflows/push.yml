@@ -171,11 +171,11 @@ jobs:
           DATABASE_URL: postgresql://sshca:development@localhost:5432/sshca
           NODE_ENV: development
         run: |
-          yarn run prisma migrate dev --name ""
+          yarn run prisma migrate deploy
           yarn build
       - name: Start Server
         env:
-          DATABASE_URL: file:./dev.db
+          DATABASE_URL: postgresql://sshca:development@localhost:5432/sshca
           NODE_ENV: development
           DOMAIN: localhost
           JWT_PRIVATE: |
