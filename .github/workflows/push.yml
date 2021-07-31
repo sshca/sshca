@@ -153,6 +153,7 @@ jobs:
           DATABASE_URL: file:./dev.db
           NODE_ENV: development
         run: |
+          rm -rf prisma/migrations
           sed -i -e 's/postgres/sqlite/' prisma/schema.prisma
           yarn run prisma migrate dev --name ""
           yarn build
