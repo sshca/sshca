@@ -15,11 +15,11 @@ services:
     ports:
       - "4000:4000"
     build:
-      context: ../server
+      context: ./server
       dockerfile: Dockerfile
     environment:
       NODE_ENV: PRODUCTION
     volumes:
-      - "../server/.env:/src/app/.env"
+      - "./server/.env:/src/app/.env"
 volumes:
   pgdata:
