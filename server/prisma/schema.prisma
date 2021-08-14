@@ -29,12 +29,19 @@ model Role {
 }
 
 model Host {
-  id        String    @id @default(uuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  name      String
-  hostname  String
-  subroles  Subrole[]
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String
+  hostname    String
+  subroles    Subrole[]
+  fingerprint String?
+}
+
+model HostVerification {
+  id          String   @id
+  createdAt   DateTime @default(now())
+  fingerprint String
 }
 
 model Subrole {

@@ -14,6 +14,7 @@ type Host {
   name: String!
   hostname: String!
   subroles: [Subrole!]!
+  fingerprint: String!
 }
 type Subrole {
   id: ID!
@@ -28,6 +29,13 @@ input SubroleInput {
 type AuthPayload {
   id: String!
 }
+type DeletionReturn {
+  id: ID!
+}
+type HostVerification {
+  createdAt: Float!
+  fingerprint: ID!
+}
 type Query {
   allRoles: [Role!]!
   allHosts: [Host!]!
@@ -35,14 +43,14 @@ type Query {
   user(id: ID!): User
   role(id: ID!): Role
   host(id: ID!): Host
+  hostVerificationStatus(id: ID!): HostVerification!
   isFirstUser: Boolean!
   key: String!
 }
-type DeletionReturn {
-  id: ID!
-}
 type Mutation {
   generateKey(key: String!): String!
+  requestHostVerification(key: String!): ID!
+  completeHostVerification(id: ID!, hostId: ID!, accepted: Boolean!): ID!
   login(email: String!, password: String!): AuthPayload
   firstUser(email: String!, password: String!): AuthPayload
   createHost(name: String!, hostname: String!): Host

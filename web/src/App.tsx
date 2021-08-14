@@ -28,6 +28,7 @@ const UsersPage = lazy(() => import("./pages/UsersPage"));
 const Host = lazy(() => import("./pages/Host"));
 const User = lazy(() => import("./pages/User"));
 const Role = lazy(() => import("./pages/Role"));
+const VerifyHostCode = lazy(() => import("./pages/VerifyHostCode"));
 
 const link = createHttpLink({
   uri: "/api/graphql",
@@ -131,6 +132,11 @@ function App() {
           <Route exact path="/role/:id">
             <Suspense fallback={<Loading />}>
               <Role />
+            </Suspense>
+          </Route>
+          <Route exact path="/verifyHost/:id">
+            <Suspense fallback={<Loading />}>
+              <VerifyHostCode />
             </Suspense>
           </Route>
         </Switch>

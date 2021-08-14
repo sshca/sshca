@@ -39,7 +39,7 @@ const Header = () => {
           >
             <Menu />
           </IconButton>
-          <Typography variant="h4">SSHCA Managment</Typography>
+          <Typography variant="h4">SSHCA Management</Typography>
         </Toolbar>
       </AppBar>
       <Drawer

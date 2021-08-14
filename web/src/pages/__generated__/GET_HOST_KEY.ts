@@ -24,6 +24,7 @@ export interface GET_HOST_KEY_host {
   subroles: GET_HOST_KEY_host_subroles[];
   hostname: string;
   name: string;
+  fingerprint: string;
 }
 
 export interface GET_HOST_KEY {

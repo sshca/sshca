@@ -66,4 +66,16 @@ export const Query = {
       .parsePrivateKey(process.env.SSH_KEY, "ssh")
       .toPublic()
       .toString("ssh"),
+  hostVerificationStatus: async (
+    _: any,
+    { id: requestId }: { id: string },
+    { user }: { user: { id?: string } }
+  ) => {
+    if (!verifyAuth(user)) {
+      throw new UserInputError("Invalid Auth");
+    }
+    return await prisma.hostVerification.findUnique({
+      where: { id: requestId },
+    });
+  },
 };

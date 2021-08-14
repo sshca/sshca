@@ -17,6 +17,7 @@ const GET_HOST_KEY_QUERY = gql`
       }
       hostname
       name
+      fingerprint
     }
     key
   }
@@ -45,6 +46,7 @@ const Host = () => {
     <Paper className="paper">
       <Typography>Name: {data.host.name}</Typography>
       <Typography>Hostname: {data.host.hostname}</Typography>
+      <Typography>Fingerprint: {data.host.fingerprint}</Typography>
       <Typography>Permissions:</Typography>
       {data.host.subroles ? (
         <>
