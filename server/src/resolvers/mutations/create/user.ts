@@ -11,8 +11,7 @@ export const createUser = async (
   if (!verifyAuth(user)) {
     throw new AuthenticationError("Invalid Auth");
   }
-  const userData = await prisma.user.create({
+  return await prisma.user.create({
     data: { email, password: hashSync(password, 10) },
   });
-  return userData;
 };

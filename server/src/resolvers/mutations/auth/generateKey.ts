@@ -1,7 +1,7 @@
 import { AuthenticationError } from "apollo-server-express";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
-import sshpk, { SSHBuffer } from "sshpk";
+import sshpk from "sshpk";
 
 export const generateKey = async (
   _: any,

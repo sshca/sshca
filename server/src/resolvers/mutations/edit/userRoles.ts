@@ -16,10 +16,8 @@ export const editUserRoles = async (
   if (!verifyAuth(user)) {
     throw new AuthenticationError("Invalid Auth");
   }
-  const userData = await prisma.user.update({
+  return await prisma.user.update({
     where: { id: userId },
     data: { roles: { set: roleIds.map((id) => ({ id })) } },
   });
-
-  return userData;
 };

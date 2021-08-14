@@ -17,8 +17,7 @@ export const createRole = async (
     throw new AuthenticationError("Invalid Auth");
   }
 
-  const role = await prisma.role.create({
+  return await prisma.role.create({
     data: { name, subroles: { create: subroles } },
   });
-  return role;
 };

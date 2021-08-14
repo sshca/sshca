@@ -10,6 +10,5 @@ export const createHost = async (
   if (!verifyAuth(user)) {
     throw new AuthenticationError("Invalid Auth");
   }
-  const host = await prisma.host.create({ data: { name, hostname } });
-  return host;
+  return await prisma.host.create({ data: { name, hostname } });
 };
