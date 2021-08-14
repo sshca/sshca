@@ -1,16 +1,15 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import {
+  Button,
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
+  DialogTitle,
+  Paper,
   TextField,
   Typography,
-  Select,
-  MenuItem,
-  DialogActions,
-  Button,
-  Paper,
 } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import React from "react";
 import { CREATE_ROLE } from "./__generated__/CREATE_ROLE";
 import { GET_HOSTS } from "./__generated__/GET_HOSTS";
@@ -45,7 +44,7 @@ const AddRole = ({
   const [subroles, setSubroles] = React.useState<
     {
       username: string;
-      hostId: number;
+      hostId: string;
     }[]
   >([]);
 
@@ -96,7 +95,7 @@ const AddRole = ({
           <Typography style={{ marginTop: 10 }}>Permissions:</Typography>
           <Typography style={{ float: "right" }}>Host:</Typography>
           <Typography align="left">Username:</Typography>
-          {[...subroles, { username: "", hostId: 0 }].map((subRole, index) => (
+          {[...subroles, { username: "", hostId: "" }].map((subRole, index) => (
             <div key={index}>
               <TextField
                 label="Username"
@@ -106,12 +105,12 @@ const AddRole = ({
                     {
                       ...subroles[index],
                       username: e.target.value,
-                      hostId: subRole.hostId || 0,
+                      hostId: subRole.hostId || "",
                     },
                     ...subroles.slice(index + 1),
                   ]);
                 }}
-                required={subRole.hostId !== 0 || subRole.username !== ""}
+                required={subRole.hostId !== "" || subRole.username !== ""}
                 style={{
                   marginTop: 10,
                   width: "47.5%",
@@ -120,29 +119,25 @@ const AddRole = ({
                 value={subRole.username}
                 variant="outlined"
               />
-              <Select
-                required={subRole.hostId !== 0 || subRole.username !== ""}
-                variant="outlined"
-                style={{ marginTop: 10, width: "47.5%" }}
-                value={subRole.hostId}
-                onChange={(e) => {
+              <Autocomplete
+                style={{ marginTop: 10, width: "47.5%", float: "right" }}
+                value={data.allHosts.find((host) => host.id === subRole.hostId)}
+                onChange={(_, value) => {
                   setSubroles([
                     ...subroles.slice(0, index),
                     {
                       ...subroles[index],
-                      hostId: e.target.value as number,
+                      hostId: value!.id,
                     },
                     ...subroles.slice(index + 1),
                   ]);
                 }}
-              >
-                <MenuItem value={0}>None</MenuItem>
-                {data.allHosts.map((host) => (
-                  <MenuItem key={host.id} value={host.id}>
-                    {host.name}
-                  </MenuItem>
-                ))}
-              </Select>
+                options={data.allHosts}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" label="Host" />
+                )}
+              />
             </div>
           ))}
         </DialogContent>
