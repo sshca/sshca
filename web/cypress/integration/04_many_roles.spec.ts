@@ -45,9 +45,9 @@ describe("Many Roles", () => {
         ":nth-child(5) > .MuiFormControl-root > .MuiInputBase-root > .MuiInputBase-input"
       ).type("root");
       cy.get(
-        ':nth-child(5) > [style="margin-top: 10px; width: 47.5%;"] > .MuiSelect-root'
+        ":nth-child(5) > .MuiAutocomplete-root > .MuiFormControl-root > .MuiInputBase-root"
       ).click();
-      cy.get('.MuiList-root > [tabindex="-1"]').click();
+      cy.get('.MuiAutocomplete-listbox > [tabindex="-1"]').click();
       cy.contains("Add").click();
       cy.contains(`Role ${index}`).should("exist");
     });
