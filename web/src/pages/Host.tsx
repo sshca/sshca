@@ -46,14 +46,25 @@ const Host = () => {
     <Paper className="paper">
       <Typography>Name: {data.host.name}</Typography>
       <Typography>Hostname: {data.host.hostname}</Typography>
-      <Typography>Fingerprint: {data.host.fingerprint}</Typography>
-      <Typography>Permissions:</Typography>
-      {data.host.subroles ? (
+      <Typography>
+        Fingerprint: {data.host.fingerprint || "Fingerprint Not Configured"}
+      </Typography>
+      {data.host.subroles.length > 0 ? (
         <>
           <Typography>
-            Usernames:{" "}
-            {data.host.subroles.map((subrole) => subrole.username).join(", ")}
+            {data.host.subroles.length > 0
+              ? "Permissions:"
+              : "No Configured Access"}
           </Typography>
+          <ul style={{ marginTop: 0 }}>
+            {data.host.subroles.map((subrole) => (
+              <li key={subrole.id}>
+                <Typography>
+                  Role: {subrole.role.name} Username: {subrole.username}
+                </Typography>
+              </li>
+            ))}
+          </ul>
           <Highlight language="bash">
             {`rm -rf /etc/ssh/sshca
 if grep -Fxq "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" /etc/ssh/sshd_config

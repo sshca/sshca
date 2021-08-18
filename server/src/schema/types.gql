@@ -14,7 +14,7 @@ type Host {
   name: String!
   hostname: String!
   subroles: [Subrole!]!
-  fingerprint: String!
+  fingerprint: String
 }
 type Subrole {
   id: ID!
