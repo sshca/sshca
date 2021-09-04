@@ -1,22 +1,15 @@
-# SSHCA [![Build](https://github.com/lavalleeale/sshca/actions/workflows/build.yml/badge.svg)](https://github.com/lavalleeale/sshca/actions/workflows/build.yml) [![Publish](https://github.com/lavalleeale/sshca/actions/workflows/publish.yml/badge.svg)](https://github.com/lavalleeale/sshca/actions/workflows/publish.yml)
+# SSHCA [![Push](https://github.com/lavalleeale/sshca/actions/workflows/push.yml/badge.svg)](https://github.com/lavalleeale/sshca/actions/workflows/push.yml) [![Publish](https://github.com/lavalleeale/sshca/actions/workflows/publish.yml/badge.svg)](https://github.com/lavalleeale/sshca/actions/workflows/publish.yml)
 
 An SSH Certificate Authority with a simple web interface and easy-to-use command line tool
 
 ## Getting Started
 
-### Cloning Repo
-
-1. `git clone https://github.com/sshca/sshca.git`
-2. Create project on google cloud console
-3. Create .env file in server with `CLIENT_ID`, `CLIENT_SECRET`, `REDIRECT_URI`, `SSH_KEY`, `JWT_SECRET`, and `DB_PASSWD`
-4. `cd docker`
-5. `docker-compose pull && docker-compose up -d`
-
 ### Initial Setup
 
-1. Visit port 80 on the server running docker and sign in with google
-2. Add preferred roles, hosts, and users.
-3. Click on each host to view installation script (must be run each time hosts permissions are updated)
+1. Create .env file in server with `SSH_KEY`, `JWT_PRIVATE`, `JWT_PUBLIC`, `DOMAIN`, and `DATABASE_URL`
+2. Build Server
+3. Upload server files to cdn (or local server) of choice
+4. `yarn start` the server
 
 ### Client Usage
 
@@ -24,3 +17,13 @@ An SSH Certificate Authority with a simple web interface and easy-to-use command
 2. Add `CertificateFile /tmp/sshca-key.pub` to `~/.ssh/config`
 3. run `sshca-client login`
 4. SSH into target server
+
+### Working locally
+
+1. `git clone https://github.com/sshca/sshca.git`
+2. Create .env file in server with `SSH_KEY`, `JWT_PRIVATE`, `JWT_PUBLIC`, `DOMAIN`, and `DATABASE_URL`
+3. Install all dependancies (`yarn` in server and web directories)
+4. Build server `yarn build` Note: NODE_ENV must be set!
+5. Start server `yarn start`
+6. Start webserver `yarn start`
+7. Webserver will be started on port 3000
