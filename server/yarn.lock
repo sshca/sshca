@@ -895,10 +895,10 @@
   resolved "https://registry.yarnpkg.com/@prisma/engines-version/-/engines-version-2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27.tgz#6dbccdce64f792dbc21c99daef80ec03020c110d"
   integrity sha512-BWTvF1mGxjG8EtG215uhxdeW5Uf5aiH4xhfzcFPFC3Ux5BdEM1uEBrLIixX67mI+ZNhqNZSBPf0DSf2I1IsaZw==
 
-"@prisma/engines@2.27.0-43.cdba6ec525e0213cce26f8e4bb23cf556d1479bb":
-  version "2.27.0-43.cdba6ec525e0213cce26f8e4bb23cf556d1479bb"
-  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-2.27.0-43.cdba6ec525e0213cce26f8e4bb23cf556d1479bb.tgz#22084a81e90b66665aa3aacde79ef5b1bc3587fe"
-  integrity sha512-AIbIhAxmd2CHZO5XzQTPrfk+Tp/5eoNoSledOG3yc6Dk97siLvnBuSEv7prggUbedCufDwZLAvwxV4PEw3zOlQ==
+"@prisma/engines@2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27":
+  version "2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27"
+  resolved "https://registry.yarnpkg.com/@prisma/engines/-/engines-2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27.tgz#5a563ead03405fc6ccb33fe48f8b3a8712be391e"
+  integrity sha512-r3/EnwKjbu2qz13I98hPQQdeFrOEcwdjlrB9CcoSoqRCjSHLnpdVMUvRfYuRKIoEF7p941R7/Fov0/CxOLF/MQ==
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -1104,9 +1104,12 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
-"@types/sshpk@https://gitpkg.now.sh/lavalleeale-forks/DefinitelyTyped/types/sshpk?master":
-  version "0.0.0"
-  resolved "https://gitpkg.now.sh/lavalleeale-forks/DefinitelyTyped/types/sshpk?master#6340656564b4aa6b167942d4590eb803469d2711"
+"@types/sshpk@^1.10.7":
+  version "1.10.7"
+  resolved "https://registry.yarnpkg.com/@types/sshpk/-/sshpk-1.10.7.tgz#6bab36950e17058347f9e6da169a043cd942e47c"
+  integrity sha512-OP/ljm/CrKpHUhIV64G59vO/S1JnEV6xobar6bgVjczEWwDDmKHVmKp3e9kZIOYQtxVt4JhX/Q9t87b9maCdJQ==
+  dependencies:
+    "@types/node" "*"
 
 "@types/webpack-env@^1.16.2":
   version "1.16.2"
@@ -3680,12 +3683,12 @@ prettier@^2.3.2:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.3.2.tgz#ef280a05ec253712e486233db5c6f23441e7342d"
   integrity sha512-lnJzDfJ66zkMy58OL5/NY5zp70S7Nz6KqcKkXYzn2tMVrNxvbqaBpg7H3qHaLxCJ5lNMsGuM8+ohS7cZrthdLQ==
 
-prisma@2.27.0:
-  version "2.27.0"
-  resolved "https://registry.yarnpkg.com/prisma/-/prisma-2.27.0.tgz#45fdecb9c2470c7ad602e804ffed70dfa7c46ad1"
-  integrity sha512-/3H9C+IPlJmY5KArhfKHMpxKXqcZIBZ+LjM1b5FxvLCGQkq/mRC96SpHcKcLtiYgftNAX13nvlxg+cBw9Dbe8Q==
+prisma@2.28.0:
+  version "2.28.0"
+  resolved "https://registry.yarnpkg.com/prisma/-/prisma-2.28.0.tgz#33adb56e336d4c4569ec2f49df9b606771df15d0"
+  integrity sha512-f83KPLy3xk07KMY4e5otNwP2I+GsdftjOfu3e8snXylnyAC1oEpRZNe7rmONr0vAI+Qgz3LFRArhWUE/dFjKIA==
   dependencies:
-    "@prisma/engines" "2.27.0-43.cdba6ec525e0213cce26f8e4bb23cf556d1479bb"
+    "@prisma/engines" "2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27"
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
