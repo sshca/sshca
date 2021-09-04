@@ -9,6 +9,7 @@ import { deleteRole } from "./mutations/delete/role";
 import { editUserRoles } from "./mutations/edit/userRoles";
 import { editRoleUsers } from "./mutations/edit/roleUsers";
 import { generateKey } from "./mutations/auth/generateKey";
+import { generateHostKey } from "./mutations/auth/generateHostKey";
 import { requestHostVerification } from "./mutations/auth/requestHostVerification";
 import { completeHostVerification } from "./mutations/auth/completeHostVerification";
 
@@ -26,4 +27,5 @@ export const Mutation = {
   generateKey,
   requestHostVerification,
   completeHostVerification,
+  generateHostKey,
 };

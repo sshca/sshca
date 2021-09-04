@@ -36,6 +36,10 @@ type HostVerification {
   createdAt: Float!
   fingerprint: ID!
 }
+type HostPrincipal {
+  username: String!
+  id: ID!
+}
 type Query {
   allRoles: [Role!]!
   allHosts: [Host!]!
@@ -46,9 +50,11 @@ type Query {
   hostVerificationStatus(id: ID!): HostVerification!
   isFirstUser: Boolean!
   key: String!
+  hostPrincipals(key: String!): [HostPrincipal!]!
 }
 type Mutation {
   generateKey(key: String!): String!
+  generateHostKey(key: String!): String!
   requestHostVerification(key: String!): ID!
   completeHostVerification(id: ID!, hostId: ID!, accepted: Boolean!): ID!
   login(email: String!, password: String!): AuthPayload
