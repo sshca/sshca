@@ -12,18 +12,24 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: (ctx) => ({
-      ...ctx,
-      user: {
-        id: ctx.req.cookies.token
-          ? (
-              jwt.verify(ctx.req.cookies.token, process.env.JWT_PUBLIC, {
-                algorithms: ["RS256"],
-              }) as JwtPayload
-            ).id
-          : undefined,
-      },
-    }),
+    context: (ctx) => {
+      try {
+        return {
+          ...ctx,
+          user: {
+            id: ctx.req.cookies.token
+              ? (
+                  jwt.verify(ctx.req.cookies.token, process.env.JWT_PUBLIC, {
+                    algorithms: ["RS256"],
+                  }) as JwtPayload
+                ).id
+              : undefined,
+          },
+        };
+      } catch (e) {
+        return ctx;
+      }
+    },
   });
   await server.start();
   const app = express();
