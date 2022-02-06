@@ -57,11 +57,11 @@ var versionCmd = &cobra.Command{
 				log.Fatal("Failed to Write Config")
 			}
 		}
-		if viper.GetString("username") == "" {
+		if viper.GetString("email") == "" {
 			reader := bufio.NewReader(os.Stdin)
-			fmt.Print("Enter SSHCA username: ")
+			fmt.Print("Enter SSHCA email: ")
 			text, _ := reader.ReadString('\n')
-			viper.Set("username", text[:len(text)-1])
+			viper.Set("email", text[:len(text)-1])
 			err := viper.WriteConfig()
 			if err != nil {
 				log.Fatal("Failed to Write Config")
@@ -87,7 +87,7 @@ var versionCmd = &cobra.Command{
 		fmt.Print("Enter Password: \n")
 		text, _ := term.ReadPassword(int(syscall.Stdin))
 		loginVariables := map[string]interface{}{
-			"email":    graphql.String(viper.GetString("username")),
+			"email":    graphql.String(viper.GetString("email")),
 			"password": graphql.String(text),
 		}
 		err = client.Mutate(context.Background(), &login, loginVariables)
