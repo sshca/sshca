@@ -21,8 +21,6 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('web/yarn.lock') }}
       - name: Install modules
         run: yarn --frozen-lockfile
-      - name: Run ESLint
-        run: yarn run eslint . --ext .ts,.tsx
       - name: Prettify code
         uses: creyD/prettier_action@v3.3
         with:
