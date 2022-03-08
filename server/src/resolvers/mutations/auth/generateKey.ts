@@ -37,7 +37,10 @@ export const generateKey = async (
     userKey,
     sshpk.identityForUser("sshca"),
     privateKey,
-    { lifetime: 60 * 10 }
+    {
+      validFrom: new Date(Date.now() - 5000),
+      validUntil: new Date(Date.now() + 10 * 1000 * 60),
+    }
   );
   cert.signatures.openssh.exts = [
     "permit-X11-forwarding",
