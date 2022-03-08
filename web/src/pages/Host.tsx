@@ -1,7 +1,6 @@
+import { lazy, Suspense } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { Paper, Typography } from "@material-ui/core";
-import React from "react";
-import Highlight from "react-highlight.js";
 import { useParams } from "react-router";
 import { GET_HOST_KEY } from "./__generated__/GET_HOST_KEY";
 
@@ -65,29 +64,27 @@ const Host = () => {
               </li>
             ))}
           </ul>
-          <Highlight language="bash">
-            {`rm -rf /etc/ssh/sshca
+          <p>{`rm -rf /etc/ssh/sshca
 if grep -Fxq "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" /etc/ssh/sshd_config
 then
-  :
+:
 else
-  echo "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" >> /etc/ssh/sshd_config
+echo "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" >> /etc/ssh/sshd_config
 fi
 if grep -Fxq "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" /etc/ssh/sshd_config
 then
-  :
+:
 else
-  echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" >> /etc/ssh/sshd_config
+echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" >> /etc/ssh/sshd_config
 fi
 mkdir -p /etc/ssh/sshca/auth_principals
 echo "${data.key.replace("\n", "")}" > /etc/ssh/sshca/ca.pub
-${data.host.subroles
-  .map(
+${data
+  .host!.subroles.map(
     (subrole) =>
       `echo "sshca_subrole_${subrole.id}" > /etc/ssh/sshca/auth_principals/${subrole.username}`
   )
-  .join("\n")}`}
-          </Highlight>
+  .join("\n")}`}</p>
         </>
       ) : (
         <Typography>No Permissions</Typography>

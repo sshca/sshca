@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "web": "yarn workspace web start",
+    "server": "yarn workspace server dev",
+    "start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn web\""
+  },
+  "packageManager": "yarn@3.2.0",
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  }
+}

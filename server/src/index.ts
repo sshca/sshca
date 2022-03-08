@@ -3,8 +3,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { resolvers } from "./resolvers";
-//@ts-expect-error
-import typeDefs from "./schema/types.gql";
+import typeDefs from "./schema/types";
 import { config } from "dotenv-safe";
 config();
 
