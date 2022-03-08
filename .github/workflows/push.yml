@@ -20,11 +20,10 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('web/yarn.lock') }}
       - name: Install modules
         run: yarn --frozen-lockfile
-      - name: Prettify code
-        uses: creyD/prettier_action@v3.3
-        with:
-          prettier_options: -c ./web/src/**
-          dry: true
+      - name: Prettify code 
+        run: |
+        npm install --global prettier
+        prettier --check ./web/src/**
   web:
     name: "Build Web"
     needs: lintweb
@@ -54,11 +53,10 @@ jobs:
         working-directory: ./server
     steps:
       - uses: actions/checkout@v2
-      - name: Prettify code
-        uses: creyD/prettier_action@v3.3
-        with:
-          prettier_options: -c ./server/src/**
-          dry: true
+      - name: Prettify code 
+        run: |
+        npm install --global prettier
+        prettier --check ./server/src/**
   server:
     name: "Build Server"
     needs: serverlint
