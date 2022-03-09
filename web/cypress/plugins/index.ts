@@ -19,12 +19,14 @@ const pluginConfig: Cypress.PluginConfig = (on, config) => {
   on("task", {
     "db:teardown": () => {
       return (async () => {
-        await prisma.hostVerification.deleteMany();
-        await prisma.host.deleteMany();
-        await prisma.subrole.deleteMany();
-        await prisma.role.deleteMany();
-        await prisma.user.deleteMany();
-        await prisma.$disconnect();
+        if (!process.env.CI) {
+          await prisma.hostVerification.deleteMany();
+          await prisma.host.deleteMany();
+          await prisma.subrole.deleteMany();
+          await prisma.role.deleteMany();
+          await prisma.user.deleteMany();
+          await prisma.$disconnect();
+        }
         return null;
       })();
     },
