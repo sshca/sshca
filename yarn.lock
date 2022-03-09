@@ -826,7 +826,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/request@npm:^2.88.10, @cypress/request@npm:^2.88.5":
+"@cypress/request@npm:^2.88.10":
   version: 2.88.10
   resolution: "@cypress/request@npm:2.88.10"
   dependencies:
@@ -1565,31 +1565,31 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:^2.27.0":
-  version: 2.30.3
-  resolution: "@prisma/client@npm:2.30.3"
+"@prisma/client@npm:3.10.0":
+  version: 3.10.0
+  resolution: "@prisma/client@npm:3.10.0"
   dependencies:
-    "@prisma/engines-version": 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
+    "@prisma/engines-version": 3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86
   peerDependencies:
     prisma: "*"
   peerDependenciesMeta:
     prisma:
       optional: true
-  checksum: 134a0e88b020dee556623a5473626e36869df44c46adbba0f63402f4f852c790ba310f4cb031d7a06df91352cc6a633216a405573e50bf865812b3f9091ee8e2
+  checksum: c9fe863abfbcecff6b26c2fc4c93de77fd11c8209e91b8e2cba13ba3f0866d228eb5e92fac43e1f75497b652db54cb5e309320c3d51e603a4ecb4125dbf3a872
   languageName: node
   linkType: hard
 
-"@prisma/engines-version@npm:2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20":
-  version: 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
-  resolution: "@prisma/engines-version@npm:2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20"
-  checksum: c277efe84d9bc7f14886038c47e3f754e1d12404ba2575a141a00e5830b47f44337e5f7743f1eff9315df88da07189807c5d48247f33e904450103e5e302b5a1
+"@prisma/engines-version@npm:3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86":
+  version: 3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86
+  resolution: "@prisma/engines-version@npm:3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86"
+  checksum: ddcb3bfdab61ac74e2df9e57562ccc7f0eb863955c8cf711f52f45572168f65e030e5070dfc9fc2e37d916b97b236576006b5cd56c813257a96b825c598e79fa
   languageName: node
   linkType: hard
 
-"@prisma/engines@npm:2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27":
-  version: 2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27
-  resolution: "@prisma/engines@npm:2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27"
-  checksum: 1c733c6ad0f960b28d40ea237d495d2e734a7cc793a4aef33fe537face5e4e1a54718dd0276b37741270bc440723a2e05b50a247dbb3eaea708546c54d9d2473
+"@prisma/engines@npm:3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86":
+  version: 3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86
+  resolution: "@prisma/engines@npm:3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86"
+  checksum: 7faa8659dd72e70f9b24be291e3660d086d5b2ee1b6557bf783100a2efaf4f7087882196191c845f96c3953a55ea8bcb03110af98a18e803b90084c0c2211444
   languageName: node
   linkType: hard
 
@@ -2046,13 +2046,6 @@ __metadata:
   version: 8.1.1
   resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
   checksum: ca09d54d47091d87020824a73f026300fa06b17cd9f2f9b9387f28b549364b141ef194ee28db762f6588de71d8febcd17f753163cb7ea116b8387c18e80ebd5c
-  languageName: node
-  linkType: hard
-
-"@types/sinonjs__fake-timers@npm:^6.0.2":
-  version: 6.0.4
-  resolution: "@types/sinonjs__fake-timers@npm:6.0.4"
-  checksum: 200cb24235409964269465e8a94ad735ec8bab98f3b2405cd6351fa6f6399be268cbbd4e824c9d361d9431ae11070cff4c3b6400b18aff03cb7933985853c0c9
   languageName: node
   linkType: hard
 
@@ -2989,7 +2982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-table3@npm:~0.6.0, cli-table3@npm:~0.6.1":
+"cli-table3@npm:~0.6.1":
   version: 0.6.1
   resolution: "cli-table3@npm:0.6.1"
   dependencies:
@@ -3323,7 +3316,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:*":
+"cypress@npm:*, cypress@npm:^9.5.1":
   version: 9.5.1
   resolution: "cypress@npm:9.5.1"
   dependencies:
@@ -3372,57 +3365,6 @@ __metadata:
   bin:
     cypress: bin/cypress
   checksum: 96efebb8bfca52f214f793856a7eb40a6eb4a7bc06e5d7c17c7378cec8e3e3975d5777147066d04d95d88b99d4052bbf8749d96b4a25d3f79cc65e88e93f703d
-  languageName: node
-  linkType: hard
-
-"cypress@npm:8.0.0":
-  version: 8.0.0
-  resolution: "cypress@npm:8.0.0"
-  dependencies:
-    "@cypress/request": ^2.88.5
-    "@cypress/xvfb": ^1.2.4
-    "@types/node": ^14.14.31
-    "@types/sinonjs__fake-timers": ^6.0.2
-    "@types/sizzle": ^2.3.2
-    arch: ^2.2.0
-    blob-util: ^2.0.2
-    bluebird: ^3.7.2
-    cachedir: ^2.3.0
-    chalk: ^4.1.0
-    check-more-types: ^2.24.0
-    cli-cursor: ^3.1.0
-    cli-table3: ~0.6.0
-    commander: ^5.1.0
-    common-tags: ^1.8.0
-    dayjs: ^1.10.4
-    debug: ^4.3.2
-    enquirer: ^2.3.6
-    eventemitter2: ^6.4.3
-    execa: 4.1.0
-    executable: ^4.1.1
-    extract-zip: 2.0.1
-    figures: ^3.2.0
-    fs-extra: ^9.1.0
-    getos: ^3.2.1
-    is-ci: ^3.0.0
-    is-installed-globally: ~0.4.0
-    lazy-ass: ^1.6.0
-    listr2: ^3.8.3
-    lodash: ^4.17.21
-    log-symbols: ^4.0.0
-    minimist: ^1.2.5
-    ospath: ^1.2.2
-    pretty-bytes: ^5.6.0
-    ramda: ~0.27.1
-    request-progress: ^3.0.0
-    supports-color: ^8.1.1
-    tmp: ~0.2.1
-    untildify: ^4.0.0
-    url: ^0.11.0
-    yauzl: ^2.10.0
-  bin:
-    cypress: bin/cypress
-  checksum: 6f8444843de84fddca64d2dc09b20bad16edd578b61b830db9038793c0a8bf363b187abd9e35c55d1f12f76d7abb5adcc85a03d1556ff4178faa72d1a6a184e1
   languageName: node
   linkType: hard
 
@@ -6403,15 +6345,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prisma@npm:2.28.0":
-  version: 2.28.0
-  resolution: "prisma@npm:2.28.0"
+"prisma@npm:3.10.0":
+  version: 3.10.0
+  resolution: "prisma@npm:3.10.0"
   dependencies:
-    "@prisma/engines": 2.28.0-17.89facabd0366f63911d089156a7a70125bfbcd27
+    "@prisma/engines": 3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86
   bin:
     prisma: build/index.js
     prisma2: build/index.js
-  checksum: b3c1a434b4b44786161beb8679feeefbed761d2b627d32e0773c63c156d5aae5a064f7e5ff0ec038b9946ae49a87829ef0ac7ead5f82d284f78da96379c1ded8
+  checksum: da693ebd69ec5f5a8132a86f1c6e300033a5ea869016e19364f514fdda6143f0d6236982a26b431313f06fecfaa2d1bd82eac3ebbf5b58082271f1a65c8a683d
   languageName: node
   linkType: hard
 
@@ -6486,13 +6428,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"punycode@npm:1.3.2":
-  version: 1.3.2
-  resolution: "punycode@npm:1.3.2"
-  checksum: b8807fd594b1db33335692d1f03e8beeddde6fda7fbb4a2e32925d88d20a3aa4cd8dcc0c109ccaccbd2ba761c208dfaaada83007087ea8bfb0129c9ef1b99ed6
-  languageName: node
-  linkType: hard
-
 "punycode@npm:^2.1.1":
   version: 2.1.1
   resolution: "punycode@npm:2.1.1"
@@ -6514,24 +6449,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"querystring@npm:0.2.0":
-  version: 0.2.0
-  resolution: "querystring@npm:0.2.0"
-  checksum: 8258d6734f19be27e93f601758858c299bdebe71147909e367101ba459b95446fbe5b975bf9beb76390156a592b6f4ac3a68b6087cea165c259705b8b4e56a69
-  languageName: node
-  linkType: hard
-
 "queue-microtask@npm:^1.2.2":
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: b676f8c040cdc5b12723ad2f91414d267605b26419d5c821ff03befa817ddd10e238d22b25d604920340fd73efd8ba795465a0377c4adf45a4a41e4234e42dc4
-  languageName: node
-  linkType: hard
-
-"ramda@npm:~0.27.1":
-  version: 0.27.2
-  resolution: "ramda@npm:0.27.2"
-  checksum: 28d6735dd1eea1a796c56cf6111f3673c6105bbd736e521cdd7826c46a18eeff337c2dba4668f6eed990d539b9961fd6db19aa46ccc1530ba67a396c0a9f580d
   languageName: node
   linkType: hard
 
@@ -7026,7 +6947,7 @@ __metadata:
   resolution: "server@workspace:server"
   dependencies:
     "@luckycatfactory/esbuild-graphql-loader": ^3.7.0
-    "@prisma/client": ^2.27.0
+    "@prisma/client": 3.10.0
     "@types/bcrypt": ^5.0.0
     "@types/cookie-parser": ^1.4.2
     "@types/dotenv-safe": ^8.1.2
@@ -7052,7 +6973,7 @@ __metadata:
     graphql-tools: ^7.0.5
     jsonwebtoken: ^8.5.1
     prettier: ^2.3.2
-    prisma: 2.28.0
+    prisma: 3.10.0
     sshpk: ^1.16.1
     ts-loader: ^9.2.3
     typescript: ^4.3.5
@@ -7726,16 +7647,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"url@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "url@npm:0.11.0"
-  dependencies:
-    punycode: 1.3.2
-    querystring: 0.2.0
-  checksum: 50d100d3dd2d98b9fe3ada48cadb0b08aa6be6d3ac64112b867b56b19be4bfcba03c2a9a0d7922bfd7ac17d4834e88537749fe182430dfd9b68e520175900d90
-  languageName: node
-  linkType: hard
-
 "util-deprecate@npm:^1.0.1":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
@@ -7857,7 +7768,7 @@ __metadata:
     "@types/react-dom": ^17.0.0
     "@types/react-router-dom": ^5.1.7
     "@vitejs/plugin-react-refresh": ^1.3.6
-    cypress: 8.0.0
+    cypress: ^9.5.1
     graphql: ^15.5.1
     react: ^17.0.2
     react-cookie: ^4.0.3

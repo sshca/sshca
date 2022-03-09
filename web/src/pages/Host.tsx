@@ -64,7 +64,8 @@ const Host = () => {
               </li>
             ))}
           </ul>
-          <p>{`rm -rf /etc/ssh/sshca
+          <Typography>Setup Script:</Typography>
+          <code style={{ whiteSpace: "pre-wrap" }}>{`rm -rf /etc/ssh/sshca
 if grep -Fxq "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" /etc/ssh/sshd_config
 then
 :
@@ -84,7 +85,7 @@ ${data
     (subrole) =>
       `echo "sshca_subrole_${subrole.id}" > /etc/ssh/sshca/auth_principals/${subrole.username}`
   )
-  .join("\n")}`}</p>
+  .join("\n")}`}</code>
         </>
       ) : (
         <Typography>No Permissions</Typography>
