@@ -23,7 +23,7 @@ jobs:
       - name: Prettify code
         run: |
           npm install --global prettier
-          prettier --check ./web/src/**
+          prettier --check ./src/**
   web:
     name: "Build Web"
     needs: lintweb
@@ -56,7 +56,7 @@ jobs:
       - name: Prettify code
         run: |
           npm install --global prettier
-          prettier --check ./server/src/**
+          prettier --check ./src/**
   server:
     name: "Build Server"
     needs: serverlint
