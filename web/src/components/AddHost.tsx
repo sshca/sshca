@@ -6,7 +6,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-} from "@material-ui/core";
+} from "@mui/material";
 import React from "react";
 import { CREATE_HOST } from "./__generated__/CREATE_HOST";
 

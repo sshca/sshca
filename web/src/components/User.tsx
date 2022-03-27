@@ -5,9 +5,9 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Snackbar,
-} from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
+} from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { Alert } from "@mui/lab";
 import React from "react";
 import { useCookies } from "react-cookie";
 import { useHistory } from "react-router-dom";

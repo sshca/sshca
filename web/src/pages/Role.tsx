@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Paper, TextField, Typography } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import { Paper, TextField, Typography } from "@mui/material";
+import { Autocomplete } from "@mui/lab";
 import React from "react";
 import { useParams } from "react-router";
 import { EDIT_ROLE_USERS } from "./__generated__/EDIT_ROLE_USERS";

@@ -8,11 +8,11 @@ import {
   Paper,
   TextField,
   Typography,
-} from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+} from "@mui/material";
 import React from "react";
 import { CREATE_ROLE } from "./__generated__/CREATE_ROLE";
 import { GET_HOSTS } from "./__generated__/GET_HOSTS";
+import SubroleCreator from "./SubroleCreator";
 
 const GET_HOSTS_QUERY = gql`
   query GET_HOSTS {
@@ -92,54 +92,11 @@ const AddRole = ({
             value={name}
             variant="outlined"
           />
-          <Typography style={{ marginTop: 10 }}>Permissions:</Typography>
-          <Typography style={{ float: "right" }}>Host:</Typography>
-          <Typography align="left">Username:</Typography>
-          {[...subroles, { username: "", hostId: "" }].map((subRole, index) => (
-            <div key={index}>
-              <TextField
-                label="Username"
-                onChange={(e) => {
-                  setSubroles([
-                    ...subroles.slice(0, index),
-                    {
-                      ...subroles[index],
-                      username: e.target.value,
-                      hostId: subRole.hostId || "",
-                    },
-                    ...subroles.slice(index + 1),
-                  ]);
-                }}
-                required={subRole.hostId !== "" || subRole.username !== ""}
-                style={{
-                  marginTop: 10,
-                  width: "47.5%",
-                  marginRight: "5%",
-                }}
-                value={subRole.username}
-                variant="outlined"
-              />
-              <Autocomplete
-                style={{ marginTop: 10, width: "47.5%", float: "right" }}
-                value={data.allHosts.find((host) => host.id === subRole.hostId)}
-                onChange={(_, value) => {
-                  setSubroles([
-                    ...subroles.slice(0, index),
-                    {
-                      ...subroles[index],
-                      hostId: value!.id,
-                    },
-                    ...subroles.slice(index + 1),
-                  ]);
-                }}
-                options={data.allHosts}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField {...params} variant="outlined" label="Host" />
-                )}
-              />
-            </div>
-          ))}
+          <SubroleCreator
+            subroles={subroles}
+            hosts={data.allHosts}
+            setSubroles={setSubroles}
+          />
         </DialogContent>
         <DialogActions>
           <Button

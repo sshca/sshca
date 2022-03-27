@@ -42,18 +42,18 @@ export const generateKey = async (
       validUntil: new Date(Date.now() + 10 * 1000 * 60),
     }
   );
-  cert.signatures.openssh.exts = [
+  cert.signatures.openssh!.exts = [
     "permit-X11-forwarding",
     "permit-agent-forwarding",
     "permit-port-forwarding",
     "permit-pty",
     "permit-user-rc",
   ].map((r) => ({ name: r, critical: false, data: Buffer.from("") }));
+  // @ts-expect-error
   const signer = privateKey.createSign("sha512");
   // @ts-expect-error
   const blob = sshpk.Certificate.formats.openssh.toBuffer(cert, true);
   signer.write(blob);
-  // @ts-expect-error
-  cert.signatures.openssh.signature = signer.sign();
+  cert.signatures.openssh!.signature = signer.sign();
   return cert.toString("openssh");
 };

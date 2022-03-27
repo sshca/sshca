@@ -4,8 +4,8 @@ import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-} from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
+} from "@mui/material";
+import { Delete } from "@mui/icons-material";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { DELETE_ROLE } from "./__generated__/DELETE_ROLE";

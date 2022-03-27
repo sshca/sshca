@@ -43,6 +43,21 @@ export default gql`
     username: String!
     id: ID!
   }
+  input ExtensionsInput {
+    permit_X11_forwarding: Boolean!
+    permit_agent_forwarding: Boolean!
+    permit_port_forwarding: Boolean!
+    permit_pty: Boolean!
+    permit_user_rc: Boolean!
+  }
+  input OptionsInput {
+    force_command: OptionInput
+    source_address: OptionInput
+  }
+  input OptionInput {
+    value: String!
+    enabled: Boolean!
+  }
   type Query {
     allRoles: [Role!]!
     allHosts: [Host!]!
@@ -70,5 +85,12 @@ export default gql`
     deleteRole(id: ID!): DeletionReturn
     editUserRoles(id: ID!, roleIds: [ID!]!): User
     editRoleUsers(id: ID!, userIds: [ID!]!): Role
+    createCustomCertificate(
+      key: String!
+      user: String!
+      extensions: ExtensionsInput!
+      options: OptionsInput!
+      expiry: Float!
+    ): String!
   }
 `;

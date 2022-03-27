@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Button, Paper, TextField, Typography } from "@material-ui/core";
+import { Button, Paper, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { FIRST_USER } from "./__generated__/FIRST_USER";

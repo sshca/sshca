@@ -1,11 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
-import {
-  Button as IconButton,
-  List,
-  Paper,
-  Typography,
-} from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import { Button as IconButton, List, Paper, Typography } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import React from "react";
 import AddRole from "./AddRole";
 import Role from "./Role";

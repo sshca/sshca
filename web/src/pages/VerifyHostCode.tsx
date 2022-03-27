@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Button, Paper, TextField, Typography } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+import { Button, Paper, TextField, Typography } from "@mui/material";
+import { Autocomplete } from "@mui/lab";
 import React from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { HOST_VERIFICATION } from "./__generated__/HOST_VERIFICATION";

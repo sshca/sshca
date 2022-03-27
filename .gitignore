@@ -12,6 +12,7 @@ sshca-client/sshca-client
 .env.development.local
 cypress.env.json
 web/cypress/videos
+web/cypress/screenshots
 .env.local
 .env.production.local
 .env.test.local

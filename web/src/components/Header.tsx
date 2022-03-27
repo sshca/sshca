@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
   useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,7 +19,8 @@ import {
   Menu,
   Person,
   Storage,
-} from "@material-ui/icons";
+  Key,
+} from "@mui/icons-material";
 import React from "react";
 import { useHistory } from "react-router";
 
@@ -69,6 +70,7 @@ const Header = () => {
             { name: "Users", icon: Person, link: "/users" },
             { name: "Roles", icon: Group, link: "/roles" },
             { name: "Hosts", icon: Storage, link: "/hosts" },
+            { name: "Custom Certificate", icon: Key, link: "/custom" },
           ].map((item) => (
             <ListItem
               button

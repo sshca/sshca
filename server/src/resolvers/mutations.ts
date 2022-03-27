@@ -12,6 +12,7 @@ import { generateKey } from "./mutations/auth/generateKey";
 import { generateHostKey } from "./mutations/auth/generateHostKey";
 import { requestHostVerification } from "./mutations/auth/requestHostVerification";
 import { completeHostVerification } from "./mutations/auth/completeHostVerification";
+import { createCustomCertificate } from "./mutations/auth/createCustomCertificate";
 
 export const Mutation = {
   firstUser,
@@ -28,4 +29,5 @@ export const Mutation = {
   requestHostVerification,
   completeHostVerification,
   generateHostKey,
+  createCustomCertificate,
 };

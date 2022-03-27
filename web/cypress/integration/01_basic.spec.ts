@@ -45,12 +45,8 @@ describe("Normal Interaction", () => {
     cy.get(
       ".MuiDialogContent-root > :nth-child(1) > .MuiInputBase-root > .MuiInputBase-input"
     ).type("Role 1");
-    cy.get(
-      ":nth-child(5) > .MuiFormControl-root > .MuiInputBase-root > .MuiInputBase-input"
-    ).type("root");
-    cy.get(
-      ":nth-child(5) > .MuiAutocomplete-root > .MuiFormControl-root > .MuiInputBase-root"
-    ).click();
+    cy.get("input#Username-1").type("root");
+    cy.get("input#Host-1").click();
     cy.get('.MuiAutocomplete-listbox > [tabindex="-1"]').click();
     cy.contains("Add").click();
     cy.contains("Role 1").should("exist");

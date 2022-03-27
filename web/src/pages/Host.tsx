@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Paper, Typography } from "@material-ui/core";
+import { Paper, Typography } from "@mui/material";
 import { useParams } from "react-router";
 import { GET_HOST_KEY } from "./__generated__/GET_HOST_KEY";
 

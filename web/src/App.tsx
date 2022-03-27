@@ -6,19 +6,14 @@ import {
   ApolloProvider,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-import {
-  Card,
-  CircularProgress,
-  createMuiTheme,
-  CssBaseline,
-  Typography,
-} from "@material-ui/core";
-import { ComponentsProps } from "@material-ui/core/styles/props";
-import { ThemeProvider } from "@material-ui/styles";
+import { LocalizationProvider } from "@mui/lab";
+import { Card, CircularProgress, CssBaseline, Typography } from "@mui/material";
+import { Components, createTheme, ThemeProvider } from "@mui/material/styles";
 import React from "react";
 import { lazy, Suspense, useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 import Header from "./components/Header";
+import DateAdapter from "@mui/lab/AdapterDateFns";
 
 const Dash = lazy(() => import("./pages/Dash"));
 const Login = lazy(() => import("./pages/Login"));
@@ -29,6 +24,7 @@ const Host = lazy(() => import("./pages/Host"));
 const User = lazy(() => import("./pages/User"));
 const Role = lazy(() => import("./pages/Role"));
 const VerifyHostCode = lazy(() => import("./pages/VerifyHostCode"));
+const CustomCertificate = lazy(() => import("./pages/CustomCertificate"));
 
 const link = createHttpLink({
   uri: "/api/graphql",
@@ -40,25 +36,29 @@ const client = new ApolloClient({
 });
 
 const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-const props: ComponentsProps = {
+const props: Components = {
   MuiTextField: {
-    variant: "outlined",
-    fullWidth: true,
+    defaultProps: {
+      variant: "outlined",
+      fullWidth: true,
+    },
   },
   MuiButton: {
-    variant: "outlined",
+    defaultProps: {
+      variant: "outlined",
+    },
   },
 };
-const darkTheme = createMuiTheme({
-  props,
+const darkTheme = createTheme({
+  components: props,
   palette: {
-    type: "dark",
+    mode: "dark",
   },
 });
-const lightTheme = createMuiTheme({
-  props,
+const lightTheme = createTheme({
+  components: props,
   palette: {
-    type: "light",
+    mode: "light",
   },
 });
 
@@ -89,59 +89,66 @@ function App() {
     client.setLink(from([errorLink, link]));
   }, [history]);
   return (
-    <ApolloProvider client={client}>
-      <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-        <CssBaseline />
-        <Header />
-        <Switch>
-          <Route exact path="/">
-            <Suspense fallback={<Loading />}>
-              <Login />
-            </Suspense>
-          </Route>
-          <Route exact path="/dash">
-            <Suspense fallback={<Loading />}>
-              <Dash />
-            </Suspense>
-          </Route>
-          <Route exact path="/roles">
-            <Suspense fallback={<Loading />}>
-              <Roles />
-            </Suspense>
-          </Route>
-          <Route exact path="/hosts">
-            <Suspense fallback={<Loading />}>
-              <Hosts />
-            </Suspense>
-          </Route>
-          <Route exact path="/users">
-            <Suspense fallback={<Loading />}>
-              <UsersPage />
-            </Suspense>
-          </Route>
-          <Route exact path="/host/:id">
-            <Suspense fallback={<Loading />}>
-              <Host />
-            </Suspense>
-          </Route>
-          <Route exact path="/user/:id">
-            <Suspense fallback={<Loading />}>
-              <User />
-            </Suspense>
-          </Route>
-          <Route exact path="/role/:id">
-            <Suspense fallback={<Loading />}>
-              <Role />
-            </Suspense>
-          </Route>
-          <Route exact path="/verifyHost/:id">
-            <Suspense fallback={<Loading />}>
-              <VerifyHostCode />
-            </Suspense>
-          </Route>
-        </Switch>
-      </ThemeProvider>
-    </ApolloProvider>
+    <LocalizationProvider dateAdapter={DateAdapter}>
+      <ApolloProvider client={client}>
+        <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+          <CssBaseline />
+          <Header />
+          <Switch>
+            <Route exact path="/">
+              <Suspense fallback={<Loading />}>
+                <Login />
+              </Suspense>
+            </Route>
+            <Route exact path="/dash">
+              <Suspense fallback={<Loading />}>
+                <Dash />
+              </Suspense>
+            </Route>
+            <Route exact path="/roles">
+              <Suspense fallback={<Loading />}>
+                <Roles />
+              </Suspense>
+            </Route>
+            <Route exact path="/hosts">
+              <Suspense fallback={<Loading />}>
+                <Hosts />
+              </Suspense>
+            </Route>
+            <Route exact path="/users">
+              <Suspense fallback={<Loading />}>
+                <UsersPage />
+              </Suspense>
+            </Route>
+            <Route exact path="/host/:id">
+              <Suspense fallback={<Loading />}>
+                <Host />
+              </Suspense>
+            </Route>
+            <Route exact path="/user/:id">
+              <Suspense fallback={<Loading />}>
+                <User />
+              </Suspense>
+            </Route>
+            <Route exact path="/role/:id">
+              <Suspense fallback={<Loading />}>
+                <Role />
+              </Suspense>
+            </Route>
+            <Route exact path="/verifyHost/:id">
+              <Suspense fallback={<Loading />}>
+                <VerifyHostCode />
+              </Suspense>
+            </Route>
+            <Route exact path="/custom">
+              <Suspense fallback={<Loading />}>
+                <CustomCertificate />
+              </Suspense>
+            </Route>
+          </Switch>
+        </ThemeProvider>
+      </ApolloProvider>
+    </LocalizationProvider>
   );
 }
 
