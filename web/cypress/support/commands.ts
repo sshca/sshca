@@ -28,7 +28,7 @@
 
 Cypress.Commands.add("login", () => {
   cy.visit("/");
-  cy.contains("Login").should("exist");
+  cy.contains("First User Signup").should("exist");
   cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
     "test@example.com"
   );
