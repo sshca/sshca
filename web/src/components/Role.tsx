@@ -1,14 +1,16 @@
-import { gql, useMutation } from "@apollo/client";
+import { ApolloError, gql, useMutation } from "@apollo/client";
 import {
+  Alert,
   IconButton,
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
+  Snackbar,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import React from "react";
 import { useHistory } from "react-router-dom";
 import { DELETE_ROLE } from "./__generated__/DELETE_ROLE";
+import { useState } from "react";
 
 const DELETE_ROLE_MUTATION = gql`
   mutation DELETE_ROLE($id: ID!) {
@@ -29,22 +31,43 @@ const Role = ({
   const [deleteRole] = useMutation<DELETE_ROLE>(DELETE_ROLE_MUTATION, {
     variables: { id: role.id },
   });
+  const [error, setError] = useState<string | null>(null);
+
   return (
-    <ListItem button onClick={() => history.push(`/role/${role.id}`)}>
-      <ListItemText primary={role.name} />
-      <ListItemSecondaryAction>
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          onClick={async () => {
-            await deleteRole();
-            remove();
-          }}
-        >
-          <Delete />
-        </IconButton>
-      </ListItemSecondaryAction>
-    </ListItem>
+    <>
+      <Snackbar
+        onClick={() => {}}
+        open={error !== null}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        <Alert severity="error">{error}</Alert>
+      </Snackbar>
+      <ListItem button onClick={() => history.push(`/role/${role.id}`)}>
+        <ListItemText primary={role.name} />
+        <ListItemSecondaryAction>
+          <IconButton
+            edge="end"
+            aria-label="delete"
+            onClick={async () => {
+              try {
+                await deleteRole();
+                remove();
+              } catch (e) {
+                if (e instanceof ApolloError) {
+                  setError(e.message);
+                } else {
+                  throw e;
+                }
+              }
+            }}
+          >
+            <Delete />
+          </IconButton>
+        </ListItemSecondaryAction>
+      </ListItem>
+    </>
   );
 };
 

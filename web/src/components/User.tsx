@@ -7,7 +7,7 @@ import {
   Snackbar,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import { Alert } from "@mui/lab";
+import { Alert } from "@mui/material";
 import React from "react";
 import { useCookies } from "react-cookie";
 import { useHistory } from "react-router-dom";

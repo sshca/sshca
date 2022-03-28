@@ -16,7 +16,11 @@ export const firstUser = async (
 ) => {
   if ((await prisma.user.count()) === 0) {
     const user = await prisma.user.create({
-      data: { email, password: hashSync(password, 10) },
+      data: {
+        email,
+        password: hashSync(password, 10),
+        roles: { create: { name: "Admin", id: "Admin" } },
+      },
     });
     res.cookie(
       "token",

@@ -11,9 +11,15 @@ export const login = async (
 ) => {
   const userData = await prisma.user.findFirst({
     where: { email },
+    include: { roles: { select: { id: true } } },
   });
   if (userData) {
     if (compareSync(password, userData.password)) {
+      if (!userData?.roles.find((role) => role.id === "Admin")) {
+        throw new AuthenticationError(
+          "Only admins may login to management interface"
+        );
+      }
       res.cookie(
         "token",
         jwt.sign({ id: userData.id }, process.env.JWT_PRIVATE, {
@@ -29,5 +35,5 @@ export const login = async (
       return { id: userData.id };
     }
   }
-  throw new AuthenticationError("Invalid Username Or Password");
+  throw new AuthenticationError("Invalid username or password");
 };
