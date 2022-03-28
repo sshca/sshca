@@ -21,5 +21,5 @@ export interface GENERATE_CUSTOMVariables {
   user: string;
   extensions: ExtensionsInput;
   options: OptionsInput;
-  expiry?: number | null;
+  expiry: number;
 }

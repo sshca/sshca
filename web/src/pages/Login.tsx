@@ -10,6 +10,7 @@ const LOGIN_MUTATION = gql`
   mutation LOGIN($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       id
+      admin
     }
   }
 `;
@@ -57,8 +58,12 @@ const Login = () => {
       }
     } else {
       try {
-        await login();
-        history.push("/dash");
+        const { data } = await login();
+        if (data?.login?.admin) {
+          history.push("/dash");
+        } else {
+          setError("Only admins may login to management interface");
+        }
       } catch (e) {
         if (e instanceof ApolloError) {
           setError(e.message);

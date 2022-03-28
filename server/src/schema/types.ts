@@ -31,6 +31,7 @@ export default gql`
   }
   type AuthPayload {
     id: String!
+    admin: Boolean!
   }
   type DeletionReturn {
     id: ID!

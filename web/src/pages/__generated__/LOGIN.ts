@@ -10,6 +10,7 @@
 export interface LOGIN_login {
   __typename: "AuthPayload";
   id: string;
+  admin: boolean;
 }
 
 export interface LOGIN {

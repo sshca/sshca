@@ -12,7 +12,7 @@ export const generateKey = async (
   },
   { user }: { user: { id?: string } }
 ) => {
-  if (!verifyAuth(user)) {
+  if (!verifyAuth(user, false)) {
     throw new AuthenticationError("Invalid Auth");
   }
   const userData = await prisma.user.findUnique({

@@ -15,14 +15,10 @@ export const login = async (
   });
   if (userData) {
     if (compareSync(password, userData.password)) {
-      if (!userData?.roles.find((role) => role.id === "Admin")) {
-        throw new AuthenticationError(
-          "Only admins may login to management interface"
-        );
-      }
+      const admin = Boolean(userData.roles.find((role) => role.id === "Admin"));
       res.cookie(
         "token",
-        jwt.sign({ id: userData.id }, process.env.JWT_PRIVATE, {
+        jwt.sign({ id: userData.id, admin }, process.env.JWT_PRIVATE, {
           expiresIn: "2 days",
           algorithm: "RS256",
         }),
@@ -32,7 +28,7 @@ export const login = async (
           secure: process.env.NODE_ENV === "production",
         }
       );
-      return { id: userData.id };
+      return { id: userData.id, admin };
     }
   }
   throw new AuthenticationError("Invalid username or password");
