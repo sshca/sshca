@@ -3,6 +3,7 @@ describe("Many Roles", () => {
     cy.task("db:teardown");
     cy.login();
     Cypress.Cookies.defaults({ preserve: "token" });
+    Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
   });
 
   beforeEach("Go To Main Page", () => {
@@ -10,32 +11,26 @@ describe("Many Roles", () => {
   });
 
   it("Add Host", () => {
-    cy.contains("Create Host").should("not.exist");
-    cy.get(`[aria-label="Add Host"]`).click();
-    cy.contains("Create Host").should("be.visible");
-    cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
-      "Host 1"
-    );
-    cy.get(
-      '[style="margin-top: 10px;"] > .MuiInputBase-root > .MuiInputBase-input'
-    ).type("host1.local");
-    cy.contains("Add").click();
+    cy.get("#Add-Host").click();
+
+    cy.get("#Name").type("Host 1");
+    cy.get("#Hostname").type("host1.local");
+    cy.get('[type="submit"]').click();
+
     cy.contains("Host 1").should("exist");
   });
 
   it("Create Roles", () => {
     var genArr = new Array(50);
     cy.wrap(genArr).each((el, index) => {
-      cy.contains("Create Role").should("not.exist");
-      cy.get(`[aria-label="Add Role"]`).click();
-      cy.contains("Create Role").should("be.visible");
-      cy.get(
-        ".MuiDialogContent-root > :nth-child(1) > .MuiInputBase-root > .MuiInputBase-input"
-      ).type(`Role ${index}`);
-      cy.get("input#Username-1").type("root");
-      cy.get("input#Host-1").click();
+      cy.get("#Add-Role").click();
+
+      cy.get("#Name").type(`Role ${index}`);
+      cy.get("#Add-Subrole").type("root");
+      cy.get("#Host-1").click();
       cy.get('.MuiAutocomplete-listbox > [tabindex="-1"]').click();
-      cy.contains("Add").click();
+      cy.get('[type="submit"]').click();
+
       cy.contains(`Role ${index}`).should("exist");
     });
   });

@@ -6,44 +6,65 @@ export default gql`
     email: String!
     roles: [Role!]!
   }
+
   type Role {
     id: ID!
     name: String!
     users: [User!]!
     subroles: [Subrole!]!
   }
+
   type Host {
     id: ID!
     name: String!
     hostname: String!
     subroles: [Subrole!]!
     fingerprint: String
+    caPub: String!
   }
+
   type Subrole {
     id: ID!
     username: String!
     role: Role!
     host: Host!
   }
+
+  enum Extension {
+    permit_X11_forwarding
+    permit_agent_forwarding
+    permit_port_forwarding
+    permit_pty
+    permit_user_rc
+  }
+
   input SubroleInput {
     username: String!
     hostId: ID!
+    extensions: [Extension!]!
+    force_command: String
+    source_address: String
   }
+
   type AuthPayload {
     id: String!
     admin: Boolean!
   }
+
   type DeletionReturn {
     id: ID!
   }
+
   type HostVerification {
     createdAt: Float!
     fingerprint: ID!
   }
+
   type HostPrincipal {
     username: String!
     id: ID!
   }
+
   input ExtensionsInput {
     permit_X11_forwarding: Boolean!
     permit_agent_forwarding: Boolean!
@@ -51,14 +72,23 @@ export default gql`
     permit_pty: Boolean!
     permit_user_rc: Boolean!
   }
+
   input OptionsInput {
     force_command: OptionInput
     source_address: OptionInput
   }
+
   input OptionInput {
     value: String!
     enabled: Boolean!
   }
+
+  type Subrole {
+    id: ID!
+    hostName: String!
+    user: String!
+  }
+
   type Query {
     allRoles: [Role!]!
     allHosts: [Host!]!
@@ -68,11 +98,13 @@ export default gql`
     host(id: ID!): Host
     hostVerificationStatus(id: ID!): HostVerification!
     isFirstUser: Boolean!
-    key: String!
     hostPrincipals(key: String!): [HostPrincipal!]!
+    listSubroles: [Subrole!]!
+    key: String!
   }
+
   type Mutation {
-    generateKey(key: String!): String!
+    generateKey(key: String!, subroleId: ID!): String!
     generateHostKey(key: String!): String!
     requestHostVerification(key: String!): ID!
     completeHostVerification(id: ID!, hostId: ID!, accepted: Boolean!): ID!
@@ -88,9 +120,7 @@ export default gql`
     editRoleUsers(id: ID!, userIds: [ID!]!): Role
     createCustomCertificate(
       key: String!
-      user: String!
-      extensions: ExtensionsInput!
-      options: OptionsInput!
+      subrole: SubroleInput!
       expiry: Float!
     ): String!
   }

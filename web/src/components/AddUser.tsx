@@ -53,6 +53,7 @@ const AddUser = ({
         <DialogContent>
           <TextField
             fullWidth
+            id="Email"
             label="Email"
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -61,6 +62,7 @@ const AddUser = ({
           />
           <TextField
             fullWidth
+            id="Password"
             label="Password"
             onChange={(e) => setPassword(e.target.value)}
             required

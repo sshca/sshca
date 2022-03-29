@@ -13,15 +13,7 @@ import React from "react";
 import { CREATE_ROLE } from "./__generated__/CREATE_ROLE";
 import { GET_HOSTS } from "./__generated__/GET_HOSTS";
 import SubroleCreator from "./SubroleCreator";
-
-const GET_HOSTS_QUERY = gql`
-  query GET_HOSTS {
-    allHosts {
-      id
-      name
-    }
-  }
-`;
+import { SubroleInput } from "../../__generated__/globalTypes";
 
 const CREATE_ROLE_MUTATION = gql`
   mutation CREATE_ROLE($name: String!, $subroles: [SubroleInput!]!) {
@@ -41,14 +33,8 @@ const AddRole = ({
   refetch(): void;
 }) => {
   const [name, setName] = React.useState("");
-  const [subroles, setSubroles] = React.useState<
-    {
-      username: string;
-      hostId: string;
-    }[]
-  >([]);
+  const [subroles, setSubroles] = React.useState<SubroleInput[]>([]);
 
-  const { loading, error, data } = useQuery<GET_HOSTS>(GET_HOSTS_QUERY);
   const [addRole] = useMutation<CREATE_ROLE>(CREATE_ROLE_MUTATION, {
     variables: { name, subroles },
   });
@@ -60,31 +46,19 @@ const AddRole = ({
     setSubroles([]);
     setName("");
   }
-  if (error) {
-    return (
-      <Paper className="paper">
-        <Typography>Error Getting Hosts</Typography>
-      </Paper>
-    );
-  } else if (loading || !data) {
-    return (
-      <Paper className="paper">
-        <Typography>Getting Hosts...</Typography>
-      </Paper>
-    );
-  }
   return (
     <Dialog
       onClose={() => setDialogOpen(false)}
       open={dialogOpen}
       style={{ textAlign: "center" }}
       fullWidth
-      maxWidth="md"
+      maxWidth="xl"
     >
       <DialogTitle id="simple-dialog-title">Create Role</DialogTitle>
       <form onSubmit={onSubmit}>
         <DialogContent>
           <TextField
+            id="Name"
             fullWidth
             label="Name"
             onChange={(e) => setName(e.target.value)}
@@ -92,11 +66,7 @@ const AddRole = ({
             value={name}
             variant="outlined"
           />
-          <SubroleCreator
-            subroles={subroles}
-            hosts={data.allHosts}
-            setSubroles={setSubroles}
-          />
+          <SubroleCreator subroles={subroles} setSubroles={setSubroles} />
         </DialogContent>
         <DialogActions>
           <Button

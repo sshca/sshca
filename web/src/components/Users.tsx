@@ -36,6 +36,7 @@ const Users = () => {
     return (
       <Paper className="paper">
         <IconButton
+          id="Add-User"
           aria-label="Add User"
           style={{ float: "right", marginLeft: -100 }}
           onClick={() => setDialogOpen(true)}

@@ -80,6 +80,7 @@ const Login = () => {
       </Typography>
       <form onSubmit={onSubmit}>
         <TextField
+          id="Email"
           error={error !== null}
           label="Email"
           onChange={(e) => setformData({ ...formData, email: e.target.value })}
@@ -87,6 +88,7 @@ const Login = () => {
           value={formData.email}
         />
         <TextField
+          id="Password"
           error={error !== null}
           helperText={error}
           label="Password"

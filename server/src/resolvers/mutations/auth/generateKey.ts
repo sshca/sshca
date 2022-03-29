@@ -7,33 +7,34 @@ export const generateKey = async (
   _: any,
   {
     key,
+    subroleId,
   }: {
     key: string;
+    subroleId: string;
   },
   { user }: { user: { id?: string } }
 ) => {
   if (!verifyAuth(user, false)) {
     throw new AuthenticationError("Invalid Auth");
   }
-  const userData = await prisma.user.findUnique({
-    where: { id: user.id },
-    include: { roles: { include: { subroles: true } } },
+  const subrole = await prisma.subrole.findFirst({
+    where: { role: { users: { some: { id: user.id } } }, id: subroleId },
+    select: {
+      id: true,
+      host: { select: { caKey: true } },
+      extensions: true,
+      force_command: true,
+      source_address: true,
+      username: true,
+    },
   });
-  if (!userData) {
-    throw new AuthenticationError("Invalid Auth");
+  if (!subrole) {
+    throw new AuthenticationError(`User does not have subrole ${subroleId}`);
   }
-  const principals = userData.roles
-    .map((r) =>
-      r.subroles.map((s) => sshpk.identityForUser(`sshca_subrole_${s.id}`))
-    )
-    .flat();
-  if (principals.length === 0) {
-    throw new AuthenticationError("User has no roles");
-  }
-  const privateKey = sshpk.parsePrivateKey(process.env.SSH_KEY, "ssh");
+  const privateKey = sshpk.parsePrivateKey(subrole.host.caKey, "ssh");
   const userKey = sshpk.parseKey(key, "ssh");
   const cert = sshpk.createCertificate(
-    principals,
+    [sshpk.identityForUser(subrole.username)],
     userKey,
     sshpk.identityForUser("sshca"),
     privateKey,
@@ -42,13 +43,35 @@ export const generateKey = async (
       validUntil: new Date(Date.now() + 10 * 1000 * 60),
     }
   );
+
   cert.signatures.openssh!.exts = [
-    "permit-X11-forwarding",
-    "permit-agent-forwarding",
-    "permit-port-forwarding",
-    "permit-pty",
-    "permit-user-rc",
-  ].map((r) => ({ name: r, critical: false, data: Buffer.from("") }));
+    ...subrole.extensions.map((extension) => ({
+      name: extension.replaceAll("_", "-"),
+      critical: false,
+      data: Buffer.from(""),
+    })),
+  ];
+  if (subrole.force_command) {
+    const extbuf = Buffer.alloc(4 + subrole.force_command.length);
+    extbuf.writeInt32BE(subrole.force_command.length);
+    extbuf.write(subrole.force_command, 4);
+    cert.signatures.openssh!.exts.push({
+      name: "force-command",
+      critical: true,
+      data: extbuf,
+    });
+  }
+  if (subrole.source_address) {
+    const extbuf = Buffer.alloc(4 + subrole.source_address.length);
+    extbuf.writeInt32BE(subrole.source_address.length);
+    extbuf.write(subrole.source_address, 4);
+    cert.signatures.openssh!.exts.push({
+      name: "source-address",
+      critical: true,
+      data: extbuf,
+    });
+  }
+  cert.signatures.openssh!.keyId = `SSHCA certifcate\nUser:${user.id}\nSubrole:${subrole.id}`;
   // @ts-expect-error
   const signer = privateKey.createSign("sha512");
   // @ts-expect-error

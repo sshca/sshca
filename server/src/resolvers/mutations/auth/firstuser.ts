@@ -24,7 +24,7 @@ export const firstUser = async (
     });
     res.cookie(
       "token",
-      jwt.sign({ id: user.id }, process.env.JWT_PRIVATE, {
+      jwt.sign({ id: user.id, admin: true }, process.env.JWT_PRIVATE, {
         expiresIn: "2 days",
         algorithm: "RS256",
       }),

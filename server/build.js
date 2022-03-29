@@ -1,7 +1,6 @@
 const { build } = require("esbuild");
 build({
   entryPoints: ["src/index.ts"],
-  pure: ["console.log"],
   platform: "node",
   minify: true,
   bundle: true,

@@ -3,6 +3,7 @@ describe("Many Users", () => {
     cy.task("db:teardown");
     cy.login();
     Cypress.Cookies.defaults({ preserve: "token" });
+    Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
   });
 
   beforeEach("Go To Main Page", () => {
@@ -12,16 +13,12 @@ describe("Many Users", () => {
   it("Create Users", () => {
     var genArr = new Array(50);
     cy.wrap(genArr).each((el, index) => {
-      cy.contains("Add User").should("not.exist");
-      cy.get(`[aria-label="Add User"]`).click();
-      cy.contains("Add User").should("be.visible");
-      cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
-        `test${index}@example.com`
-      );
-      cy.get(":nth-child(2) > .MuiInputBase-root > .MuiInputBase-input").type(
-        "development"
-      );
+      cy.get("#Add-User").click();
+
+      cy.get("#Email").type(`test${index}@example.com`, { delay: 0 });
+      cy.get("#Password").type("development");
       cy.get('[type="submit"]').click();
+
       cy.contains(`test${index}@example.com`).should("exist");
     });
   });
