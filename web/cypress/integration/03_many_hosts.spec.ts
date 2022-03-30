@@ -11,7 +11,7 @@ describe("Many Hosts", () => {
   });
 
   it("Create Hosts", () => {
-    var genArr = new Array(50);
+    var genArr = new Array(5);
     cy.wrap(genArr).each((el, index) => {
       cy.get("#Add-Host").click();
 

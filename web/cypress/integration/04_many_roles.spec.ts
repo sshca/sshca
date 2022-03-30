@@ -21,7 +21,7 @@ describe("Many Roles", () => {
   });
 
   it("Create Roles", () => {
-    var genArr = new Array(50);
+    var genArr = new Array(5);
     cy.wrap(genArr).each((el, index) => {
       cy.get("#Add-Role").click();
 
