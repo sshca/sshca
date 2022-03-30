@@ -38,6 +38,8 @@ steps:
   - name: test
     image: cypress/base
     environment:
+      CYPRESS_RECORD_KEY:
+        from_secret: CYPRESS_RECORD_KEY
       CYPRESS_CACHE_FOLDER: /drone/src/cypress
       DATABASE_URL: "postgresql://development:development@database:5432/development"
       JWT_PRIVATE: "-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQCvpnrazDsPg816ILJsUwOAsR/YDvBOhIHaTGwKxME29wnGKv+D\nIDfQpmFJZjK/v2jCWbr6/ZpyPGbKn8EZ6FjABnVNeUWjECAcDyzzhwRXOd6SQvKL\nGenMzEskQE0EA+hG31kmJrp/Qawf1QDR1ksdxSTX4xugSM0cwzzeC+3LxwIDAQAB\nAoGADhph1tt7Cn3cq6ega84mg9i049YfOU6uVma4bgzqLo2bPUwKg+68TIZvXUNV\nY8vsj15BAxIFqpJq9m3pRTlAlthgbEcVwQKccTQNkPbE1cxrneQeO7KuRHfjcP4b\nNfoZmog5CtOWiep8bbqp1vU/of4c0E4mPG8RSeTr4qG+PfECQQDVIPAugEBRSZIe\n2wEjA3B0hUdHOM4E1KtpWGJsYEasrrLLEy89R8BUuUWM/8GWjlzdiIIwi4NN3dT3\nrBmrhurrAkEA0vuX/R97cTfZaO+4YfhPsrIEQhGDb3orsWCqNKHpKO4KsrNgpdrI\n/rzv7SVHK9vtSVv/ifZAVaIS2l20ob7zlQJBAI73S2ZGDd75VRVxn2+XTQY8qTWz\ney9uYZWG/m7onkAT6EelFNksmm264lbU8U1HLjBE8+AQlgHTvpptTcLr/AUCQE9y\nGctg3XTGmQFgs0eA31HkoqHWQm3pzSYfxjfHeCrHaBPeY9hQSDtUHexoiyJC0Fk9\nYT4sEhGs0/iSLIBzjPkCQFeqMJi2JjsUxtZwWi4utHVDr/7UbIeLQlN5HqPdK4KM\nv2baez1xCVMzSIYjgcEjtTzkQtKZ8nJZpRHGCWTiWdw=\n-----END RSA PRIVATE KEY-----"
@@ -51,4 +53,4 @@ steps:
       - yarn --cwd server run prisma generate && yarn --cwd server run prisma migrate deploy
       - yarn start &
       - yarn run wait-on -c wait-on.config.js
-      - yarn --cwd web test
+      - yarn --cwd web test --record
