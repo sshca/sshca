@@ -12,6 +12,7 @@ services:
       POSTGRES_PASSWORD: development
       POSTGRES_USER: development
       POSTGRES_DB: development
+
 steps:
   - name: dependencies
     image: node
@@ -45,5 +46,5 @@ steps:
       - echo "DOMAIN=\"localhost\"" >> server/.env
       - yarn --cwd server run prisma generate && yarn --cwd server run prisma migrate deploy
       - yarn start &
-      - yarn run wait-on http://localhost:3000 && yarn run wait-on http://localhost:4000
+      - yarn run wait-on -c wait-on.config.js
       - yarn --cwd web test
