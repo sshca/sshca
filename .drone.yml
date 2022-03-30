@@ -16,6 +16,8 @@ services:
 steps:
   - name: dependencies
     image: node
+    environment:
+      CYPRESS_CACHE_FOLDER: ./cypress
     commands:
       - yarn --immutable
 
@@ -35,6 +37,8 @@ steps:
 
   - name: test
     image: cypress/base
+    environment:
+      CYPRESS_CACHE_FOLDER: ./cypress
     depends_on:
       - backend
       - frontend
