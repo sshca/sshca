@@ -4,6 +4,7 @@ name: default
 
 services:
   - name: database
+    image: postgres
     environment:
       POSTGRES_PASSWORD: development
       POSTGRES_USER: development
