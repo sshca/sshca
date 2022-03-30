@@ -2,15 +2,34 @@ kind: pipeline
 type: docker
 name: default
 
+services:
+  - name: database
+    environment:
+      POSTGRES_PASSWORD: development
+      POSTGRES_USER: development
+      POSTGRES_DB: development
 steps:
   - name: backend
     image: node
     commands:
-      - yarn --cwd server --frozen-lockfile
+      - yarn --cwd server --immutable
       - yarn --cwd server build
 
   - name: frontend
     image: node
     commands:
-      - yarn --cwd web --frozen-lockfile
+      - yarn --cwd web --immutable
       - yarn --cwd web build
+  - name: test
+    image: cypress/base
+    depends-on:
+      - backend
+      - frontend
+    commands:
+      - yarn --imutable
+      - echo "DATABASE_URL=\"postgresql://development:development@database:5432/development\"" > .env
+      - echo "JWT_PRIVATE=\"-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQCvpnrazDsPg816ILJsUwOAsR/YDvBOhIHaTGwKxME29wnGKv+D\nIDfQpmFJZjK/v2jCWbr6/ZpyPGbKn8EZ6FjABnVNeUWjECAcDyzzhwRXOd6SQvKL\nGenMzEskQE0EA+hG31kmJrp/Qawf1QDR1ksdxSTX4xugSM0cwzzeC+3LxwIDAQAB\nAoGADhph1tt7Cn3cq6ega84mg9i049YfOU6uVma4bgzqLo2bPUwKg+68TIZvXUNV\nY8vsj15BAxIFqpJq9m3pRTlAlthgbEcVwQKccTQNkPbE1cxrneQeO7KuRHfjcP4b\nNfoZmog5CtOWiep8bbqp1vU/of4c0E4mPG8RSeTr4qG+PfECQQDVIPAugEBRSZIe\n2wEjA3B0hUdHOM4E1KtpWGJsYEasrrLLEy89R8BUuUWM/8GWjlzdiIIwi4NN3dT3\nrBmrhurrAkEA0vuX/R97cTfZaO+4YfhPsrIEQhGDb3orsWCqNKHpKO4KsrNgpdrI\n/rzv7SVHK9vtSVv/ifZAVaIS2l20ob7zlQJBAI73S2ZGDd75VRVxn2+XTQY8qTWz\ney9uYZWG/m7onkAT6EelFNksmm264lbU8U1HLjBE8+AQlgHTvpptTcLr/AUCQE9y\nGctg3XTGmQFgs0eA31HkoqHWQm3pzSYfxjfHeCrHaBPeY9hQSDtUHexoiyJC0Fk9\nYT4sEhGs0/iSLIBzjPkCQFeqMJi2JjsUxtZwWi4utHVDr/7UbIeLQlN5HqPdK4KM\nv2baez1xCVMzSIYjgcEjtTzkQtKZ8nJZpRHGCWTiWdw=\n-----END RSA PRIVATE KEY-----\"" >> .env
+      - echo "JWT_PUBLIC=\"-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvpnrazDsPg816ILJsUwOAsR/Y\nDvBOhIHaTGwKxME29wnGKv+DIDfQpmFJZjK/v2jCWbr6/ZpyPGbKn8EZ6FjABnVN\neUWjECAcDyzzhwRXOd6SQvKLGenMzEskQE0EA+hG31kmJrp/Qawf1QDR1ksdxSTX\n4xugSM0cwzzeC+3LxwIDAQAB\n-----END PUBLIC KEY-----\"" >> .env
+      - echo "SSH_KEY=\"-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn\nNhAAAAAwEAAQAAAIEApAidP6scNZJZqD2bS4AgJOYiVO/f90tGnz72wFeVUSABHUV/u8II\nju53rj2evLAqY4tgihkN/es0rk5OocWQ/1ShW/IBEtQzJ6zF71JYfqG94G3TLbV8FjJ+Nv\nZznrwBOGcVdMS8uQw0RUx3YnQVUPFdjb54bR2kqzsYKs/cF/kAAAIYHVf3hh1X94YAAAAH\nc3NoLXJzYQAAAIEApAidP6scNZJZqD2bS4AgJOYiVO/f90tGnz72wFeVUSABHUV/u8IIju\n53rj2evLAqY4tgihkN/es0rk5OocWQ/1ShW/IBEtQzJ6zF71JYfqG94G3TLbV8FjJ+NvZz\nnrwBOGcVdMS8uQw0RUx3YnQVUPFdjb54bR2kqzsYKs/cF/kAAAADAQABAAAAgEJ1GwCIms\n05lgmLrDdSmbNZad9vsBXI8bvjDqWu1lgf11O8rJutaTo/c02suXtJBGOAPIS20exmNtnH\n8COqn6us2Tqasx+I1D5VEQ1eGLAo64jo1hJVoOd5UR6DSG+sNmys88C5EJ3TItmOkhQ6SI\nO306abTbKHPtm2EX7cduthAAAAQGcrRy5Poh5Tz54RviYojnDUDyr+nquNHGFFWySOJkrv\nxuk91yyOkc9kdJmzlhkrBzKHzUkpHk5wgVacX7+l+aAAAABBAM32i2NHqoNBBc71KHJfrv\nuLoREVVzIWcE+IbHed2eP2Zgtww7OCU/coAxGimGGxQgznMtzXK3Z7l8MrXufV4J8AAABB\nAMviWtEUUv1gNQ9DSz20pL+dNiQ2v/SEmxEUQnhJ+lQWnUJDS/p2Gv/oRSWpfdLdow8fSd\nho5OSfAErZY5EeSGcAAAAcYWxleEBBbGV4cy1NYWNCb29rLUFpci5sb2NhbAECAwQFBgc=\n-----END OPENSSH PRIVATE KEY-----\"" >> .env
+      - echo "DOMAIN=\"localhost\"" >> .env
+      - yarn start & yarn --cwd web test
