@@ -75,6 +75,7 @@ const Role = () => {
       <br />
       <Typography>Users:</Typography>
       <Autocomplete
+        id="Users"
         multiple
         options={data.allUsers}
         value={data.role.users}

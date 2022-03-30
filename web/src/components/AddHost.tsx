@@ -55,6 +55,7 @@ const AddHost = ({
       <form onSubmit={onSubmit}>
         <DialogContent>
           <TextField
+            id="Name"
             fullWidth
             label="Name"
             onChange={(e) => setName(e.target.value)}
@@ -63,6 +64,7 @@ const AddHost = ({
             variant="outlined"
           />
           <TextField
+            id="Hostname"
             fullWidth
             label="Hostname"
             onChange={(e) => setHostname(e.target.value)}

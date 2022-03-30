@@ -15,6 +15,7 @@ import (
 
 	"net/http/cookiejar"
 
+	"github.com/AlecAivazis/survey/v2"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
@@ -22,7 +23,10 @@ import (
 	"golang.org/x/term"
 )
 
+var Role string
+
 func init() {
+	versionCmd.Flags().StringVarP(&Role, "role", "r", "", "Role to preselect")
 	rootCmd.AddCommand(versionCmd)
 }
 
@@ -95,11 +99,41 @@ var versionCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		fmt.Printf("Logged in with id: %v\n", login.Login.Id)
+		var subroles struct {
+			Subroles []struct {
+				Id       graphql.ID
+				HostName graphql.String
+				User     graphql.String
+			} `graphql:"listSubroles"`
+		}
+		err = client.Query(context.Background(), &subroles, map[string]interface{}{})
+		if err != nil {
+			log.Fatal(err)
+		}
+		options := make([]string, len(subroles.Subroles))
+		role := -1
+		for i := 0; i < len(subroles.Subroles); i++ {
+			userFriendlyRole := fmt.Sprintf("%v@%v", subroles.Subroles[i].User, subroles.Subroles[i].HostName)
+			if userFriendlyRole == Role {
+				role = i
+				break
+			}
+			options[i] = userFriendlyRole
+		}
+		if role == -1 {
+			prompt := &survey.Select{
+				Message: "Choose a role:",
+				Options: options,
+			}
+			survey.AskOne(prompt, &role, survey.WithValidator(survey.Required))
+		}
+		fmt.Println(subroles.Subroles[role])
 		var generateKey struct {
-			GenerateKey graphql.String `graphql:"generateKey(key: $key)"`
+			GenerateKey graphql.String `graphql:"generateKey(key: $key, subroleId: $subroleId)"`
 		}
 		generateKeyVariables := map[string]interface{}{
-			"key": graphql.String(data),
+			"key":       graphql.String(data),
+			"subroleId": graphql.ID(subroles.Subroles[role].Id),
 		}
 		err = client.Mutate(context.Background(), &generateKey, generateKeyVariables)
 		if err != nil {

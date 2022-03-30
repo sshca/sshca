@@ -25,11 +25,11 @@ export interface GET_HOST_KEY_host {
   hostname: string;
   name: string;
   fingerprint: string | null;
+  caPub: string;
 }
 
 export interface GET_HOST_KEY {
   host: GET_HOST_KEY_host | null;
-  key: string;
 }
 
 export interface GET_HOST_KEYVariables {

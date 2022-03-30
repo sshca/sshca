@@ -7,27 +7,20 @@
 // START Enums and Input Objects
 //==============================================================
 
-export interface ExtensionsInput {
-  permit_X11_forwarding: boolean;
-  permit_agent_forwarding: boolean;
-  permit_port_forwarding: boolean;
-  permit_pty: boolean;
-  permit_user_rc: boolean;
-}
-
-export interface OptionInput {
-  value: string;
-  enabled: boolean;
-}
-
-export interface OptionsInput {
-  force_command?: OptionInput | null;
-  source_address?: OptionInput | null;
+export enum Extension {
+  permit_X11_forwarding = "permit_X11_forwarding",
+  permit_agent_forwarding = "permit_agent_forwarding",
+  permit_port_forwarding = "permit_port_forwarding",
+  permit_pty = "permit_pty",
+  permit_user_rc = "permit_user_rc",
 }
 
 export interface SubroleInput {
   username: string;
   hostId: string;
+  extensions: Extension[];
+  force_command?: string | null;
+  source_address?: string | null;
 }
 
 //==============================================================

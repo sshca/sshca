@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 datasource db {
   provider = "postgres"
   url      = env("DATABASE_URL")
@@ -34,6 +31,7 @@ model Host {
   updatedAt   DateTime  @updatedAt
   name        String
   hostname    String
+  caKey       String
   subroles    Subrole[]
   fingerprint String?
 }
@@ -45,12 +43,23 @@ model HostVerification {
 }
 
 model Subrole {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  username  String
-  role      Role     @relation(fields: [roleId], references: [id])
-  host      Host     @relation(fields: [hostId], references: [id])
-  hostId    String
-  roleId    String
+  id             String      @id @default(uuid())
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  username       String
+  role           Role        @relation(fields: [roleId], references: [id])
+  host           Host        @relation(fields: [hostId], references: [id])
+  hostId         String
+  roleId         String
+  extensions     Extension[]
+  force_command  String?
+  source_address String?
+}
+
+enum Extension {
+  permit_X11_forwarding
+  permit_agent_forwarding
+  permit_port_forwarding
+  permit_pty
+  permit_user_rc
 }

@@ -36,6 +36,7 @@ const Roles = () => {
   return (
     <Paper className="paper">
       <IconButton
+        id="Add-Role"
         aria-label="Add Role"
         style={{ float: "right", marginLeft: -100 }}
         onClick={() => setDialogOpen(true)}

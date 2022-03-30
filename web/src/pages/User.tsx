@@ -55,6 +55,7 @@ const User = () => {
     <Paper className="paper">
       <Typography>Email: {data.user.email}</Typography>
       <Autocomplete
+        id="Roles"
         multiple
         options={data.allRoles}
         value={data.user.roles}

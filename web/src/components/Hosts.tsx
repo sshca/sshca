@@ -37,6 +37,7 @@ const Hosts = () => {
     return (
       <Paper className="paper">
         <IconButton
+          id="Add-Host"
           aria-label="Add Host"
           style={{ float: "right", marginLeft: -100 }}
           onClick={() => setDialogOpen(true)}

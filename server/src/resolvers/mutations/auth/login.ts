@@ -11,12 +11,14 @@ export const login = async (
 ) => {
   const userData = await prisma.user.findFirst({
     where: { email },
+    include: { roles: { select: { id: true } } },
   });
   if (userData) {
     if (compareSync(password, userData.password)) {
+      const admin = Boolean(userData.roles.find((role) => role.id === "Admin"));
       res.cookie(
         "token",
-        jwt.sign({ id: userData.id }, process.env.JWT_PRIVATE, {
+        jwt.sign({ id: userData.id, admin }, process.env.JWT_PRIVATE, {
           expiresIn: "2 days",
           algorithm: "RS256",
         }),
@@ -26,8 +28,8 @@ export const login = async (
           secure: process.env.NODE_ENV === "production",
         }
       );
-      return { id: userData.id };
+      return { id: userData.id, admin };
     }
   }
-  throw new AuthenticationError("Invalid Username Or Password");
+  throw new AuthenticationError("Invalid username or password");
 };

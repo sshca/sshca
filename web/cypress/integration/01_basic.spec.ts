@@ -3,6 +3,7 @@ describe("Normal Interaction", () => {
     cy.task("db:teardown");
     cy.login();
     Cypress.Cookies.defaults({ preserve: "token" });
+    Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
   });
 
   beforeEach("Go To Main Page", () => {
@@ -10,64 +11,53 @@ describe("Normal Interaction", () => {
   });
 
   it("Add Host", () => {
-    cy.contains("Create Host").should("not.exist");
-    cy.get(`[aria-label="Add Host"]`).click();
-    cy.contains("Create Host").should("be.visible");
-    cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
-      "Host 1"
-    );
-    cy.get(
-      '[style="margin-top: 10px;"] > .MuiInputBase-root > .MuiInputBase-input'
-    ).type("host1.local");
-    cy.contains("Add").click();
+    cy.get("#Add-Host").click();
+
+    cy.get("#Name").type("Host 1");
+    cy.get("#Hostname").type("host1.local");
+    cy.get('[type="submit"]').click();
+
     cy.contains("Host 1").should("exist");
   });
 
   it("Add User", () => {
-    cy.contains("Add User").should("not.exist");
-    cy.get(`[aria-label="Add User"]`).click();
-    cy.contains("Add User").should("be.visible");
+    cy.get("#Add-User").click();
 
-    cy.get(":nth-child(1) > .MuiInputBase-root > .MuiInputBase-input").type(
-      "test2@example.com"
-    );
-    cy.get(":nth-child(2) > .MuiInputBase-root > .MuiInputBase-input").type(
-      "development"
-    );
+    cy.get("#Email").type("test2@example.com");
+    cy.get("#Password").type("development");
     cy.get('[type="submit"]').click();
+
     cy.contains("test2@example.com").should("exist");
   });
 
   it("Add Role", () => {
-    cy.contains("Create Role").should("not.exist");
-    cy.get(`[aria-label="Add Role"]`).click();
-    cy.contains("Create Role").should("be.visible");
-    cy.get(
-      ".MuiDialogContent-root > :nth-child(1) > .MuiInputBase-root > .MuiInputBase-input"
-    ).type("Role 1");
-    cy.get("input#Username-1").type("root");
-    cy.get("input#Host-1").click();
+    cy.get("#Add-Role").click();
+
+    cy.get("#Name").type("Role 1");
+    cy.get("#Add-Subrole").type("root");
+    cy.get("#Host-1").click();
     cy.get('.MuiAutocomplete-listbox > [tabindex="-1"]').click();
-    cy.contains("Add").click();
+    cy.get('[type="submit"]').click();
+
     cy.contains("Role 1").should("exist");
   });
 
   it("View Host", () => {
     cy.contains("Host 1").click();
-    cy.contains("AuthorizedPrincipalsFile").should("exist");
+    cy.contains("ssh-rsa").should("exist");
     cy.contains("Host 1").should("exist");
     cy.contains("host1.local").should("exist");
   });
 
   it("View User", () => {
-    cy.contains("test@example.com").click();
-    cy.contains("test@example.com").should("exist");
+    cy.contains("test2@example.com").click();
+    cy.contains("test2@example.com").should("exist");
     cy.contains("Role 1").should("not.exist");
-    cy.get(".MuiInputBase-root").click();
+    cy.get("#Roles").click();
     cy.contains("Role 1").click();
     cy.reload();
     cy.contains("Role 1").should("be.visible");
-    cy.get(".MuiChip-root > .MuiSvgIcon-root").click();
+    cy.get("#Roles").type("{backspace}");
     cy.reload();
     cy.contains("Role 1").should("not.exist");
   });
@@ -75,19 +65,19 @@ describe("Normal Interaction", () => {
   it("View Role", () => {
     cy.contains("Role 1").click();
     cy.contains("Role 1").should("exist");
-    cy.contains("test@example.com").should("not.exist");
-    cy.get(".MuiInputBase-root").click();
-    cy.contains("test@example.com").click();
+    cy.contains("test2@example.com").should("not.exist");
+    cy.get("#Users").click();
+    cy.contains("test2@example.com").click();
     cy.reload();
-    cy.contains("test@example.com").should("be.visible");
-    cy.get(".MuiChip-root > .MuiSvgIcon-root").click();
+    cy.contains("test2@example.com").should("be.visible");
+    cy.get("#Users").type("{backspace}");
     cy.reload();
-    cy.contains("test@example.com").should("not.exist");
+    cy.contains("test2@example.com").should("not.exist");
   });
   it("Cleanup", () => {
     cy.contains("Host 1").should("be.visible");
     cy.contains("Role 1").should("be.visible");
-    cy.contains("test@example.com").should("be.visible");
+    cy.contains("test2@example.com").should("be.visible");
     cy.get('[aria-label="delete"]').each((el) => cy.wrap(el).click());
   });
 });

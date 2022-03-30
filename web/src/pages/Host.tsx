@@ -17,8 +17,8 @@ const GET_HOST_KEY_QUERY = gql`
       hostname
       name
       fingerprint
+      caPub
     }
-    key
   }
 `;
 
@@ -65,27 +65,12 @@ const Host = () => {
             ))}
           </ul>
           <Typography>Setup Script:</Typography>
-          <code style={{ whiteSpace: "pre-wrap" }}>{`rm -rf /etc/ssh/sshca
-if grep -Fxq "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" /etc/ssh/sshd_config
-then
-:
-else
-echo "TrustedUserCAKeys /etc/ssh/sshca/ca.pub" >> /etc/ssh/sshd_config
-fi
-if grep -Fxq "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" /etc/ssh/sshd_config
-then
-:
-else
-echo "AuthorizedPrincipalsFile /etc/ssh/sshca/auth_principals/%u" >> /etc/ssh/sshd_config
-fi
-mkdir -p /etc/ssh/sshca/auth_principals
-echo "${data.key.replace("\n", "")}" > /etc/ssh/sshca/ca.pub
-${data
-  .host!.subroles.map(
-    (subrole) =>
-      `echo "sshca_subrole_${subrole.id}" > /etc/ssh/sshca/auth_principals/${subrole.username}`
-  )
-  .join("\n")}`}</code>
+          <code
+            style={{ whiteSpace: "pre-wrap", lineBreak: "anywhere" }}
+          >{`echo "TrustedUserCAKeys /etc/ssh/sshca_ca.pub" >> /etc/ssh/sshd_config
+echo "${data.host.caPub
+            .replace("\n", "")
+            .slice(0, -10)}" > /etc/ssh/sshca_ca.pub`}</code>
         </>
       ) : (
         <Typography>No Permissions</Typography>

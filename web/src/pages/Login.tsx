@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
 import { Button, Paper, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router-dom";
@@ -10,6 +10,7 @@ const LOGIN_MUTATION = gql`
   mutation LOGIN($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       id
+      admin
     }
   }
 `;
@@ -32,7 +33,7 @@ const Login = () => {
     password: string;
   }>({ email: "", password: "" });
   const history = useHistory();
-  const [error, setError] = React.useState(false);
+  const [error, setError] = React.useState<null | string>(null);
 
   const [login] = useMutation<LOGIN>(LOGIN_MUTATION, {
     variables: { email: formData.email, password: formData.password },
@@ -46,25 +47,29 @@ const Login = () => {
     e.preventDefault();
     if (data?.isFirstUser) {
       try {
-        setError(false);
-        await signup({
-          variables: { email: formData.email, password: formData.password },
-        });
-      } catch {
-        setError(true);
-      } finally {
-        if (!error) history.push("/dash");
+        await signup();
+        history.push("/dash");
+      } catch (e) {
+        if (e instanceof ApolloError) {
+          setError(e.message);
+        } else {
+          throw e;
+        }
       }
     } else {
       try {
-        setError(false);
-        await login({
-          variables: { email: formData.email, password: formData.password },
-        });
-      } catch {
-        setError(true);
-      } finally {
-        if (!error) history.push("/dash");
+        const { data } = await login();
+        if (data?.login?.admin) {
+          history.push("/dash");
+        } else {
+          setError("Only admins may login to management interface");
+        }
+      } catch (e) {
+        if (e instanceof ApolloError) {
+          setError(e.message);
+        } else {
+          throw e;
+        }
       }
     }
   }
@@ -75,16 +80,17 @@ const Login = () => {
       </Typography>
       <form onSubmit={onSubmit}>
         <TextField
-          error={error}
-          helperText={error ? "Invalid email or password" : ""}
+          id="Email"
+          error={error !== null}
           label="Email"
           onChange={(e) => setformData({ ...formData, email: e.target.value })}
           required
           value={formData.email}
         />
         <TextField
-          error={error}
-          helperText={error ? "Invalid email or password" : ""}
+          id="Password"
+          error={error !== null}
+          helperText={error}
           label="Password"
           onChange={(e) =>
             setformData({ ...formData, password: e.target.value })
