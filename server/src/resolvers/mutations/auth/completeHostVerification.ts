@@ -9,7 +9,7 @@ export const completeHostVerification = async (
     hostId,
     accepted,
   }: {
-    id: string;
+    id?: string;
     hostId: string;
     accepted: boolean;
   },
@@ -18,7 +18,7 @@ export const completeHostVerification = async (
   if (!verifyAuth(user)) {
     throw new AuthenticationError("Invalid Auth");
   }
-  if (accepted) {
+  if (accepted && verificationId) {
     const verification = await prisma.hostVerification.findUnique({
       where: { id: verificationId },
     });
@@ -30,8 +30,8 @@ export const completeHostVerification = async (
       data: { fingerprint: verification.fingerprint },
     });
     await prisma.hostVerification.delete({ where: { id: verificationId } });
-  } else {
-    await prisma.hostVerification.delete({ where: { id: verificationId } });
+    return hostId;
   }
-  return hostId;
+  await prisma.hostVerification.delete({ where: { id: verificationId } });
+  return;
 };

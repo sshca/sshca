@@ -9,10 +9,11 @@ import (
 	"net/http"
 	"os"
 
+	"strings"
+
 	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/sshca/sshca/sshca-host/lib"
 )
 
 func init() {
@@ -65,13 +66,53 @@ var loginCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 		fmt.Printf("Go to %v/verifyHost/%v to complete verification\n", viper.GetString("server"), requestHostVerification.Id)
-		log.Println("Press enter after verification")
+		fmt.Println("Press enter after verification")
 		_, _ = bufio.NewReader(os.Stdin).ReadString('\n')
-		lib.PostSetup(client, data)
 
-		// err = ioutil.WriteFile("/tmp/sshca-key.pub", []byte(generateKey.GenerateKey), fs.FileMode(0600))
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
+		// Generate Certificate For Host
+		var generateHostKey struct {
+			GenerateHostKey struct {
+				Cert  graphql.String
+				CaPub graphql.String
+			} `graphql:"generateHostKey(key: $key)"`
+		}
+		generateHostKeyVariables := map[string]interface{}{
+			"key": graphql.String(data),
+		}
+		err = client.Mutate(context.Background(), &generateHostKey, generateHostKeyVariables)
+		if err != nil {
+			log.Fatal(err)
+		}
+		sshConfigFile, err := os.OpenFile("/etc/ssh/sshd_config", os.O_APPEND|os.O_RDWR, 0600)
+		if err != nil {
+			panic(err)
+		}
+
+		defer sshConfigFile.Close()
+
+		stat, err := sshConfigFile.Stat()
+		if err != nil {
+			panic(err)
+		}
+		var sshConfigBytes = make([]byte, stat.Size())
+
+		sshConfigFile.Read(sshConfigBytes)
+		sshConfigString := string(sshConfigBytes)
+		if !strings.Contains(string(sshConfigString), "sshca") {
+			sshConfigFile.WriteString("\nTrustedUserCAKeys /etc/ssh/sshca_ca.pub\nHostCertificate /etc/ssh/sshca_cert.pub")
+			caFile, err := os.OpenFile("/etc/ssh/sshca_ca.pub", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+			if err != nil {
+				panic(err)
+			}
+
+			defer caFile.Close()
+
+			caFile.WriteString(string(generateHostKey.GenerateHostKey.CaPub))
+		}
+		hostKeyFile, err := os.OpenFile("/etc/ssh/sshca_cert.pub", os.O_WRONLY|os.O_CREATE, 0644)
+
+		defer hostKeyFile.Close()
+
+		hostKeyFile.WriteString(string(generateHostKey.GenerateHostKey.Cert))
 	},
 }

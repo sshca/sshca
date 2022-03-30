@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface VERIFICATION_COMPLETION {
-  completeHostVerification: string;
+  completeHostVerification: string | null;
 }
 
 export interface VERIFICATION_COMPLETIONVariables {
