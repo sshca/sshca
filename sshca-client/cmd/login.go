@@ -125,7 +125,10 @@ var versionCmd = &cobra.Command{
 				Message: "Choose a role:",
 				Options: options,
 			}
-			survey.AskOne(prompt, &role, survey.WithValidator(survey.Required))
+			err = survey.AskOne(prompt, &role, survey.WithValidator(survey.Required))
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 		fmt.Println(subroles.Subroles[role])
 		var generateKey struct {
