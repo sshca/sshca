@@ -13,19 +13,25 @@ services:
       POSTGRES_USER: development
       POSTGRES_DB: development
 steps:
-  - name: dependancies
+  - name: dependencies
     image: node
     commands:
       - yarn --immutable
+
   - name: backend
+    depends_on:
+      - dependencies
     image: node
     commands:
       - yarn --cwd server build
 
   - name: frontend
+    depends_on:
+      - dependencies
     image: node
     commands:
       - yarn --cwd web build
+
   - name: test
     image: cypress/base
     depends_on:
