@@ -5,7 +5,7 @@ name: default
 services:
   - name: database
     image: postgres
-   server/.environment:
+    environment:
       POSTGRES_PASSWORD: development
       POSTGRES_USER: development
       POSTGRES_DB: development
