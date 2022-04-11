@@ -7,7 +7,8 @@
   "scripts": {
     "web": "yarn workspace web start",
     "server": "yarn workspace server dev",
-    "start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn web\""
+    "start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn web\"",
+    "test": "concurrently --kill-others-on-fail \"yarn start\"  \"yarn workspace web test\""
   },
   "packageManager": "yarn@3.2.0",
   "devDependencies": {
