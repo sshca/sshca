@@ -14,9 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Prettify code
-        run: |
-          npm install --global prettier
-          prettier --check ./src/**
+        run: npx prettier --check ./src/**
   web:
     name: "Build Web"
     needs: lintweb
@@ -47,9 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Prettify code
-        run: |
-          npm install --global prettier
-          prettier --check ./src/**
+        run: npx prettier --check ./src/**
   server:
     name: "Build Server"
     needs: serverlint
