@@ -17,7 +17,12 @@ describe("Many Hosts", () => {
 
       cy.get("#Name").type(`Host ${index}`);
       cy.get("#Hostname").type(`host${index}.local`);
-      cy.contains("Add").click();
+
+      cy.intercept("http://localhost:3000/api/graphql").as("createHost");
+
+      cy.get('[type="submit"]').click();
+
+      cy.wait("@createHost");
 
       cy.contains(`Host ${index}`).should("exist");
     });
