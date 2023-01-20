@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -72,7 +71,7 @@ var versionCmd = &cobra.Command{
 			}
 		}
 		keyLocation := viper.GetString("keyLocation")
-		data, err := ioutil.ReadFile(keyLocation)
+		data, err := os.ReadFile(keyLocation)
 		if err != nil {
 			log.Fatal("Error reading public key file")
 		}
@@ -143,7 +142,7 @@ var versionCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = ioutil.WriteFile("/tmp/sshca-key.pub", []byte(generateKey.GenerateKey), fs.FileMode(0600))
+		err = os.WriteFile("/tmp/sshca-key.pub", []byte(generateKey.GenerateKey), fs.FileMode(0600))
 		if err != nil {
 			log.Fatal(err)
 		}
