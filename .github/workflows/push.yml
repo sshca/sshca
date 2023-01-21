@@ -169,7 +169,7 @@ jobs:
       - name: Start Server
         run: yarn start &
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v5
         with:
           record: true
           parallel: true
