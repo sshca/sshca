@@ -35,12 +35,15 @@ func initConfig() {
 	viper.AddConfigPath("/etc/ssh")
 	viper.SetConfigName(".sshca-config")
 	viper.SetConfigType("yaml")
-	viper.SafeWriteConfig()
+	err := viper.SafeWriteConfig()
+	if err != nil {
+		log.Print(err)
+	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	err := viper.ReadInConfig()
+	err = viper.ReadInConfig()
 	if err != nil {
 		log.Fatal("Failed to Read Config")
 	}
