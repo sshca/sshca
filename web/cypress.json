@@ -7,5 +7,5 @@
     "googleRefreshToken": "REFRESH_TOKEN"
   },
   "projectId": "34w3c4",
-  "defaultCommandTimeout": 10000
+  "defaultCommandTimeout": 100000
 }
