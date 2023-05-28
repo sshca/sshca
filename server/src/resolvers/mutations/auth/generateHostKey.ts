@@ -1,6 +1,6 @@
 import { AuthenticationError } from "apollo-server-express";
-import prisma from "../../../prisma";
 import sshpk from "sshpk";
+import prisma from "../../../prisma";
 
 export const generateHostKey = async (
   _: any,
@@ -27,6 +27,12 @@ export const generateHostKey = async (
     privateKey,
     { lifetime: 60 * 60 * 24 * 365 * 10 }
   );
+  // @ts-expect-error
+  const signer = privateKey.createSign("sha512");
+  // @ts-expect-error
+  const blob = sshpk.Certificate.formats.openssh.toBuffer(cert, true);
+  signer.write(blob);
+  cert.signatures.openssh!.signature = signer.sign();
   const hostKey = sshpk.parsePrivateKey(host.caKey);
   return {
     cert: cert.toString("openssh"),

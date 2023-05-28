@@ -9,11 +9,10 @@ import (
 
 	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func init() {
-	loginCmd.PersistentFlags().StringVar(&keyFile, "keyfile", "", "file to get ssh host key from")
+	loginCmd.PersistentFlags().StringVar(&keyFile, "keyFile", "", "file to get ssh host key from")
 	loginCmd.PersistentFlags().StringVar(&serverURL, "server", "", "url of server")
 	rootCmd.AddCommand(loginCmd)
 }
@@ -44,7 +43,7 @@ var (
 				log.Fatal(err)
 			}
 			if !requestHostVerification.RequestHostVerification.Finished {
-				fmt.Printf("Go to %v/verifyHost/%v to complete verification\n", viper.GetString("server"), *requestHostVerification.RequestHostVerification.Id)
+				fmt.Printf("Go to %v/verifyHost/%v to complete verification\n", serverURL, *requestHostVerification.RequestHostVerification.Id)
 			}
 		},
 	}

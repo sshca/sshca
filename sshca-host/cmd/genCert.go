@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	rootCmd.PersistentFlags().StringVar(&keyFile, "keyfile", "", "file to get ssh host key from")
+	rootCmd.PersistentFlags().StringVar(&keyFile, "keyFile", "", "file to get ssh host key from")
 	rootCmd.PersistentFlags().StringVar(&serverURL, "server", "", "url of server")
 	rootCmd.PersistentFlags().StringVar(&certFile, "certFile", "", "file to write ssh host cert")
 	rootCmd.PersistentFlags().StringVar(&caFile, "caFile", "", "file to write ssh CA")
