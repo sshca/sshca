@@ -32,7 +32,7 @@ jobs:
             "web/node_modules"
           key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn --cwd .. --immutable-cache
       - name: Build Web
         env:
           NODE_ENV: development
@@ -63,7 +63,7 @@ jobs:
             "server/node_modules"
           key: ${{ runner.os }}-modules-v1-${{ hashFiles('server/yarn.lock') }}
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn --cwd .. --immutable-cache
       - name: Build Server
         env:
           NODE_ENV: production
@@ -166,18 +166,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        name: Cache Node Modules
-        with:
-          path: |
-            "web/node_modules"
-            "~/.cache/Cypress"
-          key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
-      - uses: actions/cache@v2
-        name: Cache Server Node Modules
-        with:
-          path: "server/node_modules"
-          key: ${{ runner.os }}-modules-v1-${{ hashFiles('server/yarn.lock') }}
       - name: Setup Env
         run: |
           echo "DATABASE_URL=\"postgresql://development:development@localhost:5432/development\"" > .env
@@ -186,9 +174,7 @@ jobs:
           echo "SSH_KEY=\"-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn\nNhAAAAAwEAAQAAAIEApAidP6scNZJZqD2bS4AgJOYiVO/f90tGnz72wFeVUSABHUV/u8II\nju53rj2evLAqY4tgihkN/es0rk5OocWQ/1ShW/IBEtQzJ6zF71JYfqG94G3TLbV8FjJ+Nv\nZznrwBOGcVdMS8uQw0RUx3YnQVUPFdjb54bR2kqzsYKs/cF/kAAAIYHVf3hh1X94YAAAAH\nc3NoLXJzYQAAAIEApAidP6scNZJZqD2bS4AgJOYiVO/f90tGnz72wFeVUSABHUV/u8IIju\n53rj2evLAqY4tgihkN/es0rk5OocWQ/1ShW/IBEtQzJ6zF71JYfqG94G3TLbV8FjJ+NvZz\nnrwBOGcVdMS8uQw0RUx3YnQVUPFdjb54bR2kqzsYKs/cF/kAAAADAQABAAAAgEJ1GwCIms\n05lgmLrDdSmbNZad9vsBXI8bvjDqWu1lgf11O8rJutaTo/c02suXtJBGOAPIS20exmNtnH\n8COqn6us2Tqasx+I1D5VEQ1eGLAo64jo1hJVoOd5UR6DSG+sNmys88C5EJ3TItmOkhQ6SI\nO306abTbKHPtm2EX7cduthAAAAQGcrRy5Poh5Tz54RviYojnDUDyr+nquNHGFFWySOJkrv\nxuk91yyOkc9kdJmzlhkrBzKHzUkpHk5wgVacX7+l+aAAAABBAM32i2NHqoNBBc71KHJfrv\nuLoREVVzIWcE+IbHed2eP2Zgtww7OCU/coAxGimGGxQgznMtzXK3Z7l8MrXufV4J8AAABB\nAMviWtEUUv1gNQ9DSz20pL+dNiQ2v/SEmxEUQnhJ+lQWnUJDS/p2Gv/oRSWpfdLdow8fSd\nho5OSfAErZY5EeSGcAAAAcYWxleEBBbGV4cy1NYWNCb29rLUFpci5sb2NhbAECAwQFBgc=\n-----END OPENSSH PRIVATE KEY-----\"" >> .env
           echo "DOMAIN=\"localhost\"" >> .env
       - name: Install Dependencies
-        run: |
-          yarn --cwd ../web --frozen-lockfile
-          yarn --cwd ../server --frozen-lockfile
+        run: yarn --cwd .. --immutable-cache
       - name: Build Server
         env:
           NODE_ENV: development
@@ -205,12 +191,13 @@ jobs:
           install: false
           start: yarn run -T start
           working-directory: web
-          wait-on: "http://localhost:3000, http://localhost:3000/api/graphql?query=%7B__typename%7D"
+          wait-on: "http://localhost:4000/api/graphql?query=%7B__typename%7D"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   publishserver:
     name: "Publish Server"
     needs:
