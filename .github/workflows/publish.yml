@@ -298,7 +298,7 @@ jobs:
     name: Publish Client Release
     needs:
       - publishclientartifacts
-      - publishhosttartifacts
+      - publishhostartifacts
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
 
