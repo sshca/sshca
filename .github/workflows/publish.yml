@@ -97,6 +97,35 @@ jobs:
         with:
           name: client
           path: ./sshca-client/sshca-client
+  hostlint:
+    name: "Lint Host"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: sshca-host
+  host:
+    name: "Build Host"
+    needs: hostlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Build
+        run: go build -v .
+        working-directory: ./sshca-host
+      - uses: actions/upload-artifact@v2
+        with:
+          name: client
+          path: ./sshca-host/sshca-host
   tests:
     services:
       # Label used to access the service container
@@ -167,8 +196,6 @@ jobs:
           yarn run prisma generate
           yarn run prisma migrate deploy
           yarn build
-      - name: Start Server
-        run: yarn start &
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
@@ -176,7 +203,7 @@ jobs:
           parallel: true
           group: "Github Actions"
           install: false
-          start: yarn start
+          start: yarn run -T start
           working-directory: web
           wait-on: "http://localhost:3000, http://localhost:3000/api/graphql"
         env:
@@ -245,6 +272,40 @@ jobs:
         with:
           name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
           path: ./sshca-client/sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+  publishhostartifacts:
+    needs:
+      - tests
+      - host
+    name: Publish Host Artifacts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          [
+            { "os": "darwin", "arch": "amd64" },
+            { "os": "darwin", "arch": "arm64" },
+            { "os": "linux", "arch": "amd64" },
+            { "os": "linux", "arch": "386" },
+            { "os": "windows", "arch": "amd64" },
+            { "os": "windows", "arch": "386" },
+          ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.16.3"
+
+      - name: Create Artifact
+        run: |
+          cd sshca-host
+          GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o host
+          zip -j -r sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip sshca_host
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
+          path: ./sshca-host/sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
   # Create the release for the tag
   publishclientrelease:
     runs-on: ubuntu-latest
@@ -264,7 +325,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: false
+          draft: true
           prerelease: false
   # Add all the builds as assets to the release
   publishclientartifactsrelease:
@@ -299,4 +360,37 @@ jobs:
           upload_url: ${{ needs.publishclientrelease.outputs.upload_url }}
           asset_path: ./sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          asset_content_type: application/zip
+  publishhostartifactsrelease:
+    runs-on: ubuntu-latest
+    name: Add Host Artifacts to Release
+    needs: [publishhostartifacts, publishclientrelease]
+    strategy:
+      matrix:
+        target:
+          [
+            { "os": "darwin", "arch": "amd64" },
+            { "os": "darwin", "arch": "arm64" },
+            { "os": "linux", "arch": "amd64" },
+            { "os": "linux", "arch": "386" },
+            { "os": "windows", "arch": "amd64" },
+            { "os": "windows", "arch": "386" },
+          ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
+
+      - name: Upload Artifact to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.publishclientrelease.outputs.upload_url }}
+          asset_path: ./sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          asset_name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_content_type: application/zip

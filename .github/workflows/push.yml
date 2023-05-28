@@ -96,6 +96,35 @@ jobs:
         with:
           name: client
           path: ./sshca-client/sshca-client
+  hostlint:
+    name: "Lint Host"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: sshca-host
+  host:
+    name: "Build Host"
+    needs: hostlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Build
+        run: go build -v .
+        working-directory: ./sshca-host
+      - uses: actions/upload-artifact@v2
+        with:
+          name: client
+          path: ./sshca-host/sshca-host
   tests:
     services:
       # Label used to access the service container
@@ -166,8 +195,6 @@ jobs:
           yarn run prisma generate
           yarn run prisma migrate deploy
           yarn build
-      - name: Start Server
-        run: yarn start &
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
@@ -175,7 +202,7 @@ jobs:
           parallel: true
           group: "Github Actions"
           install: false
-          start: yarn start
+          start: yarn run -T start
           working-directory: web
           wait-on: "http://localhost:3000, http://localhost:3000/api/graphql"
         env:
