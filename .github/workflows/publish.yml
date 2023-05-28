@@ -203,6 +203,7 @@ jobs:
     needs:
       - tests
       - client
+      - host
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -294,10 +295,12 @@ jobs:
           name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
           path: ./sshca-host/sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
   # Create the release for the tag
-  publishclientrelease:
+  publishrelease:
     runs-on: ubuntu-latest
     name: Publish Client Release
-    needs: publishclientartifacts
+    needs:
+      - publishclientartifacts
+      - publishhosttartifacts
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
 
@@ -318,7 +321,7 @@ jobs:
   publishclientartifactsrelease:
     runs-on: ubuntu-latest
     name: Add Client Artifacts to Release
-    needs: [publishclientartifacts, publishclientrelease]
+    needs: publishrelease
     strategy:
       matrix:
         target:
@@ -344,14 +347,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.publishclientrelease.outputs.upload_url }}
+          upload_url: ${{ needs.publishrelease.outputs.upload_url }}
           asset_path: ./sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_content_type: application/zip
   publishhostartifactsrelease:
     runs-on: ubuntu-latest
     name: Add Host Artifacts to Release
-    needs: [publishhostartifacts, publishclientrelease]
+    needs: publishrelease
     strategy:
       matrix:
         target:
@@ -377,7 +380,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ needs.publishclientrelease.outputs.upload_url }}
+          upload_url: ${{ needs.publishrelease.outputs.upload_url }}
           asset_path: ./sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_content_type: application/zip
