@@ -32,7 +32,7 @@ jobs:
             "web/node_modules"
           key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn --cwd .. --immutable
       - name: Build Web
         env:
           NODE_ENV: development
@@ -63,7 +63,7 @@ jobs:
             "server/node_modules"
           key: ${{ runner.os }}-modules-v1-${{ hashFiles('server/yarn.lock') }}
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn --cwd .. --immutable
       - name: Build Server
         env:
           NODE_ENV: production
@@ -97,6 +97,35 @@ jobs:
         with:
           name: client
           path: ./sshca-client/sshca-client
+  hostlint:
+    name: "Lint Host"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: sshca-host
+  host:
+    name: "Build Host"
+    needs: hostlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Build
+        run: go build -v .
+        working-directory: ./sshca-host
+      - uses: actions/upload-artifact@v2
+        with:
+          name: client
+          path: ./sshca-host/sshca-host
   tests:
     services:
       # Label used to access the service container
@@ -137,18 +166,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        name: Cache Node Modules
-        with:
-          path: |
-            "web/node_modules"
-            "~/.cache/Cypress"
-          key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
-      - uses: actions/cache@v2
-        name: Cache Server Node Modules
-        with:
-          path: "server/node_modules"
-          key: ${{ runner.os }}-modules-v1-${{ hashFiles('server/yarn.lock') }}
       - name: Setup Env
         run: |
           echo "DATABASE_URL=\"postgresql://development:development@localhost:5432/development\"" > .env
@@ -157,9 +174,7 @@ jobs:
           echo "SSH_KEY=\"-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn\nNhAAAAAwEAAQAAAIEApAidP6scNZJZqD2bS4AgJOYiVO/f90tGnz72wFeVUSABHUV/u8II\nju53rj2evLAqY4tgihkN/es0rk5OocWQ/1ShW/IBEtQzJ6zF71JYfqG94G3TLbV8FjJ+Nv\nZznrwBOGcVdMS8uQw0RUx3YnQVUPFdjb54bR2kqzsYKs/cF/kAAAIYHVf3hh1X94YAAAAH\nc3NoLXJzYQAAAIEApAidP6scNZJZqD2bS4AgJOYiVO/f90tGnz72wFeVUSABHUV/u8IIju\n53rj2evLAqY4tgihkN/es0rk5OocWQ/1ShW/IBEtQzJ6zF71JYfqG94G3TLbV8FjJ+NvZz\nnrwBOGcVdMS8uQw0RUx3YnQVUPFdjb54bR2kqzsYKs/cF/kAAAADAQABAAAAgEJ1GwCIms\n05lgmLrDdSmbNZad9vsBXI8bvjDqWu1lgf11O8rJutaTo/c02suXtJBGOAPIS20exmNtnH\n8COqn6us2Tqasx+I1D5VEQ1eGLAo64jo1hJVoOd5UR6DSG+sNmys88C5EJ3TItmOkhQ6SI\nO306abTbKHPtm2EX7cduthAAAAQGcrRy5Poh5Tz54RviYojnDUDyr+nquNHGFFWySOJkrv\nxuk91yyOkc9kdJmzlhkrBzKHzUkpHk5wgVacX7+l+aAAAABBAM32i2NHqoNBBc71KHJfrv\nuLoREVVzIWcE+IbHed2eP2Zgtww7OCU/coAxGimGGxQgznMtzXK3Z7l8MrXufV4J8AAABB\nAMviWtEUUv1gNQ9DSz20pL+dNiQ2v/SEmxEUQnhJ+lQWnUJDS/p2Gv/oRSWpfdLdow8fSd\nho5OSfAErZY5EeSGcAAAAcYWxleEBBbGV4cy1NYWNCb29rLUFpci5sb2NhbAECAwQFBgc=\n-----END OPENSSH PRIVATE KEY-----\"" >> .env
           echo "DOMAIN=\"localhost\"" >> .env
       - name: Install Dependencies
-        run: |
-          yarn --cwd ../web --frozen-lockfile
-          yarn --cwd ../server --frozen-lockfile
+        run: yarn --cwd .. --immutable
       - name: Build Server
         env:
           NODE_ENV: development
@@ -167,8 +182,6 @@ jobs:
           yarn run prisma generate
           yarn run prisma migrate deploy
           yarn build
-      - name: Start Server
-        run: yarn start &
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
@@ -176,14 +189,15 @@ jobs:
           parallel: true
           group: "Github Actions"
           install: false
-          start: yarn start
+          start: yarn run -T start
           working-directory: web
-          wait-on: "http://localhost:3000, http://localhost:3000/api/graphql"
+          wait-on: "http://localhost:4000/api/graphql?query=%7B__typename%7D"
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
           # determine the unique run id necessary to re-run the checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   publishserver:
     name: "Publish Server"
     needs:
@@ -245,6 +259,40 @@ jobs:
         with:
           name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
           path: ./sshca-client/sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+  publishhostartifacts:
+    needs:
+      - tests
+      - host
+    name: Publish Host Artifacts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          [
+            { "os": "darwin", "arch": "amd64" },
+            { "os": "darwin", "arch": "arm64" },
+            { "os": "linux", "arch": "amd64" },
+            { "os": "linux", "arch": "386" },
+            { "os": "windows", "arch": "amd64" },
+            { "os": "windows", "arch": "386" },
+          ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: "1.16.3"
+
+      - name: Create Artifact
+        run: |
+          cd sshca-host
+          GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o sshca_host
+          zip -j -r sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip sshca_host
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
+          path: ./sshca-host/sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
   # Create the release for the tag
   publishclientrelease:
     runs-on: ubuntu-latest
@@ -264,7 +312,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: false
+          draft: true
           prerelease: false
   # Add all the builds as assets to the release
   publishclientartifactsrelease:
@@ -299,4 +347,37 @@ jobs:
           upload_url: ${{ needs.publishclientrelease.outputs.upload_url }}
           asset_path: ./sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          asset_content_type: application/zip
+  publishhostartifactsrelease:
+    runs-on: ubuntu-latest
+    name: Add Host Artifacts to Release
+    needs: [publishhostartifacts, publishclientrelease]
+    strategy:
+      matrix:
+        target:
+          [
+            { "os": "darwin", "arch": "amd64" },
+            { "os": "darwin", "arch": "arm64" },
+            { "os": "linux", "arch": "amd64" },
+            { "os": "linux", "arch": "386" },
+            { "os": "windows", "arch": "amd64" },
+            { "os": "windows", "arch": "386" },
+          ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
+
+      - name: Upload Artifact to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.publishclientrelease.outputs.upload_url }}
+          asset_path: ./sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
+          asset_name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip
           asset_content_type: application/zip

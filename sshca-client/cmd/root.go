@@ -39,6 +39,7 @@ func initConfig() {
 	viper.AddConfigPath(home)
 	viper.SetConfigName(".sshca-client")
 	viper.SetConfigType("yaml")
+
 	err = viper.SafeWriteConfig()
 	if err != nil {
 		log.Print(err)

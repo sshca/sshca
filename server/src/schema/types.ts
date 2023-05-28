@@ -103,11 +103,21 @@ export default gql`
     key: String!
   }
 
+  type HostGenerationReturn {
+    cert: String!
+    caPub: String!
+  }
+
+  type requestHostVerificationReturn {
+    id: ID
+    finished: Boolean!
+  }
+
   type Mutation {
     generateKey(key: String!, subroleId: ID!): String!
-    generateHostKey(key: String!): String!
-    requestHostVerification(key: String!): ID!
-    completeHostVerification(id: ID!, hostId: ID!, accepted: Boolean!): ID!
+    generateHostKey(key: String!): HostGenerationReturn!
+    requestHostVerification(key: String!): requestHostVerificationReturn!
+    completeHostVerification(id: ID!, hostId: ID, accepted: Boolean!): ID
     login(email: String!, password: String!): AuthPayload
     firstUser(email: String!, password: String!): AuthPayload
     createHost(name: String!, hostname: String!): Host

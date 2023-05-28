@@ -1,11 +1,7 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
-
-	"github.com/spf13/viper"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -30,21 +26,4 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-
-	// Search config in home directory with name ".sshca-client" (without extension).
-	viper.AddConfigPath("/etc/ssh")
-	viper.SetConfigName(".sshca-config")
-	viper.SetConfigType("yaml")
-	err := viper.SafeWriteConfig()
-	if err != nil {
-		log.Print(err)
-	}
-
-	viper.AutomaticEnv() // read in environment variables that match
-
-	// If a config file is found, read it in.
-	err = viper.ReadInConfig()
-	if err != nil {
-		log.Fatal("Failed to Read Config")
-	}
 }

@@ -1,6 +1,5 @@
 import { AuthenticationError } from "apollo-server-express";
 import prisma from "../../../prisma";
-import { verifyAuth } from "../../../verifyauth";
 import sshpk from "sshpk";
 
 export const generateHostKey = async (
@@ -26,7 +25,11 @@ export const generateHostKey = async (
     userKey,
     sshpk.identityForUser("sshca"),
     privateKey,
-    { lifetime: 60 * 65 }
+    { lifetime: 60 * 60 * 24 * 365 * 10 }
   );
-  return cert.toString("openssh");
+  const hostKey = sshpk.parsePrivateKey(host.caKey);
+  return {
+    cert: cert.toString("openssh"),
+    caPub: hostKey.toPublic().toString("ssh"),
+  };
 };
