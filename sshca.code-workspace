@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "sshca-client"
+    },
+    {
+      "path": "sshca-host"
+    }
+  ],
+  "settings": {}
+}
