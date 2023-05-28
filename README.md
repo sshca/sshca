@@ -1,5 +1,7 @@
 # SSHCA [![Push](https://github.com/lavalleeale/sshca/actions/workflows/push.yml/badge.svg)](https://github.com/lavalleeale/sshca/actions/workflows/push.yml) [![Publish](https://github.com/lavalleeale/sshca/actions/workflows/publish.yml/badge.svg)](https://github.com/lavalleeale/sshca/actions/workflows/publish.yml)
 
+<img src="https://github.com/sshca/sshca/blob/master/preview.png?raw=true" width="500" />
+
 An SSH Certificate Authority with a simple web interface and easy-to-use command line tool
 
 ## Getting Started

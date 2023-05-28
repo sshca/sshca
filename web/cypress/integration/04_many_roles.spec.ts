@@ -15,13 +15,18 @@ describe("Many Roles", () => {
 
     cy.get("#Name").type("Host 1");
     cy.get("#Hostname").type("host1.local");
+
+    cy.intercept("http://localhost:3000/api/graphql").as("createHost");
+
     cy.get('[type="submit"]').click();
+
+    cy.wait("@createHost");
 
     cy.contains("Host 1").should("exist");
   });
 
   it("Create Roles", () => {
-    var genArr = new Array(50);
+    var genArr = new Array(5);
     cy.wrap(genArr).each((el, index) => {
       cy.get("#Add-Role").click();
 

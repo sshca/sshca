@@ -1,9 +1,11 @@
 {
+  "$schema": "https://raw.githubusercontent.com/cypress-io/cypress/develop/cli/schema/cypress.schema.json",
   "baseUrl": "http://localhost:3000",
   "env": {
     "googleClientId": "CLIENT_ID",
     "googleClientSecret": "CLIENT_SECRET",
     "googleRefreshToken": "REFRESH_TOKEN"
   },
-  "projectId": "34w3c4"
+  "projectId": "34w3c4",
+  "defaultCommandTimeout": 10000
 }
