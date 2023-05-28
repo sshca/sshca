@@ -286,7 +286,7 @@ jobs:
       - name: Create Artifact
         run: |
           cd sshca-host
-          GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o host
+          GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o sshca_host
           zip -j -r sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}.zip sshca_host
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
