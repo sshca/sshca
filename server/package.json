@@ -40,7 +40,7 @@
   },
   "scripts": {
     "build": "node build",
-    "dev": "node build && node dist/server",
+    "dev": "concurrently \"node dev.js\" \"nodemon dist/server\"",
     "start": "node dist/server",
     "prisma:generate": "prisma generate"
   }

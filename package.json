@@ -5,7 +5,7 @@
     "web"
   ],
   "scripts": {
-    "web": "yarn workspace web start",
+    "web": "yarn workspace web dev",
     "server": "yarn workspace server dev",
     "start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn web\""
   },
