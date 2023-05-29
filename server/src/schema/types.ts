@@ -84,7 +84,7 @@ export default gql`
     enabled: Boolean!
   }
 
-  type Subrole {
+  type AuthSubrole {
     id: ID!
     hostName: String!
     user: String!

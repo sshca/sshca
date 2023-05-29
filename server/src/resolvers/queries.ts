@@ -122,7 +122,7 @@ export const Query = {
                 id: true,
                 username: true,
                 hostId: true,
-                host: { select: { name: true } },
+                host: { select: { name: true, hostname: true } },
               },
             },
           },
@@ -133,7 +133,7 @@ export const Query = {
       .map((role) =>
         role.subroles.map((subrole) => ({
           id: subrole.id,
-          hostName: subrole.host.name,
+          hostName: subrole.host.hostname,
           user: subrole.username,
         }))
       )

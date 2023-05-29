@@ -1,31 +1,34 @@
 package cmd
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
-	"strings"
 	"syscall"
 
 	"net/http/cookiejar"
 
 	"github.com/AlecAivazis/survey/v2"
-	homedir "github.com/mitchellh/go-homedir"
 	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"golang.org/x/term"
 )
 
 var Role string
+var KeyFile string
+var Email string
+var CertFile string
+var Server string
 
 func init() {
 	versionCmd.Flags().StringVarP(&Role, "role", "r", "", "Role to preselect")
+	versionCmd.Flags().StringVarP(&KeyFile, "keyFile", "k", "", "Where to find ssh public key")
+	versionCmd.Flags().StringVarP(&Email, "email", "e", "", "Email to login with")
+	versionCmd.Flags().StringVarP(&CertFile, "certFile", "c", "", "Where to store certificate")
+	versionCmd.Flags().StringVarP(&Server, "server", "s", "", "Server to connect to")
 	rootCmd.AddCommand(versionCmd)
 }
 
@@ -34,44 +37,7 @@ var versionCmd = &cobra.Command{
 	Short: "Start Login Sequence",
 	Long:  `LONG DESC`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if viper.GetString("keyLocation") == "" {
-			reader := bufio.NewReader(os.Stdin)
-			fmt.Print("Enter SSH public key location: ")
-			text, _ := reader.ReadString('\n')
-			dir, _ := homedir.Dir()
-			if text == "~" {
-				text = dir
-			} else if strings.HasPrefix(text, "~/") {
-				text = filepath.Join(dir, text[2:])
-			}
-			viper.Set("keyLocation", text[:len(text)-1])
-			err := viper.WriteConfig()
-			if err != nil {
-				log.Fatal("Failed to Write Config")
-			}
-		}
-		if viper.GetString("server") == "" {
-			reader := bufio.NewReader(os.Stdin)
-			fmt.Print("Enter SSHCA server address: ")
-			text, _ := reader.ReadString('\n')
-			viper.Set("server", text[:len(text)-1])
-			err := viper.WriteConfig()
-			if err != nil {
-				log.Fatal("Failed to Write Config")
-			}
-		}
-		if viper.GetString("email") == "" {
-			reader := bufio.NewReader(os.Stdin)
-			fmt.Print("Enter SSHCA email: ")
-			text, _ := reader.ReadString('\n')
-			viper.Set("email", text[:len(text)-1])
-			err := viper.WriteConfig()
-			if err != nil {
-				log.Fatal("Failed to Write Config")
-			}
-		}
-		keyLocation := viper.GetString("keyLocation")
-		data, err := os.ReadFile(keyLocation)
+		data, err := os.ReadFile(KeyFile)
 		if err != nil {
 			log.Fatal("Error reading public key file")
 		}
@@ -79,7 +45,7 @@ var versionCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-		client := graphql.NewClient(fmt.Sprintf("%s/api/graphql", viper.GetString("server")), &http.Client{
+		client := graphql.NewClient(fmt.Sprintf("%s/api/graphql", Server), &http.Client{
 			Jar: jar,
 		})
 		var login struct {
@@ -90,7 +56,7 @@ var versionCmd = &cobra.Command{
 		fmt.Print("Enter Password: \n")
 		text, _ := term.ReadPassword(int(syscall.Stdin))
 		loginVariables := map[string]interface{}{
-			"email":    graphql.String(viper.GetString("email")),
+			"email":    graphql.String(Email),
 			"password": graphql.String(text),
 		}
 		err = client.Mutate(context.Background(), &login, loginVariables)
@@ -142,7 +108,7 @@ var versionCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = os.WriteFile("/tmp/sshca-key.pub", []byte(generateKey.GenerateKey), fs.FileMode(0600))
+		err = os.WriteFile(CertFile, []byte(generateKey.GenerateKey), fs.FileMode(0600))
 		if err != nil {
 			log.Fatal(err)
 		}
