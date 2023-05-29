@@ -1,4 +1,15 @@
 import {
+  ChevronLeft,
+  ChevronRight,
+  Dashboard,
+  Group,
+  Key,
+  Menu,
+  Person,
+  Storage,
+  VerifiedUser,
+} from "@mui/icons-material";
+import {
   AppBar,
   Divider,
   Drawer,
@@ -11,16 +22,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Dashboard,
-  Group,
-  Menu,
-  Person,
-  Storage,
-  Key,
-} from "@mui/icons-material";
 import React from "react";
 import { useHistory } from "react-router";
 
@@ -71,6 +72,11 @@ const Header = () => {
             { name: "Roles", icon: Group, link: "/roles" },
             { name: "Hosts", icon: Storage, link: "/hosts" },
             { name: "Custom Certificate", icon: Key, link: "/custom" },
+            {
+              name: "Verify Host Certificate",
+              icon: VerifiedUser,
+              link: "/verify",
+            },
           ].map((item) => (
             <ListItem
               button

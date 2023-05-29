@@ -139,4 +139,7 @@ export const Query = {
       )
       .flat();
   },
+  hostVerificationStatuses: async () => {
+    return await prisma.hostVerification.findMany({});
+  },
 };

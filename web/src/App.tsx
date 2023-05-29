@@ -1,19 +1,18 @@
 import {
-  createHttpLink,
   ApolloClient,
-  InMemoryCache,
-  from,
   ApolloProvider,
+  InMemoryCache,
+  createHttpLink,
+  from,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 import { LocalizationProvider } from "@mui/lab";
+import DateAdapter from "@mui/lab/AdapterDateFns";
 import { Card, CircularProgress, CssBaseline, Typography } from "@mui/material";
-import { Components, createTheme, ThemeProvider } from "@mui/material/styles";
-import React from "react";
-import { lazy, Suspense, useState } from "react";
+import { Components, ThemeProvider, createTheme } from "@mui/material/styles";
+import React, { Suspense, lazy, useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 import Header from "./components/Header";
-import DateAdapter from "@mui/lab/AdapterDateFns";
 
 const Dash = lazy(() => import("./pages/Dash"));
 const Login = lazy(() => import("./pages/Login"));
@@ -24,6 +23,7 @@ const Host = lazy(() => import("./pages/Host"));
 const User = lazy(() => import("./pages/User"));
 const Role = lazy(() => import("./pages/Role"));
 const VerifyHostCode = lazy(() => import("./pages/VerifyHostCode"));
+const ViewHostRequests = lazy(() => import("./pages/ViewHostRequests"));
 const CustomCertificate = lazy(() => import("./pages/CustomCertificate"));
 
 const link = createHttpLink({
@@ -143,6 +143,11 @@ function App() {
             <Route exact path="/custom">
               <Suspense fallback={<Loading />}>
                 <CustomCertificate />
+              </Suspense>
+            </Route>
+            <Route exact path="/verify">
+              <Suspense fallback={<Loading />}>
+                <ViewHostRequests />
               </Suspense>
             </Route>
           </Switch>
