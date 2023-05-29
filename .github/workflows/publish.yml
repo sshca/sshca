@@ -25,12 +25,6 @@ jobs:
         working-directory: ./web
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        name: Cache Node Modules
-        with:
-          path: |
-            "web/node_modules"
-          key: ${{ runner.os }}-modules-v1-${{ hashFiles('web/yarn.lock') }}
       - name: Install Dependencies
         run: yarn --cwd .. --immutable
       - name: Build Web
@@ -56,12 +50,6 @@ jobs:
         working-directory: ./server
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/cache@v2
-        name: Cache Node Modules
-        with:
-          path: |
-            "server/node_modules"
-          key: ${{ runner.os }}-modules-v1-${{ hashFiles('server/yarn.lock') }}
       - name: Install Dependencies
         run: yarn --cwd .. --immutable
       - name: Build Server
@@ -246,7 +234,7 @@ jobs:
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: "./build"
+          publish-dir: "./web/build"
           production-branch: master
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: "Deploy from GitHub Actions"
