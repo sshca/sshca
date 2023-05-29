@@ -20,8 +20,10 @@ export const requestHostVerification = async (
     return { finished: true };
   }
   const id = randomInt(100000, 999999);
-  await prisma.hostVerification.create({
-    data: { fingerprint: hostFingerprint.toString(), id: id.toString() },
+  await prisma.hostVerification.upsert({
+    where: { fingerprint: hostFingerprint.toString() },
+    create: { fingerprint: hostFingerprint.toString(), id: id.toString() },
+    update: {},
   });
   return { id, finished: false };
 };

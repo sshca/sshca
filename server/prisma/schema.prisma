@@ -39,7 +39,7 @@ model Host {
 model HostVerification {
   id          String   @id
   createdAt   DateTime @default(now())
-  fingerprint String
+  fingerprint String   @unique
 }
 
 model Subrole {

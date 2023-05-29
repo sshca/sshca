@@ -49,7 +49,6 @@ describe("Normal Interaction", () => {
 
   it("View Host", () => {
     cy.contains("Host 1").click();
-    cy.contains("ssh-rsa").should("exist");
     cy.contains("Host 1").should("exist");
     cy.contains("host1.local").should("exist");
   });

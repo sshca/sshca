@@ -1,4 +1,3 @@
-import { lazy, Suspense } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { Paper, Typography } from "@mui/material";
 import { useParams } from "react-router";
@@ -64,13 +63,6 @@ const Host = () => {
               </li>
             ))}
           </ul>
-          <Typography>Setup Script:</Typography>
-          <code
-            style={{ whiteSpace: "pre-wrap", lineBreak: "anywhere" }}
-          >{`echo "TrustedUserCAKeys /etc/ssh/sshca_ca.pub" >> /etc/ssh/sshd_config
-echo "${data.host.caPub
-            .replace("\n", "")
-            .slice(0, -10)}" > /etc/ssh/sshca_ca.pub`}</code>
         </>
       ) : (
         <Typography>No Permissions</Typography>
