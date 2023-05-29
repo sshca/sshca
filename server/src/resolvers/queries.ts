@@ -44,7 +44,18 @@ export const Query = {
     }
     return prisma.role.findUnique({
       where: { id: roleId },
-      include: { subroles: { include: { host: true } }, users: true },
+      include: {
+        subroles: {
+          select: {
+            extensions: true,
+            host: true,
+            username: true,
+            id: true,
+            hostId: true,
+          },
+        },
+        users: true,
+      },
     });
   },
   host: async (
@@ -122,22 +133,14 @@ export const Query = {
                 id: true,
                 username: true,
                 hostId: true,
-                host: { select: { name: true, hostname: true } },
+                host: { select: { name: true, hostname: true, id: true } },
               },
             },
           },
         },
       },
     });
-    return userData!.roles
-      .map((role) =>
-        role.subroles.map((subrole) => ({
-          id: subrole.id,
-          hostName: subrole.host.hostname,
-          user: subrole.username,
-        }))
-      )
-      .flat();
+    return userData!.roles.map((role) => role.subroles).flat();
   },
   hostVerificationStatuses: async () => {
     return await prisma.hostVerification.findMany({});

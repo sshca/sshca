@@ -66,9 +66,11 @@ var versionCmd = &cobra.Command{
 		fmt.Printf("Logged in with id: %v\n", login.Login.Id)
 		var subroles struct {
 			Subroles []struct {
-				Id       graphql.ID
-				HostName graphql.String
-				User     graphql.String
+				Id   graphql.ID
+				Host struct {
+					Hostname graphql.String
+				}
+				Username graphql.String
 			} `graphql:"listSubroles"`
 		}
 		err = client.Query(context.Background(), &subroles, map[string]interface{}{})
@@ -78,7 +80,7 @@ var versionCmd = &cobra.Command{
 		options := make([]string, len(subroles.Subroles))
 		role := -1
 		for i := 0; i < len(subroles.Subroles); i++ {
-			userFriendlyRole := fmt.Sprintf("%v@%v", subroles.Subroles[i].User, subroles.Subroles[i].HostName)
+			userFriendlyRole := fmt.Sprintf("%v@%v", subroles.Subroles[i].Username, subroles.Subroles[i].Host.Hostname)
 			if userFriendlyRole == Role {
 				role = i
 				break
