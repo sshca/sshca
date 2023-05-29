@@ -78,6 +78,10 @@ describe("Normal Interaction", () => {
     cy.get("#Users").type("{backspace}");
     cy.reload();
     cy.contains("test2@example.com").should("not.exist");
+    cy.get("#Edit-Role").click();
+    cy.get("#Username-1").clear().type("roo");
+    cy.get('[type="submit"]').click();
+    cy.contains("host1.local: roo").should("exist");
   });
   it("Cleanup", () => {
     cy.contains("Host 1").should("be.visible");

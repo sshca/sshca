@@ -28,6 +28,8 @@ export default gql`
     username: String!
     role: Role!
     host: Host!
+    hostId: ID!
+    extensions: [Extension!]!
   }
 
   enum Extension {
@@ -130,6 +132,7 @@ export default gql`
     deleteRole(id: ID!): DeletionReturn
     editUserRoles(id: ID!, roleIds: [ID!]!): User
     editRoleUsers(id: ID!, userIds: [ID!]!): Role
+    editRoleSubroles(id: ID!, subroles: [SubroleInput!]!): Role
     createCustomCertificate(
       key: String!
       subrole: SubroleInput!

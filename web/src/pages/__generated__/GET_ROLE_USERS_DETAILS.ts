@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { Extension } from "./../../../__generated__/globalTypes";
+
 // ====================================================
 // GraphQL query operation: GET_ROLE_USERS_DETAILS
 // ====================================================
@@ -22,12 +24,15 @@ export interface GET_ROLE_USERS_DETAILS_role_subroles {
   __typename: "Subrole";
   username: string;
   id: string;
+  hostId: string;
+  extensions: Extension[];
   host: GET_ROLE_USERS_DETAILS_role_subroles_host;
 }
 
 export interface GET_ROLE_USERS_DETAILS_role {
   __typename: "Role";
   name: string;
+  id: string;
   users: GET_ROLE_USERS_DETAILS_role_users[];
   subroles: GET_ROLE_USERS_DETAILS_role_subroles[];
 }

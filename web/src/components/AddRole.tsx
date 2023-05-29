@@ -1,19 +1,7 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React from "react";
-import { CREATE_ROLE } from "./__generated__/CREATE_ROLE";
-import { GET_HOSTS } from "./__generated__/GET_HOSTS";
-import SubroleCreator from "./SubroleCreator";
+import { gql, useMutation } from "@apollo/client";
 import { SubroleInput } from "../../__generated__/globalTypes";
+import RoleSubrolesDiaglog from "./RoleSubrolesDialog";
+import { CREATE_ROLE } from "./__generated__/CREATE_ROLE";
 
 const CREATE_ROLE_MUTATION = gql`
   mutation CREATE_ROLE($name: String!, $subroles: [SubroleInput!]!) {
@@ -32,60 +20,20 @@ const AddRole = ({
   setDialogOpen(value: boolean): void;
   refetch(): void;
 }) => {
-  const [name, setName] = React.useState("");
-  const [subroles, setSubroles] = React.useState<SubroleInput[]>([]);
+  const [addRole] = useMutation<CREATE_ROLE>(CREATE_ROLE_MUTATION, {});
 
-  const [addRole] = useMutation<CREATE_ROLE>(CREATE_ROLE_MUTATION, {
-    variables: { name, subroles },
-  });
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    await addRole();
+  async function onSubmit(name: string, subroles: SubroleInput[]) {
+    await addRole({ variables: { name, subroles } });
     refetch();
-    setSubroles([]);
-    setName("");
   }
+
   return (
-    <Dialog
-      onClose={() => setDialogOpen(false)}
-      open={dialogOpen}
-      style={{ textAlign: "center" }}
-      fullWidth
-      maxWidth="xl"
-    >
-      <DialogTitle id="simple-dialog-title">Create Role</DialogTitle>
-      <form onSubmit={onSubmit}>
-        <DialogContent>
-          <TextField
-            id="Name"
-            fullWidth
-            label="Name"
-            onChange={(e) => setName(e.target.value)}
-            required
-            value={name}
-            variant="outlined"
-          />
-          <SubroleCreator subroles={subroles} setSubroles={setSubroles} />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setDialogOpen(false);
-              setSubroles([]);
-              setName("");
-            }}
-            color="primary"
-            variant="contained"
-          >
-            Cancel
-          </Button>
-          <Button color="primary" variant="contained" type="submit">
-            Add
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+    <RoleSubrolesDiaglog
+      dialogOpen={dialogOpen}
+      setDialogOpen={setDialogOpen}
+      onSubmit={onSubmit}
+      title={"Create"}
+    />
   );
 };
 

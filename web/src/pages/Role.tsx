@@ -1,6 +1,15 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Autocomplete, Paper, TextField, Typography } from "@mui/material";
+import { Edit } from "@mui/icons-material";
+import {
+  Autocomplete,
+  IconButton,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
 import { useParams } from "react-router";
+import EditRole from "../components/EditRole";
 import { EDIT_ROLE_USERS } from "./__generated__/EDIT_ROLE_USERS";
 import { GET_ROLE_USERS_DETAILS } from "./__generated__/GET_ROLE_USERS_DETAILS";
 
@@ -8,6 +17,7 @@ const GET_ROLE_QUERY = gql`
   query GET_ROLE_USERS_DETAILS($id: ID!) {
     role(id: $id) {
       name
+      id
       users {
         email
         id
@@ -15,6 +25,8 @@ const GET_ROLE_QUERY = gql`
       subroles {
         username
         id
+        hostId
+        extensions
         host {
           hostname
         }
@@ -37,6 +49,7 @@ const EDIT_ROLE_USERS_MUTATION = gql`
 
 const Role = () => {
   const { id } = useParams<{ id: string }>();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { loading, error, data, refetch } = useQuery<GET_ROLE_USERS_DETAILS>(
     GET_ROLE_QUERY,
     { variables: { id } }
@@ -59,6 +72,23 @@ const Role = () => {
     );
   return (
     <Paper className="paper">
+      <IconButton
+        id="Edit-Role"
+        aria-label="Edit Role"
+        style={{ float: "right", marginLeft: -100 }}
+        onClick={() => setDialogOpen(true)}
+      >
+        <Edit />
+      </IconButton>
+      <EditRole
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        refetch={() => {
+          setDialogOpen(false);
+          refetch();
+        }}
+        role={data.role}
+      />
       <Typography>Name: {data.role.name}</Typography>
       <Typography>Permissions:</Typography>
       <ul>
