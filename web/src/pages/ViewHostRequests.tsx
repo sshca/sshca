@@ -29,6 +29,12 @@ const ViewHostRequests = () => {
         <Typography>Getting Verification Details</Typography>
       </Paper>
     );
+  if (data.hostVerificationStatuses.length === 0)
+    return (
+      <Paper className="paper">
+        <Typography>No verification requests found</Typography>
+      </Paper>
+    );
   return (
     <>
       {data.hostVerificationStatuses.map((host) => (
