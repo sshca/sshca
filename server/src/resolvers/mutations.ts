@@ -3,6 +3,7 @@ import { createCustomCertificate } from "./mutations/auth/createCustomCertificat
 import { firstUser } from "./mutations/auth/firstuser";
 import { generateHostKey } from "./mutations/auth/generateHostKey";
 import { generateKey } from "./mutations/auth/generateKey";
+import { keyLogin } from "./mutations/auth/keyLogin";
 import { login } from "./mutations/auth/login";
 import { requestHostVerification } from "./mutations/auth/requestHostVerification";
 import { createHost } from "./mutations/create/host";
@@ -32,4 +33,5 @@ export const Mutation = {
   completeHostVerification,
   generateHostKey,
   createCustomCertificate,
+  keyLogin,
 };

@@ -120,7 +120,7 @@ export const Query = {
     _args: any,
     { user }: { user: { id?: string } }
   ) => {
-    if (!verifyAuth(user, false)) {
+    if (!verifyAuth(user, false, false)) {
       throw new UserInputError("Invalid Auth");
     }
     const userData = await prisma.user.findUnique({
@@ -142,7 +142,14 @@ export const Query = {
     });
     return userData!.roles.map((role) => role.subroles).flat();
   },
-  hostVerificationStatuses: async () => {
+  hostVerificationStatuses: async (
+    _parent: any,
+    _args: any,
+    { user }: { user: { id?: string } }
+  ) => {
+    if (!verifyAuth(user)) {
+      throw new UserInputError("Invalid Auth");
+    }
     return await prisma.hostVerification.findMany({});
   },
 };

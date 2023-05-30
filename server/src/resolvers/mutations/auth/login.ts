@@ -18,10 +18,14 @@ export const login = async (
       const admin = Boolean(userData.roles.find((role) => role.id === "Admin"));
       res.cookie(
         "token",
-        jwt.sign({ id: userData.id, admin }, process.env.JWT_PRIVATE, {
-          expiresIn: "2 days",
-          algorithm: "RS256",
-        }),
+        jwt.sign(
+          { id: userData.id, admin, fullLogin: true },
+          process.env.JWT_PRIVATE,
+          {
+            expiresIn: "2 days",
+            algorithm: "RS256",
+          }
+        ),
         {
           domain: process.env.DOMAIN,
           httpOnly: true,

@@ -23,6 +23,7 @@ COPY --from=prod-build /app/node_modules /app/node_modules
 COPY --from=build  /app/dist /app/dist
 COPY --from=build  /app/prisma /app/prisma
 COPY --from=build  /app/.env.example /app/.env.example
+ENV NODE_ENV=production
 
 EXPOSE 3000
 CMD ["yarn", "start"]

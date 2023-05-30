@@ -1,7 +1,7 @@
 import { AuthenticationError } from "apollo-server-express";
+import sshpk from "sshpk";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
-import sshpk from "sshpk";
 
 export const generateKey = async (
   _: any,
@@ -14,7 +14,7 @@ export const generateKey = async (
   },
   { user }: { user: { id?: string } }
 ) => {
-  if (!verifyAuth(user, false)) {
+  if (!verifyAuth(user, false, false)) {
     throw new AuthenticationError("Invalid Auth");
   }
   const subrole = await prisma.subrole.findFirst({
@@ -33,6 +33,10 @@ export const generateKey = async (
   }
   const privateKey = sshpk.parsePrivateKey(subrole.host.caKey, "ssh");
   const userKey = sshpk.parseKey(key, "ssh");
+  await prisma.user.update({
+    where: { id: user.id! },
+    data: { fingerprint: userKey.fingerprint("sha256").toString() },
+  });
   const cert = sshpk.createCertificate(
     [sshpk.identityForUser(subrole.username)],
     userKey,

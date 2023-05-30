@@ -16,6 +16,7 @@ export interface GET_USER_ROLES_DETAILS_user_roles {
 export interface GET_USER_ROLES_DETAILS_user {
   __typename: "User";
   email: string;
+  fingerprint: string | null;
   roles: GET_USER_ROLES_DETAILS_user_roles[];
 }
 

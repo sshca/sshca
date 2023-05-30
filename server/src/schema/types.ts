@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 export default gql`
   type User {
     id: ID!
+    fingerprint: String
     email: String!
     roles: [Role!]!
   }
@@ -123,6 +124,7 @@ export default gql`
     requestHostVerification(key: String!): requestHostVerificationReturn!
     completeHostVerification(id: ID!, hostId: ID, accepted: Boolean!): ID
     login(email: String!, password: String!): AuthPayload
+    keyLogin(key: String!): ID!
     firstUser(email: String!, password: String!): AuthPayload
     createHost(name: String!, hostname: String!): Host
     createUser(email: String!, password: String!): User
