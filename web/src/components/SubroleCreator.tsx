@@ -1,12 +1,12 @@
 import { gql, useQuery } from "@apollo/client";
 import {
-  Typography,
-  TextField,
   Autocomplete,
   Checkbox,
   FormControlLabel,
+  TextField,
+  Typography,
 } from "@mui/material";
-import { SubroleInput, Extension } from "../../__generated__/globalTypes";
+import { Extension, SubroleInput } from "../../__generated__/globalTypes";
 import { GET_HOSTS } from "./__generated__/GET_HOSTS";
 
 const GET_HOSTS_QUERY = gql`
@@ -146,7 +146,9 @@ const SubroleCreator = ({
               style={{ margin: 0 }}
               control={
                 <Checkbox
-                  value={subrole}
+                  inputProps={{ "aria-label": "controlled" }}
+                  defaultChecked={subrole.extensions.includes(extension)}
+                  value={subrole.extensions.includes(extension)}
                   onChange={(e) =>
                     setSubroles([
                       ...subroles.slice(0, index),
