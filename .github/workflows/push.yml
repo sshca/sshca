@@ -80,7 +80,7 @@ jobs:
       - name: Build
         run: go build -v .
         working-directory: ./sshca-client
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: client
           path: ./sshca-client/sshca-client
@@ -109,7 +109,7 @@ jobs:
       - name: Build
         run: go build -v .
         working-directory: ./sshca-host
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: client
           path: ./sshca-host/sshca-host

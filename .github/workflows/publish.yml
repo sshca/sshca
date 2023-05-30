@@ -81,7 +81,7 @@ jobs:
       - name: Build
         run: go build -v .
         working-directory: ./sshca-client
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: client
           path: ./sshca-client/sshca-client
@@ -110,7 +110,7 @@ jobs:
       - name: Build
         run: go build -v .
         working-directory: ./sshca-host
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: client
           path: ./sshca-host/sshca-host
@@ -272,7 +272,7 @@ jobs:
           cd sshca-client
           GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
           path: ./sshca-client/sshca_client_${{ matrix.target.os }}_${{ matrix.target.arch }}
@@ -306,7 +306,7 @@ jobs:
           cd sshca-host
           GOOS=${{ matrix.target.os }} GOARCH=${{ matrix.target.arch }} go build -o sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
       - name: Upload Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
           path: ./sshca-host/sshca_host_${{ matrix.target.os }}_${{ matrix.target.arch }}
