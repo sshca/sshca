@@ -12,7 +12,7 @@ jobs:
       run:
         working-directory: ./web
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Prettify code
         run: npx prettier --check ./src/**
   web:
@@ -23,7 +23,7 @@ jobs:
       run:
         working-directory: ./web
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         run: yarn --cwd .. --immutable
       - name: Build Web
@@ -37,7 +37,7 @@ jobs:
       run:
         working-directory: ./server
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Prettify code
         run: npx prettier --check ./src/**
   server:
@@ -48,7 +48,7 @@ jobs:
       run:
         working-directory: ./server
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Dependencies
         run: yarn --cwd .. --immutable
       - name: Build Server
@@ -59,10 +59,10 @@ jobs:
     name: "Lint Client"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           working-directory: sshca-client
   client:
@@ -70,12 +70,12 @@ jobs:
     needs: clientlint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.16
+          go-version: 1.19
 
       - name: Build
         run: go build -v .
@@ -88,10 +88,10 @@ jobs:
     name: "Lint Host"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v2
+        uses: golangci/golangci-lint-action@v3
         with:
           working-directory: sshca-host
   host:
@@ -99,12 +99,12 @@ jobs:
     needs: hostlint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v4
         with:
-          go-version: 1.16
+          go-version: 1.19
 
       - name: Build
         run: go build -v .
@@ -152,7 +152,7 @@ jobs:
     name: "Run Tests With Cypress"
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Env
         run: |
           echo "DATABASE_URL=\"postgresql://development:development@localhost:5432/development\"" > .env
