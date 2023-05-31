@@ -1,12 +1,12 @@
 describe("Normal Interaction", () => {
   before("Log In", () => {
     cy.task("db:teardown");
-    cy.login();
-    Cypress.Cookies.defaults({ preserve: "token" });
+    Cypress.session.clearAllSavedSessions();
     Cypress.Keyboard.defaults({ keystrokeDelay: 0 });
   });
 
   beforeEach("Go To Main Page", () => {
+    cy.login();
     cy.visit("/dash");
   });
 

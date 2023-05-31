@@ -27,11 +27,13 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.add("login", () => {
-  cy.visit("/");
-  cy.get("input#Email").type("test@example.com");
-  cy.get("input#Password").type("development");
-  cy.contains("Submit").click();
-  cy.url().should("include", "/dash");
+  cy.session("Default", () => {
+    cy.visit("/");
+    cy.get("input#Email").type("test@example.com");
+    cy.get("input#Password").type("development");
+    cy.contains("Submit").click();
+    cy.url().should("include", "/dash");
+  });
 });
 
 export {};
