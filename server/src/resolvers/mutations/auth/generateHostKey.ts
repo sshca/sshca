@@ -27,7 +27,9 @@ export const generateHostKey = async (
     privateKey,
     {
       validFrom: new Date(Date.now() - 5000),
-      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 2),
+      validUntil: new Date(
+        Date.now() + 1000 * Number(process.env.HOST_VALIDITY_SECONDS)
+      ),
     }
   );
   // @ts-expect-error

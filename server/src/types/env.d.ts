@@ -1,9 +1,15 @@
-declare namespace NodeJS {
-  interface ProcessEnv {
-    SSH_KEY: string;
-    JWT_PRIVATE: string;
-    JWT_PUBLIC: string;
-    DOMAIN: string;
-    DATABASE_URL: string;
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      DATABASE_URL: string;
+      JWT_PRIVATE: string;
+      JWT_PUBLIC: string;
+      SSH_KEY: string;
+      DOMAIN: string;
+      HOST_VALIDITY_SECONDS: string;
+      CLIENT_VALIDITY_SECONDS: string;
+    }
   }
 }
+
+export {}

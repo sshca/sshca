@@ -44,7 +44,9 @@ export const generateKey = async (
     privateKey,
     {
       validFrom: new Date(Date.now() - 5000),
-      validUntil: new Date(Date.now() + 10 * 1000 * 60),
+      validUntil: new Date(
+        Date.now() + 1000 * Number(process.env.CLIENT_VALIDITY_SECONDS)
+      ),
     }
   );
 
