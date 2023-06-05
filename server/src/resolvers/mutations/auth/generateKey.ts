@@ -35,7 +35,7 @@ export const generateKey = async (
   const userKey = sshpk.parseKey(key, "ssh");
   await prisma.user.update({
     where: { id: user.id! },
-    data: { fingerprint: userKey.fingerprint("sha256").toString() },
+    data: { fingerprint: userKey.fingerprint("sha256").hash },
   });
   const cert = sshpk.createCertificate(
     [sshpk.identityForUser(subrole.username)],

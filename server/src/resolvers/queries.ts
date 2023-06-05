@@ -1,4 +1,4 @@
-import { AuthenticationError, UserInputError } from "apollo-server-express";
+import { UserInputError } from "apollo-server-express";
 import sshpk from "sshpk";
 import prisma from "../prisma";
 import { verifyAuth } from "../verifyauth";
@@ -9,19 +9,33 @@ export const Query = {
     }
     return prisma.role.findMany();
   },
-  allHosts: (_parent: any, _args: any, { user }: { user: { id?: string } }) => {
+  allHosts: async (
+    _parent: any,
+    _args: any,
+    { user }: { user: { id?: string } }
+  ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
     }
-    return prisma.host.findMany();
+    return (await prisma.host.findMany()).map((host) => ({
+      ...host,
+      fingerprint: host.fingerprint?.toString("base64"),
+    }));
   },
-  allUsers: (_parent: any, _args: any, { user }: { user: { id?: string } }) => {
+  allUsers: async (
+    _parent: any,
+    _args: any,
+    { user }: { user: { id?: string } }
+  ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
     }
-    return prisma.user.findMany();
+    return (await prisma.user.findMany()).map((user) => ({
+      ...user,
+      fingerprint: user.fingerprint?.toString("base64"),
+    }));
   },
-  user: (
+  user: async (
     _: any,
     { id: userId }: { id: string },
     { user }: { user: { id?: string } }
@@ -29,10 +43,14 @@ export const Query = {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
     }
-    return prisma.user.findUnique({
+    const fetchedUser = await prisma.user.findUnique({
       where: { id: userId },
       include: { roles: true },
     });
+    return {
+      ...fetchedUser,
+      fingerprint: fetchedUser?.fingerprint?.toString("base64"),
+    };
   },
   role: (
     _: any,
@@ -73,6 +91,7 @@ export const Query = {
     return host
       ? {
           ...host,
+          fingerprint: host.fingerprint?.toString("base64"),
           caPub: sshpk.parsePrivateKey(host.caKey).toPublic().toString("ssh"),
         }
       : null;
@@ -84,36 +103,10 @@ export const Query = {
       .toPublic()
       .toString("ssh"),
   hostVerificationStatus: async (_: any, { id: requestId }: { id: string }) => {
-    return await prisma.hostVerification.findUnique({
+    const status = await prisma.hostVerification.findUnique({
       where: { id: requestId },
     });
-  },
-  hostPrincipals: async (
-    _: any,
-    {
-      key,
-    }: {
-      key: string;
-    }
-  ) => {
-    const host = await prisma.host.findFirst({
-      where: {
-        fingerprint: sshpk
-          .parseKey(key, "ssh")
-          .fingerprint("sha256")
-          .toString(),
-      },
-      include: {
-        subroles: true,
-      },
-    });
-    if (!host) {
-      throw new AuthenticationError("Host not found");
-    }
-    return host.subroles.map((subrole) => ({
-      username: subrole.username,
-      id: subrole.id,
-    }));
+    return { ...status, fingerprint: status?.fingerprint.toString("base64") };
   },
   listSubroles: async (
     _parent: any,
@@ -150,6 +143,9 @@ export const Query = {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
     }
-    return await prisma.hostVerification.findMany({});
+    return (await prisma.hostVerification.findMany()).map((verification) => ({
+      ...verification,
+      fingerprint: verification.fingerprint?.toString("base64"),
+    }));
   },
 };

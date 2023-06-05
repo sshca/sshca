@@ -60,12 +60,7 @@ export default gql`
 
   type HostVerification {
     createdAt: Float!
-    fingerprint: ID!
-    id: ID!
-  }
-
-  type HostPrincipal {
-    username: String!
+    fingerprint: String!
     id: ID!
   }
 
@@ -103,7 +98,6 @@ export default gql`
     hostVerificationStatus(id: ID!): HostVerification!
     hostVerificationStatuses: [HostVerification!]!
     isFirstUser: Boolean!
-    hostPrincipals(key: String!): [HostPrincipal!]!
     listSubroles: [Subrole!]!
     key: String!
   }

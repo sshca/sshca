@@ -14,15 +14,15 @@ export const requestHostVerification = async (
   const hostFingerprint = hostKey.fingerprint();
   if (
     (await prisma.host.findFirst({
-      where: { fingerprint: hostFingerprint.toString() },
+      where: { fingerprint: hostFingerprint.hash },
     })) !== null
   ) {
     return { finished: true };
   }
   const id = randomInt(100000, 999999);
   await prisma.hostVerification.upsert({
-    where: { fingerprint: hostFingerprint.toString() },
-    create: { fingerprint: hostFingerprint.toString(), id: id.toString() },
+    where: { fingerprint: hostFingerprint.hash },
+    create: { fingerprint: hostFingerprint.hash, id: id.toString() },
     update: {},
   });
   return { id, finished: false };

@@ -14,7 +14,7 @@ model User {
   email       String
   password    String
   roles       Role[]
-  fingerprint String?  @unique
+  fingerprint Bytes?   @unique
 }
 
 model Role {
@@ -34,13 +34,13 @@ model Host {
   hostname    String
   caKey       String
   subroles    Subrole[]
-  fingerprint String?
+  fingerprint Bytes?
 }
 
 model HostVerification {
   id          String   @id
   createdAt   DateTime @default(now())
-  fingerprint String   @unique
+  fingerprint Bytes    @unique
 }
 
 model Subrole {

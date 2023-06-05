@@ -11,7 +11,7 @@ export const keyLogin = async (
 ) => {
   const userKey = sshpk.parseKey(key, "ssh");
   const userData = await prisma.user.findFirst({
-    where: { fingerprint: userKey.fingerprint("sha256").toString() },
+    where: { fingerprint: userKey.fingerprint("sha256").hash },
     include: { roles: { select: { id: true } } },
   });
   if (userData) {

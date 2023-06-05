@@ -12,7 +12,7 @@ export const generateHostKey = async (
 ) => {
   const host = await prisma.host.findFirst({
     where: {
-      fingerprint: sshpk.parseKey(key, "ssh").fingerprint("sha256").toString(),
+      fingerprint: sshpk.parseKey(key, "ssh").fingerprint("sha256").hash,
     },
   });
   if (!host) {
