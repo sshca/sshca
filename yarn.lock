@@ -2682,13 +2682,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sshpk@npm:^1.10.7":
-  version: 1.17.0
-  resolution: "@types/sshpk@npm:1.17.0"
+"@types/sshpk@npm:^1.17.1":
+  version: 1.17.1
+  resolution: "@types/sshpk@npm:1.17.1"
   dependencies:
     "@types/asn1": "*"
     "@types/node": "*"
-  checksum: 32f867e274e695320d851972ed64f85756887ce40fd6dd31c5326cad0c11859e37a712b98ef9ea2178c379301b02be6d2bffe8d55cca3de0fcd7d84822db4d5a
+  checksum: 5ce185e5d4b10ebe81d0fb137431092d4ffe02b9fc4f0f14ae65da81f9c2586e52cf13b6276e2a521897bd3699c2f29bfb854c39e171ac67f36ee5e483988377
   languageName: node
   linkType: hard
 
@@ -8102,7 +8102,7 @@ __metadata:
     "@types/express": ^4.17.13
     "@types/jsonwebtoken": ^8.5.4
     "@types/node": ^16.3.3
-    "@types/sshpk": ^1.10.7
+    "@types/sshpk": ^1.17.1
     "@typescript-eslint/eslint-plugin": ^4.28.4
     "@typescript-eslint/parser": ^4.28.4
     "@vitejs/plugin-react": ^1.2.0
@@ -8123,7 +8123,7 @@ __metadata:
     nodemon: ^2.0.22
     prettier: ^2.3.2
     prisma: 4.9.0
-    sshpk: ^1.16.1
+    sshpk: ^1.17.0
     ts-loader: ^9.2.3
     typescript: ^4.3.5
   languageName: unknown
@@ -8297,7 +8297,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sshpk@npm:^1.14.1, sshpk@npm:^1.16.1":
+"sshpk@npm:^1.14.1, sshpk@npm:^1.17.0":
   version: 1.17.0
   resolution: "sshpk@npm:1.17.0"
   dependencies:

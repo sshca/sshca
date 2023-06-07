@@ -14,7 +14,7 @@
     "graphql": "^15.5.1",
     "graphql-tools": "^7.0.5",
     "jsonwebtoken": "^9.0.0",
-    "sshpk": "^1.16.1"
+    "sshpk": "^1.17.0"
   },
   "devDependencies": {
     "@luckycatfactory/esbuild-graphql-loader": "^3.7.0",
@@ -24,7 +24,7 @@
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.4",
     "@types/node": "^16.3.3",
-    "@types/sshpk": "^1.10.7",
+    "@types/sshpk": "^1.17.1",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
     "@vitejs/plugin-react": "^1.2.0",

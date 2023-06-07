@@ -32,7 +32,7 @@ export const generateHostKey = async (
       ),
     }
   );
-  // @ts-expect-error
+
   const signer = privateKey.createSign("sha512");
   // @ts-expect-error
   const blob = sshpk.Certificate.formats.openssh.toBuffer(cert, true);
