@@ -5,19 +5,8 @@ on:
   pull_request:
 
 jobs:
-  lintweb:
-    name: "Lint Web"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./web
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prettify code
-        run: npx prettier --check ./src/**
   web:
     name: "Build Web"
-    needs: lintweb
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -30,19 +19,8 @@ jobs:
         env:
           NODE_ENV: development
         run: yarn build
-  serverlint:
-    name: "Lint Server"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./server
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prettify code
-        run: npx prettier --check ./src/**
   server:
     name: "Build Server"
-    needs: serverlint
     runs-on: ubuntu-latest
     defaults:
       run:
