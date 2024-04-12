@@ -32,5 +32,5 @@ COPY --from=server-build  /app/server/src/generated /app/server/src/generated
 COPY --from=server-build  /app/server/.env.example /app/server/.env.example
 ENV NODE_ENV=production
 
-EXPOSE 3000
+EXPOSE 4000
 CMD ["yarn", "workspace", "server", "start"]

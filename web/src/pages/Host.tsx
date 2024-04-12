@@ -28,6 +28,7 @@ const Host = () => {
     variables: { id },
   });
 
+  console.log(id);
   if (error)
     return (
       <Paper className="paper">

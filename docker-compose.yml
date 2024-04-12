@@ -4,16 +4,16 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: sshca
-      POSTGRES_DB: sshca
-      POSTGRES_PASSWORD: md5a490a675897fb83b0fade1e4a0810d39 #development
+      POSTGRES_USER: development
+      POSTGRES_DB: development
+      POSTGRES_PASSWORD: development
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
   backend:
     ports:
-      - "4000:4000"
+      - "3000:4000"
     build: .
     environment:
       NODE_ENV: PRODUCTION
