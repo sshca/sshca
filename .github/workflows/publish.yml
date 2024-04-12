@@ -210,40 +210,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./server
           platforms: linux/amd64
           push: true
           tags: |
             ghcr.io/sshca/sshca-server:latest
-  publishweb:
-    name: "Publish Web"
-    needs:
-      - tests
-      - client
-      - host
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./web
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install Dependencies
-        run: yarn --cwd .. --immutable
-      - name: Build Web
-        env:
-          NODE_ENV: PRODUCTION
-        run: yarn build
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: "./web/build"
-          production-branch: master
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions"
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 1
   publishclientartifacts:
     needs:
       - tests

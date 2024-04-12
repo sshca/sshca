@@ -6,10 +6,10 @@ import {
   from,
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
-import { LocalizationProvider } from "@mui/lab";
-import DateAdapter from "@mui/lab/AdapterDateFns";
 import { Card, CircularProgress, CssBaseline, Typography } from "@mui/material";
 import { Components, ThemeProvider, createTheme } from "@mui/material/styles";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { Suspense, lazy, useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 import Header from "./components/Header";
@@ -89,7 +89,7 @@ function App() {
     client.setLink(from([errorLink, link]));
   }, [history]);
   return (
-    <LocalizationProvider dateAdapter={DateAdapter}>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ApolloProvider client={client}>
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
           <CssBaseline />

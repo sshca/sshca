@@ -23,7 +23,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);

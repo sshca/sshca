@@ -5,7 +5,17 @@ build({
   minify: true,
   bundle: true,
   outfile: "dist/server.js",
-  external: ["../node_modules/*", "./node_modules/*"],
+  external: [
+    "apollo-server-express",
+    "jsonwebtoken",
+    "bcrypt",
+    "sshpk",
+    "graphql-tag",
+    "express",
+    "dotenv-safe",
+    "cookie-parser",
+    "@prisma/client",
+  ],
 })
   .then(console.log)
   .catch(() => {

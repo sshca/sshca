@@ -1,0 +1,67 @@
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/prisma"
+}
+
+model User {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  email       String
+  password    String
+  roles       Role[]
+  fingerprint Bytes?   @unique
+}
+
+model Role {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  name      String
+  users     User[]
+  subroles  Subrole[]
+}
+
+model Host {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String
+  hostname    String
+  caKey       String
+  subroles    Subrole[]
+  fingerprint Bytes?
+}
+
+model HostVerification {
+  id          String   @id
+  createdAt   DateTime @default(now())
+  fingerprint Bytes    @unique
+}
+
+model Subrole {
+  id             String      @id @default(uuid())
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  username       String
+  role           Role        @relation(fields: [roleId], references: [id])
+  host           Host        @relation(fields: [hostId], references: [id])
+  hostId         String
+  roleId         String
+  extensions     Extension[]
+  force_command  String?
+  source_address String?
+}
+
+enum Extension {
+  permit_X11_forwarding
+  permit_agent_forwarding
+  permit_port_forwarding
+  permit_pty
+  permit_user_rc
+}

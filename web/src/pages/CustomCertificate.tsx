@@ -1,6 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
-import { DateTimePicker } from "@mui/lab";
 import { Button, Paper, TextField } from "@mui/material";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 import { FormEvent, useState } from "react";
 import { SubroleInput } from "../../__generated__/globalTypes";
 import SubroleCreator from "../components/SubroleCreator";
@@ -19,9 +20,7 @@ const GENERATE_CUSTOM_MUTATION = gql`
 const CustomCertificate = () => {
   const [subrole, setSubrole] = useState<SubroleInput | null>(null);
   const [key, setKey] = useState("");
-  const [expiry, setExpiry] = useState<number | null>(
-    Date.now() + 60 * 60 * 1000
-  );
+  const [expiry, setExpiry] = useState<Dayjs | null>(dayjs().add(1, "hour"));
 
   const [generateCustom] = useMutation<GENERATE_CUSTOM>(
     GENERATE_CUSTOM_MUTATION,
@@ -60,9 +59,9 @@ const CustomCertificate = () => {
         />
         <DateTimePicker
           label="Expiry Date"
-          minDateTime={Date.now()}
+          minDate={dayjs()}
+          maxDate={dayjs().add(1, "year")}
           onChange={setExpiry}
-          renderInput={(params) => <TextField {...params} sx={{ mt: 1 }} />}
           value={expiry}
         />
         <SubroleCreator

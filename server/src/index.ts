@@ -1,10 +1,11 @@
 import { ApolloServer } from "apollo-server-express";
 import cookieParser from "cookie-parser";
+import { config } from "dotenv-safe";
 import express from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import path from "path";
 import { resolvers } from "./resolvers";
 import typeDefs from "./schema/types";
-import { config } from "dotenv-safe";
 config();
 
 async function startApolloServer() {
@@ -28,8 +29,12 @@ async function startApolloServer() {
   });
   await server.start();
   const app = express();
+  app.use(express.static("build"));
   app.use(cookieParser());
   server.applyMiddleware({ app, path: "/api/graphql" });
+  app.get("*", function (request, response) {
+    response.sendFile(path.resolve("build", "index.html"));
+  });
   await new Promise<void>((resolve) =>
     app.listen({ port: 4000 }, () => resolve())
   );
