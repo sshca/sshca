@@ -32,7 +32,7 @@ jobs:
           NODE_ENV: production
         run: |
           yarn workspace server prisma generate
-          yarn workespace server build
+          yarn workspace server build
   clientlint:
     name: "Lint Client"
     runs-on: ubuntu-latest
