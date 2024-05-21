@@ -5,6 +5,7 @@ import express from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "path";
 import { resolvers } from "./resolvers";
+import { Query } from "./resolvers/queries";
 import typeDefs from "./schema/types";
 config();
 
@@ -32,6 +33,9 @@ async function startApolloServer() {
   app.use(express.static("build"));
   app.use(cookieParser());
   server.applyMiddleware({ app, path: "/api/graphql" });
+  app.get("/key", async (req, res) => {
+    res.send(await Query.key());
+  });
   app.get("*", function (request, response) {
     response.sendFile(path.resolve("build", "index.html"));
   });
