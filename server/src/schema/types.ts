@@ -3,9 +3,15 @@ import gql from "graphql-tag";
 export default gql`
   type User {
     id: ID!
-    fingerprint: String
+    fingerprint: [UserFingerprint!]!
     email: String!
     roles: [Role!]!
+  }
+
+  type UserFingerprint {
+    id: ID!
+    fingerprint: String!
+    user: User!
   }
 
   type Role {

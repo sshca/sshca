@@ -8,7 +8,9 @@ const GET_USER_QUERY = gql`
   query GET_USER_ROLES_DETAILS($id: ID!) {
     user(id: $id) {
       email
-      fingerprint
+      fingerprint {
+        fingerprint
+      }
       roles {
         name
         id
@@ -53,9 +55,17 @@ const User = () => {
   return (
     <Paper className="paper">
       <Typography>Email: {data.user.email}</Typography>
-      <Typography>
-        Fingerprint: {data.user.fingerprint || "Fingerprint Not Configured"}
-      </Typography>
+      {data.user.fingerprint.length > 0 ? (
+        <ul>
+          {data.user.fingerprint.map((fingerprint) => (
+            <li key={fingerprint.fingerprint}>
+              Fingerprint: {fingerprint.fingerprint}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <Typography>Fingerprint Not Configured</Typography>
+      )}
       <Autocomplete
         id="Roles"
         multiple

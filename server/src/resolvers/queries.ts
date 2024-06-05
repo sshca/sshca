@@ -30,9 +30,15 @@ export const Query = {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
     }
-    return (await prisma.user.findMany()).map((user) => ({
+    return (
+      await prisma.user.findMany({
+        include: { fingerprint: { select: { fingerprint: true } } },
+      })
+    ).map((user) => ({
       ...user,
-      fingerprint: user.fingerprint?.toString("base64"),
+      fingerprint: user.fingerprint.map((f) =>
+        f.fingerprint.toString("base64")
+      ),
     }));
   },
   user: async (
@@ -45,11 +51,15 @@ export const Query = {
     }
     const fetchedUser = await prisma.user.findUnique({
       where: { id: userId },
-      include: { roles: true },
+      include: { roles: true, fingerprint: { select: { fingerprint: true } } },
     });
+    console.log(fetchedUser);
     return {
       ...fetchedUser,
-      fingerprint: fetchedUser?.fingerprint?.toString("base64"),
+      fingerprint: fetchedUser!.fingerprint.map((f) => ({
+        ...f,
+        fingerprint: f.fingerprint.toString("base64"),
+      })),
     };
   },
   role: (

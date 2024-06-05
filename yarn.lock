@@ -9291,6 +9291,7 @@ __metadata:
     "@yarnpkg/pnpify": "npm:^4.0.1"
     apollo-server-express: "npm:^3.0.2"
     bcrypt: "npm:^5.0.1"
+    concurrently: "npm:^8.0.0"
     cookie-parser: "npm:^1.4.5"
     dotenv-safe: "npm:^8.2.0"
     esbuild: "npm:^0.14.25"

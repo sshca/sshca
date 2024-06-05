@@ -14,7 +14,7 @@ export const generateKey = async (
   },
   { user }: { user: { id?: string } }
 ) => {
-  if (!verifyAuth(user, false, false)) {
+  if (!user.id || !verifyAuth(user, false, false)) {
     throw new AuthenticationError("Invalid Auth");
   }
   const subrole = await prisma.subrole.findFirst({
@@ -33,9 +33,13 @@ export const generateKey = async (
   }
   const privateKey = sshpk.parsePrivateKey(subrole.host.caKey, "ssh");
   const userKey = sshpk.parseKey(key, "ssh");
-  await prisma.user.update({
-    where: { id: user.id! },
-    data: { fingerprint: userKey.fingerprint("sha256").hash },
+  await prisma.userFingerprint.upsert({
+    where: { fingerprint: userKey.fingerprint("sha256").hash },
+    update: {},
+    create: {
+      fingerprint: userKey.fingerprint("sha256").hash,
+      userId: user.id,
+    },
   });
   const cert = sshpk.createCertificate(
     [sshpk.identityForUser(subrole.username)],
@@ -78,7 +82,6 @@ export const generateKey = async (
     });
   }
   cert.signatures.openssh!.keyId = `SSHCA certifcate\nUser:${user.id}\nSubrole:${subrole.id}`;
-  // @ts-expect-error
   const signer = privateKey.createSign("sha512");
   // @ts-expect-error
   const blob = sshpk.Certificate.formats.openssh.toBuffer(cert, true);

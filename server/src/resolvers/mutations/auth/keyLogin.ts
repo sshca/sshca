@@ -10,15 +10,17 @@ export const keyLogin = async (
   { res }: { res: Response }
 ) => {
   const userKey = sshpk.parseKey(key, "ssh");
-  const userData = await prisma.user.findFirst({
+  const fingerprint = await prisma.userFingerprint.findFirst({
     where: { fingerprint: userKey.fingerprint("sha256").hash },
-    include: { roles: { select: { id: true } } },
+    select: {
+      userId: true,
+    },
   });
-  if (userData) {
+  if (fingerprint) {
     res.cookie(
       "token",
       jwt.sign(
-        { id: userData.id, admin: false, fullLogin: false },
+        { id: fingerprint.userId, admin: false, fullLogin: false },
         process.env.JWT_PRIVATE,
         {
           expiresIn: "2 days",
@@ -31,7 +33,7 @@ export const keyLogin = async (
         secure: process.env.NODE_ENV === "production",
       }
     );
-    return userData.id;
+    return fingerprint.userId;
   }
   throw new AuthenticationError("Invalid username or password");
 };

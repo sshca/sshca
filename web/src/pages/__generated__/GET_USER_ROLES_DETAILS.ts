@@ -7,6 +7,11 @@
 // GraphQL query operation: GET_USER_ROLES_DETAILS
 // ====================================================
 
+export interface GET_USER_ROLES_DETAILS_user_fingerprint {
+  __typename: "UserFingerprint";
+  fingerprint: string;
+}
+
 export interface GET_USER_ROLES_DETAILS_user_roles {
   __typename: "Role";
   name: string;
@@ -16,7 +21,7 @@ export interface GET_USER_ROLES_DETAILS_user_roles {
 export interface GET_USER_ROLES_DETAILS_user {
   __typename: "User";
   email: string;
-  fingerprint: string | null;
+  fingerprint: GET_USER_ROLES_DETAILS_user_fingerprint[];
   roles: GET_USER_ROLES_DETAILS_user_roles[];
 }
 
