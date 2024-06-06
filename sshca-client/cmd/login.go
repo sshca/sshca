@@ -6,10 +6,9 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"net/http/cookiejar"
 	"os"
 	"syscall"
-
-	"net/http/cookiejar"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/shurcooL/graphql"
@@ -23,6 +22,11 @@ func init() {
 	loginCommand.Flags().StringVarP(&Email, "email", "e", "", "Email to login with")
 	loginCommand.Flags().StringVarP(&CertFile, "certFile", "c", "", "Where to store certificate")
 	loginCommand.Flags().StringVarP(&Server, "server", "s", "", "Server to connect to")
+	loginCommand.MarkFlagRequired("role")
+	loginCommand.MarkFlagRequired("keyFile")
+	loginCommand.MarkFlagRequired("email")
+	loginCommand.MarkFlagRequired("certFile")
+	loginCommand.MarkFlagRequired("server")
 	rootCmd.AddCommand(loginCommand)
 }
 
@@ -111,7 +115,7 @@ var (
 				log.Fatal(err)
 			}
 
-			err = os.WriteFile(CertFile, []byte(generateKey.GenerateKey), fs.FileMode(0600))
+			err = os.WriteFile(CertFile, []byte(generateKey.GenerateKey), fs.FileMode(0o600))
 			if err != nil {
 				log.Fatal(err)
 			}

@@ -6,9 +6,8 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
-	"os"
-
 	"net/http/cookiejar"
+	"os"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/shurcooL/graphql"
@@ -20,6 +19,10 @@ func init() {
 	keyLoginCommand.Flags().StringVarP(&KeyFile, "keyFile", "k", "", "Where to find ssh public key")
 	keyLoginCommand.Flags().StringVarP(&CertFile, "certFile", "c", "", "Where to store certificate")
 	keyLoginCommand.Flags().StringVarP(&Server, "server", "s", "", "Server to connect to")
+	keyLoginCommand.MarkFlagRequired("role")
+	keyLoginCommand.MarkFlagRequired("keyFile")
+	keyLoginCommand.MarkFlagRequired("certFile")
+	keyLoginCommand.MarkFlagRequired("server")
 	rootCmd.AddCommand(keyLoginCommand)
 }
 
@@ -97,7 +100,7 @@ var keyLoginCommand = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		err = os.WriteFile(CertFile, []byte(generateKey.GenerateKey), fs.FileMode(0600))
+		err = os.WriteFile(CertFile, []byte(generateKey.GenerateKey), fs.FileMode(0o600))
 		if err != nil {
 			log.Fatal(err)
 		}
