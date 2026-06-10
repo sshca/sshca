@@ -12,7 +12,7 @@ jobs:
       run:
         working-directory: ./web
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: yarn --cwd .. --immutable
       - name: Build Web
@@ -23,7 +23,7 @@ jobs:
     name: "Build Server"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Install Dependencies
         run: yarn --immutable
       - name: Build Server
@@ -36,10 +36,10 @@ jobs:
     name: "Lint Client"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v9
         with:
           working-directory: sshca-client
   client:
@@ -47,17 +47,17 @@ jobs:
     needs: clientlint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v6
         with:
           go-version: 1.19
 
       - name: Build
         run: go build -v .
         working-directory: ./sshca-client
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v7
         with:
           name: client
           path: ./sshca-client/sshca-client
@@ -65,10 +65,10 @@ jobs:
     name: "Lint Host"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v9
         with:
           working-directory: sshca-host
   host:
@@ -76,19 +76,19 @@ jobs:
     needs: hostlint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v6
         with:
           go-version: 1.19
 
       - name: Build
         run: go build -v .
         working-directory: ./sshca-host
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v7
         with:
-          name: client
+          name: host
           path: ./sshca-host/sshca-host
   tests:
     services:
@@ -129,7 +129,7 @@ jobs:
     name: "Run Tests With Cypress"
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
       - name: Setup Env
         run: |
           echo "DATABASE_URL=\"postgresql://development:development@localhost:5432/development\"" > .env
@@ -149,7 +149,7 @@ jobs:
           yarn run prisma migrate deploy
           yarn build
       - name: Cypress run
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v7
         with:
           record: true
           parallel: true
