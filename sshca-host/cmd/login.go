@@ -3,9 +3,9 @@ package cmd
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
@@ -23,7 +23,7 @@ var (
 		Short: "Start Login Sequence",
 		Long:  `LONG DESC`,
 		Run: func(cmd *cobra.Command, args []string) {
-			data, err := ioutil.ReadFile(keyFile)
+			data, err := os.ReadFile(keyFile)
 			if err != nil {
 				log.Fatal("Error reading public key file")
 			}

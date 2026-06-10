@@ -22,11 +22,21 @@ func init() {
 	loginCommand.Flags().StringVarP(&Email, "email", "e", "", "Email to login with")
 	loginCommand.Flags().StringVarP(&CertFile, "certFile", "c", "", "Where to store certificate")
 	loginCommand.Flags().StringVarP(&Server, "server", "s", "", "Server to connect to")
-	loginCommand.MarkFlagRequired("role")
-	loginCommand.MarkFlagRequired("keyFile")
-	loginCommand.MarkFlagRequired("email")
-	loginCommand.MarkFlagRequired("certFile")
-	loginCommand.MarkFlagRequired("server")
+	if err := loginCommand.MarkFlagRequired("role"); err != nil {
+		log.Fatal(err)
+	}
+	if err := loginCommand.MarkFlagRequired("keyFile"); err != nil {
+		log.Fatal(err)
+	}
+	if err := loginCommand.MarkFlagRequired("email"); err != nil {
+		log.Fatal(err)
+	}
+	if err := loginCommand.MarkFlagRequired("certFile"); err != nil {
+		log.Fatal(err)
+	}
+	if err := loginCommand.MarkFlagRequired("server"); err != nil {
+		log.Fatal(err)
+	}
 	rootCmd.AddCommand(loginCommand)
 }
 

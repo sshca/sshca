@@ -23,10 +23,18 @@ func init() {
 	keyLoginCommand.Flags().StringVar(&PrivateKeyFile, "privateKeyFile", "", "Where to find ssh private key for challenge signing")
 	keyLoginCommand.Flags().StringVarP(&CertFile, "certFile", "c", "", "Where to store certificate")
 	keyLoginCommand.Flags().StringVarP(&Server, "server", "s", "", "Server to connect to")
-	keyLoginCommand.MarkFlagRequired("role")
-	keyLoginCommand.MarkFlagRequired("privateKeyFile")
-	keyLoginCommand.MarkFlagRequired("certFile")
-	keyLoginCommand.MarkFlagRequired("server")
+	if err := keyLoginCommand.MarkFlagRequired("role"); err != nil {
+		log.Fatal(err)
+	}
+	if err := keyLoginCommand.MarkFlagRequired("privateKeyFile"); err != nil {
+		log.Fatal(err)
+	}
+	if err := keyLoginCommand.MarkFlagRequired("certFile"); err != nil {
+		log.Fatal(err)
+	}
+	if err := keyLoginCommand.MarkFlagRequired("server"); err != nil {
+		log.Fatal(err)
+	}
 	rootCmd.AddCommand(keyLoginCommand)
 }
 

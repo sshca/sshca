@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
@@ -32,7 +32,7 @@ var (
 		Short: "Generate certificates after login",
 		Long:  `LONG DESC`,
 		Run: func(cmd *cobra.Command, args []string) {
-			data, err := ioutil.ReadFile(keyFile)
+			data, err := os.ReadFile(keyFile)
 			if err != nil {
 				log.Fatal("Error reading public key file")
 			}
@@ -52,11 +52,11 @@ var (
 				log.Fatal(err)
 			}
 
-			err = ioutil.WriteFile(certFile, []byte(generateHostKey.GenerateHostKey.Cert), fs.FileMode(0644))
+			err = os.WriteFile(certFile, []byte(generateHostKey.GenerateHostKey.Cert), fs.FileMode(0644))
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = ioutil.WriteFile(caFile, []byte(generateHostKey.GenerateHostKey.CaPub), fs.FileMode(0644))
+			err = os.WriteFile(caFile, []byte(generateHostKey.GenerateHostKey.CaPub), fs.FileMode(0644))
 			if err != nil {
 				log.Fatal(err)
 			}
