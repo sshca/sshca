@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@yarnpkg/pnpify": "^4.0.1",
     "apollo-server-express": "^3.0.2",
@@ -16,6 +17,7 @@
     "graphql-tag": "^2.12.6",
     "graphql-tools": "^7.0.5",
     "jsonwebtoken": "^9.0.0",
+    "pg": "^8.21.0",
     "sshpk": "^1.17.0"
   },
   "devDependencies": {
