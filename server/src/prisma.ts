@@ -1,6 +1,6 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { config } from "dotenv-safe";
-import path from "path";
+import * as path from "path";
 import { PrismaClient } from "./generated/index";
 
 config({

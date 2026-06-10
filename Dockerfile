@@ -1,7 +1,9 @@
-FROM node:18 as base
+FROM node:24 as base
 WORKDIR /app
 
 RUN yarn set version stable
+RUN yarn config set nodeLinker node-modules
+RUN yarn config set enableScripts true
 COPY package.json ./
 COPY yarn.lock ./
 RUN mkdir web server
@@ -19,7 +21,7 @@ RUN export NODE_ENV=production
 
 RUN yarn workspaces focus server
 COPY ./server ./server
-RUN cd server && yarn pnpify prisma generate
+RUN yarn workspace server prisma:generate
 RUN yarn workspace server build
 
 FROM base as prod

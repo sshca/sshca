@@ -17,6 +17,7 @@ services:
     build: .
     environment:
       NODE_ENV: production
+      DATABASE_URL: "postgresql://development:development@db:5432/development"
     volumes:
       - "./server/.env:/app/server/.env"
 volumes:
