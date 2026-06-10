@@ -5,7 +5,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { FormEvent, useState } from "react";
 import { SubroleInput } from "../../__generated__/globalTypes";
 import SubroleCreator from "../components/SubroleCreator";
-import { GENERATE_CUSTOM } from "./__generated__/GENERATE_CUSTOM";
+import {
+  GENERATE_CUSTOM,
+  GENERATE_CUSTOMVariables,
+} from "./__generated__/GENERATE_CUSTOM";
 
 const GENERATE_CUSTOM_MUTATION = gql`
   mutation GENERATE_CUSTOM(
@@ -22,16 +25,19 @@ const CustomCertificate = () => {
   const [key, setKey] = useState("");
   const [expiry, setExpiry] = useState<Dayjs | null>(dayjs().add(1, "hour"));
 
-  const [generateCustom] = useMutation<GENERATE_CUSTOM>(
-    GENERATE_CUSTOM_MUTATION,
-    {
-      variables: { key, expiry, subrole },
-    }
-  );
+  const [generateCustom] = useMutation<
+    GENERATE_CUSTOM,
+    GENERATE_CUSTOMVariables
+  >(GENERATE_CUSTOM_MUTATION);
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    generateCustom().then((data) => {
+    if (!subrole || !expiry) {
+      return;
+    }
+    generateCustom({
+      variables: { key, expiry: expiry.valueOf(), subrole },
+    }).then((data) => {
       if (data.data) {
         const a = window.document.createElement("a");
         a.href = window.URL.createObjectURL(
@@ -71,7 +77,11 @@ const CustomCertificate = () => {
           }
           single
         />
-        <Button type="submit" sx={{ float: "right" }}>
+        <Button
+          disabled={!subrole || !expiry || key.trim() === ""}
+          type="submit"
+          sx={{ float: "right" }}
+        >
           Submit
         </Button>
       </form>

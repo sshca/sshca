@@ -13,6 +13,6 @@ export interface VERIFICATION_COMPLETION {
 
 export interface VERIFICATION_COMPLETIONVariables {
   id: string;
-  hostId: string;
+  hostId: string | null;
   accepted: boolean;
 }

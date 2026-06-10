@@ -2,6 +2,7 @@ import { AuthenticationError } from "apollo-server-express";
 import { compareSync } from "bcrypt";
 import { Response } from "express";
 import jwt from "jsonwebtoken";
+import { authCookieOptions } from "../../../cookies";
 import prisma from "../../../prisma";
 
 export const login = async (
@@ -19,18 +20,14 @@ export const login = async (
       res.cookie(
         "token",
         jwt.sign(
-          { id: userData.id, admin, fullLogin: true },
+          { id: userData.id, fullLogin: true },
           process.env.JWT_PRIVATE,
           {
             expiresIn: "2 days",
             algorithm: "RS256",
           }
         ),
-        {
-          domain: process.env.DOMAIN,
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-        }
+        authCookieOptions()
       );
       return { id: userData.id, admin };
     }

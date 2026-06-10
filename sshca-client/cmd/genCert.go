@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"io/fs"
 	"log"
@@ -12,28 +14,44 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/shurcooL/graphql"
 	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh"
 )
 
 func init() {
 	keyLoginCommand.Flags().StringVarP(&Role, "role", "r", "", "Role to preselect")
 	keyLoginCommand.Flags().StringVarP(&KeyFile, "keyFile", "k", "", "Where to find ssh public key")
+	keyLoginCommand.Flags().StringVar(&PrivateKeyFile, "privateKeyFile", "", "Where to find ssh private key for challenge signing")
 	keyLoginCommand.Flags().StringVarP(&CertFile, "certFile", "c", "", "Where to store certificate")
 	keyLoginCommand.Flags().StringVarP(&Server, "server", "s", "", "Server to connect to")
 	keyLoginCommand.MarkFlagRequired("role")
-	keyLoginCommand.MarkFlagRequired("keyFile")
+	keyLoginCommand.MarkFlagRequired("privateKeyFile")
 	keyLoginCommand.MarkFlagRequired("certFile")
 	keyLoginCommand.MarkFlagRequired("server")
 	rootCmd.AddCommand(keyLoginCommand)
 }
 
+var PrivateKeyFile string
+
 var keyLoginCommand = &cobra.Command{
 	Use:   "genCert",
-	Short: "Login without password",
+	Short: "Login without password using a signed key challenge",
 	Long:  `LONG DESC`,
 	Run: func(cmd *cobra.Command, args []string) {
-		data, err := os.ReadFile(KeyFile)
+		publicKeyFile := KeyFile
+		if publicKeyFile == "" {
+			publicKeyFile = PrivateKeyFile + ".pub"
+		}
+		data, err := os.ReadFile(publicKeyFile)
 		if err != nil {
 			log.Fatal("Error reading public key file")
+		}
+		privateKeyData, err := os.ReadFile(PrivateKeyFile)
+		if err != nil {
+			log.Fatal("Error reading private key file")
+		}
+		signer, err := ssh.ParsePrivateKey(privateKeyData)
+		if err != nil {
+			log.Fatal("Error parsing private key file")
 		}
 		jar, err := cookiejar.New(nil)
 		if err != nil {
@@ -42,13 +60,32 @@ var keyLoginCommand = &cobra.Command{
 		client := graphql.NewClient(fmt.Sprintf("%s/api/graphql", Server), &http.Client{
 			Jar: jar,
 		})
-		var login struct {
-			KeyLogin graphql.ID `graphql:"keyLogin(key: $key)"`
+		var beginLogin struct {
+			BeginKeyLogin struct {
+				Id    graphql.ID
+				Nonce graphql.String
+			} `graphql:"beginKeyLogin(key: $key)"`
 		}
 		loginVariables := map[string]interface{}{
 			"key": graphql.String(data),
 		}
-		err = client.Mutate(context.Background(), &login, loginVariables)
+		err = client.Mutate(context.Background(), &beginLogin, loginVariables)
+		if err != nil {
+			log.Fatal(err)
+		}
+		signature, err := signer.Sign(rand.Reader, []byte(beginLogin.BeginKeyLogin.Nonce))
+		if err != nil {
+			log.Fatal(err)
+		}
+		var completeLogin struct {
+			CompleteKeyLogin graphql.ID `graphql:"completeKeyLogin(id: $id, key: $key, signature: $signature)"`
+		}
+		completeLoginVariables := map[string]interface{}{
+			"id":        beginLogin.BeginKeyLogin.Id,
+			"key":       graphql.String(data),
+			"signature": graphql.String(base64.StdEncoding.EncodeToString(ssh.Marshal(signature))),
+		}
+		err = client.Mutate(context.Background(), &completeLogin, completeLoginVariables)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -17,6 +17,9 @@ export const deleteUser = async (
   if (userId === user.id) {
     throw new UserInputError("Cannot delete yourself");
   }
-  await prisma.user.delete({ where: { id: userId } });
+  await prisma.$transaction([
+    prisma.userFingerprint.deleteMany({ where: { userId } }),
+    prisma.user.delete({ where: { id: userId } }),
+  ]);
   return { id: userId };
 };

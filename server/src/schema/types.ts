@@ -70,6 +70,12 @@ export default gql`
     id: ID!
   }
 
+  type KeyLoginChallenge {
+    id: ID!
+    nonce: String!
+    expiresAt: Float!
+  }
+
   input ExtensionsInput {
     permit_X11_forwarding: Boolean!
     permit_agent_forwarding: Boolean!
@@ -124,7 +130,8 @@ export default gql`
     requestHostVerification(key: String!): requestHostVerificationReturn!
     completeHostVerification(id: ID!, hostId: ID, accepted: Boolean!): ID
     login(email: String!, password: String!): AuthPayload
-    keyLogin(key: String!): ID!
+    beginKeyLogin(key: String!): KeyLoginChallenge!
+    completeKeyLogin(id: ID!, key: String!, signature: String!): ID!
     firstUser(email: String!, password: String!): AuthPayload
     createHost(name: String!, hostname: String!): Host
     createUser(email: String!, password: String!): User

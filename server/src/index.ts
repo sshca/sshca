@@ -6,6 +6,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import path from "path";
 import { resolvers } from "./resolvers";
 import { Query } from "./resolvers/queries";
+import prisma from "./prisma";
 import typeDefs from "./schema/types";
 config();
 
@@ -13,18 +14,30 @@ async function startApolloServer() {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: (ctx) => {
+    context: async (ctx) => {
       try {
+        const payload = ctx.req.cookies.token
+          ? (jwt.verify(ctx.req.cookies.token, process.env.JWT_PUBLIC!, {
+              algorithms: ["RS256"],
+            }) as JwtPayload)
+          : undefined;
+        const id = typeof payload?.id === "string" ? payload.id : undefined;
+        const fullLogin = Boolean(payload?.fullLogin);
+        const userData = id
+          ? await prisma.user.findUnique({
+              where: { id },
+              select: { roles: { select: { id: true } } },
+            })
+          : null;
+        const admin = fullLogin
+          ? Boolean(userData?.roles.find((role) => role.id === "Admin"))
+          : false;
         return {
           ...ctx,
-          user: ctx.req.cookies.token
-            ? (jwt.verify(ctx.req.cookies.token, process.env.JWT_PUBLIC!, {
-                algorithms: ["RS256"],
-              }) as JwtPayload)
-            : { id: undefined },
+          user: userData && id ? { id, fullLogin, admin } : { id: undefined },
         };
       } catch (e) {
-        return ctx;
+        return { ...ctx, user: { id: undefined } };
       }
     },
   });

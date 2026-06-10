@@ -84,7 +84,7 @@ const SubroleCreator = ({
                   ...subroles.slice(0, index),
                   {
                     ...subroles[index],
-                    hostId: value!.id,
+                    hostId: value?.id || "",
                   },
                   ...subroles.slice(index + 1),
                 ]);

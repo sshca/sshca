@@ -10,7 +10,10 @@ import {
 import { useState } from "react";
 import { useParams } from "react-router";
 import EditRole from "../components/EditRole";
-import { EDIT_ROLE_USERS } from "./__generated__/EDIT_ROLE_USERS";
+import {
+  EDIT_ROLE_USERS,
+  EDIT_ROLE_USERSVariables,
+} from "./__generated__/EDIT_ROLE_USERS";
 import { GET_ROLE_USERS_DETAILS } from "./__generated__/GET_ROLE_USERS_DETAILS";
 
 const GET_ROLE_QUERY = gql`
@@ -54,9 +57,10 @@ const Role = () => {
     GET_ROLE_QUERY,
     { variables: { id } }
   );
-  const [editRoleUsers] = useMutation<EDIT_ROLE_USERS>(
-    EDIT_ROLE_USERS_MUTATION
-  );
+  const [editRoleUsers] = useMutation<
+    EDIT_ROLE_USERS,
+    EDIT_ROLE_USERSVariables
+  >(EDIT_ROLE_USERS_MUTATION);
 
   if (error)
     return (

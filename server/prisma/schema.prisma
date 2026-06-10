@@ -1,6 +1,5 @@
 datasource db {
   provider = "postgres"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -13,7 +12,7 @@ model User {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  email     String
+  email     String   @unique
   password  String
   roles     Role[]
 
@@ -37,13 +36,21 @@ model Host {
   hostname    String
   caKey       String
   subroles    Subrole[]
-  fingerprint Bytes?
+  fingerprint Bytes?    @unique
 }
 
 model HostVerification {
   id          String   @id
   createdAt   DateTime @default(now())
   fingerprint Bytes    @unique
+}
+
+model KeyLoginChallenge {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  nonce       String
+  fingerprint Bytes
 }
 
 model Subrole {
@@ -63,7 +70,7 @@ model Subrole {
 model UserFingerprint {
   createdAt   DateTime @default(now())
   fingerprint Bytes    @id
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
 }
 

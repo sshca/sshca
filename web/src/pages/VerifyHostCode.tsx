@@ -9,7 +9,10 @@ import {
 import { FormEvent, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { HOST_VERIFICATION } from "./__generated__/HOST_VERIFICATION";
-import { VERIFICATION_COMPLETION } from "./__generated__/VERIFICATION_COMPLETION";
+import {
+  VERIFICATION_COMPLETION,
+  VERIFICATION_COMPLETIONVariables,
+} from "./__generated__/VERIFICATION_COMPLETION";
 
 const HOST_VERIFICATION_QUERY = gql`
   query HOST_VERIFICATION($id: ID!) {
@@ -27,7 +30,7 @@ const HOST_VERIFICATION_QUERY = gql`
 const VERIFICATION_COMPLETION_MUTATION = gql`
   mutation VERIFICATION_COMPLETION(
     $id: ID!
-    $hostId: ID!
+    $hostId: ID
     $accepted: Boolean!
   ) {
     completeHostVerification(id: $id, hostId: $hostId, accepted: $accepted)
@@ -45,13 +48,15 @@ const VerifyHostCode = () => {
       variables: { id },
     }
   );
-  const [completeVerification] = useMutation<VERIFICATION_COMPLETION>(
-    VERIFICATION_COMPLETION_MUTATION,
-    { variables: { id, hostId } }
-  );
+  const [completeVerification] = useMutation<
+    VERIFICATION_COMPLETION,
+    VERIFICATION_COMPLETIONVariables
+  >(VERIFICATION_COMPLETION_MUTATION);
 
   async function completeHostVerification(accepted: boolean) {
-    const response = await completeVerification({ variables: { accepted } });
+    const response = await completeVerification({
+      variables: { id, hostId: accepted ? hostId : null, accepted },
+    });
     if (response.data?.completeHostVerification) {
       history.push(`/host/${response.data.completeHostVerification}`);
     } else {
@@ -91,7 +96,7 @@ const VerifyHostCode = () => {
           style={{ margin: "auto", marginBottom: 10, width: "50%" }}
           value={data.allHosts.find((host) => host.id === hostId) || null}
           onChange={(_, value) => {
-            setHostId(value!.id);
+            setHostId(value?.id || "");
           }}
           options={data.allHosts}
           getOptionLabel={(option) => option.name}
@@ -103,6 +108,7 @@ const VerifyHostCode = () => {
           variant="contained"
           color="primary"
           type="submit"
+          disabled={hostId === ""}
           style={{ marginRight: 10 }}
         >
           Accept

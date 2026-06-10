@@ -18,6 +18,6 @@ export const editRoleUsers = async (
   }
   return await prisma.role.update({
     where: { id: roleId },
-    data: { users: { connect: userIds.map((id) => ({ id })) } },
+    data: { users: { set: userIds.map((id) => ({ id })) } },
   });
 };

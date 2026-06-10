@@ -1,6 +1,7 @@
 import { hashSync } from "bcrypt";
 import { Response } from "express";
 import jwt from "jsonwebtoken";
+import { authCookieOptions } from "../../../cookies";
 import prisma from "../../../prisma";
 
 export const firstUser = async (
@@ -25,18 +26,14 @@ export const firstUser = async (
     res.cookie(
       "token",
       jwt.sign(
-        { id: user.id, admin: true, fullLogin: true },
+        { id: user.id, fullLogin: true },
         process.env.JWT_PRIVATE,
         {
           expiresIn: "2 days",
           algorithm: "RS256",
         }
       ),
-      {
-        domain: process.env.DOMAIN,
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      }
+      authCookieOptions()
     );
     return { id: user.id };
   }

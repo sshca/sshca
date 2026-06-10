@@ -72,16 +72,20 @@ function Loading() {
 }
 function App() {
   const [darkMode, setDarkMode] = useState(darkThemeMq.matches);
-  darkThemeMq.addEventListener("change", (evt) => {
-    setDarkMode(evt.matches);
-  });
+  React.useEffect(() => {
+    const listener = (evt: MediaQueryListEvent) => {
+      setDarkMode(evt.matches);
+    };
+    darkThemeMq.addEventListener("change", listener);
+    return () => darkThemeMq.removeEventListener("change", listener);
+  }, []);
   const history = useHistory();
   React.useEffect(() => {
     const errorLink = onError(({ graphQLErrors }) => {
       if (graphQLErrors)
         graphQLErrors.forEach(({ message }) => {
           if (message === "Invalid Auth") {
-            history.push("");
+            history.push("/");
           }
         });
     });
