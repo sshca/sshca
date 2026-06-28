@@ -1,7 +1,6 @@
 import { hashSync } from "bcrypt";
 import { Response } from "express";
-import jwt from "jsonwebtoken";
-import { authCookieOptions } from "../../../cookies";
+import { setFullLoginCookie } from "../../../auth";
 import prisma from "../../../prisma";
 
 export const firstUser = async (
@@ -13,7 +12,7 @@ export const firstUser = async (
     email: string;
     password: string;
   },
-  { res }: { res: Response }
+  { res }: { res: Response },
 ) => {
   if ((await prisma.user.count()) === 0) {
     const user = await prisma.user.create({
@@ -23,18 +22,7 @@ export const firstUser = async (
         roles: { create: { name: "Admin", id: "Admin" } },
       },
     });
-    res.cookie(
-      "token",
-      jwt.sign(
-        { id: user.id, fullLogin: true },
-        process.env.JWT_PRIVATE,
-        {
-          expiresIn: "2 days",
-          algorithm: "RS256",
-        }
-      ),
-      authCookieOptions()
-    );
-    return { id: user.id };
+    setFullLoginCookie(res, user.id);
+    return { id: user.id, admin: true };
   }
 };

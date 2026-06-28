@@ -6,12 +6,21 @@ export default gql`
     fingerprint: [UserFingerprint!]!
     email: String!
     roles: [Role!]!
+    passkeys: [PasskeyCredential!]!
   }
 
   type UserFingerprint {
     id: ID!
     fingerprint: String!
     user: User!
+  }
+
+  type PasskeyCredential {
+    id: ID!
+    name: String
+    createdAt: Float!
+    lastUsedAt: Float
+    transports: [String!]!
   }
 
   type Role {
@@ -112,6 +121,7 @@ export default gql`
     isFirstUser: Boolean!
     listSubroles: [Subrole!]!
     key: String!
+    me: User
   }
 
   type HostGenerationReturn {
@@ -130,6 +140,14 @@ export default gql`
     requestHostVerification(key: String!): requestHostVerificationReturn!
     completeHostVerification(id: ID!, hostId: ID, accepted: Boolean!): ID
     login(email: String!, password: String!): AuthPayload
+    beginPasskeyRegistration: String!
+    completePasskeyRegistration(
+      response: String!
+      name: String
+    ): PasskeyCredential!
+    beginPasskeyLogin: String!
+    completePasskeyLogin(response: String!): AuthPayload!
+    deletePasskeyCredential(id: ID!): DeletionReturn
     beginKeyLogin(key: String!): KeyLoginChallenge!
     completeKeyLogin(id: ID!, key: String!, signature: String!): ID!
     firstUser(email: String!, password: String!): AuthPayload
