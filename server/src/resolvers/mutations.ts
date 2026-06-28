@@ -1,7 +1,12 @@
 import { beginKeyLogin } from "./mutations/auth/beginKeyLogin";
+import { beginPasskeyLogin } from "./mutations/auth/beginPasskeyLogin";
+import { beginPasskeyRegistration } from "./mutations/auth/beginPasskeyRegistration";
 import { completeHostVerification } from "./mutations/auth/completeHostVerification";
 import { completeKeyLogin } from "./mutations/auth/completeKeyLogin";
+import { completePasskeyLogin } from "./mutations/auth/completePasskeyLogin";
+import { completePasskeyRegistration } from "./mutations/auth/completePasskeyRegistration";
 import { createCustomCertificate } from "./mutations/auth/createCustomCertificate";
+import { deletePasskeyCredential } from "./mutations/auth/deletePasskeyCredential";
 import { firstUser } from "./mutations/auth/firstuser";
 import { generateHostKey } from "./mutations/auth/generateHostKey";
 import { generateKey } from "./mutations/auth/generateKey";
@@ -36,4 +41,9 @@ export const Mutation = {
   createCustomCertificate,
   beginKeyLogin,
   completeKeyLogin,
+  beginPasskeyRegistration,
+  completePasskeyRegistration,
+  beginPasskeyLogin,
+  completePasskeyLogin,
+  deletePasskeyCredential,
 };

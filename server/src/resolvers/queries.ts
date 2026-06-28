@@ -2,6 +2,23 @@ import { UserInputError } from "apollo-server-express";
 import sshpk from "sshpk";
 import prisma from "../prisma";
 import { verifyAuth } from "../verifyauth";
+
+const formatPasskeys = <
+  T extends {
+    passkeys?: { createdAt: Date; lastUsedAt: Date | null }[];
+  },
+>(
+  user: T,
+) => ({
+  ...user,
+  passkeys:
+    user.passkeys?.map((passkey) => ({
+      ...passkey,
+      createdAt: passkey.createdAt.getTime(),
+      lastUsedAt: passkey.lastUsedAt?.getTime() || null,
+    })) || [],
+});
+
 export const Query = {
   allRoles: (_parent: any, _args: any, { user }: { user: { id?: string } }) => {
     if (!verifyAuth(user)) {
@@ -12,7 +29,7 @@ export const Query = {
   allHosts: async (
     _parent: any,
     _args: any,
-    { user }: { user: { id?: string } }
+    { user }: { user: { id?: string } },
   ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
@@ -25,37 +42,43 @@ export const Query = {
   allUsers: async (
     _parent: any,
     _args: any,
-    { user }: { user: { id?: string } }
+    { user }: { user: { id?: string } },
   ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
     }
     return (
       await prisma.user.findMany({
-        include: { fingerprint: { select: { fingerprint: true } } },
+        include: {
+          fingerprint: { select: { fingerprint: true } },
+          passkeys: true,
+        },
       })
     ).map((user) => ({
-      ...user,
-      fingerprint: user.fingerprint.map((f) =>
-        f.fingerprint.toString("base64")
-      ),
+      ...formatPasskeys(user),
+      fingerprint: user.fingerprint.map((f) => ({
+        fingerprint: f.fingerprint.toString("base64"),
+      })),
     }));
   },
   user: async (
     _: any,
     { id: userId }: { id: string },
-    { user }: { user: { id?: string } }
+    { user }: { user: { id?: string } },
   ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
     }
     const fetchedUser = await prisma.user.findUnique({
       where: { id: userId },
-      include: { roles: true, fingerprint: { select: { fingerprint: true } } },
+      include: {
+        roles: true,
+        fingerprint: { select: { fingerprint: true } },
+        passkeys: true,
+      },
     });
-    console.log(fetchedUser);
     return {
-      ...fetchedUser,
+      ...formatPasskeys(fetchedUser!),
       fingerprint: fetchedUser!.fingerprint.map((f) => ({
         ...f,
         fingerprint: f.fingerprint.toString("base64"),
@@ -65,7 +88,7 @@ export const Query = {
   role: (
     _: any,
     { id: roleId }: { id: string },
-    { user }: { user: { id?: string } }
+    { user }: { user: { id?: string } },
   ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
@@ -89,7 +112,7 @@ export const Query = {
   host: async (
     _: any,
     { id: hostId }: { id: string },
-    { user }: { user: { id?: string } }
+    { user }: { user: { id?: string } },
   ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");
@@ -112,6 +135,32 @@ export const Query = {
       .parsePrivateKey(process.env.SSH_KEY, "ssh")
       .toPublic()
       .toString("ssh"),
+  me: async (
+    _parent: any,
+    _args: any,
+    { user }: { user: { id?: string; admin?: boolean; fullLogin?: boolean } },
+  ) => {
+    if (!verifyAuth(user) || !user.id) {
+      return null;
+    }
+    const fetchedUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        roles: true,
+        fingerprint: { select: { fingerprint: true } },
+        passkeys: true,
+      },
+    });
+    return fetchedUser
+      ? {
+          ...formatPasskeys(fetchedUser),
+          fingerprint: fetchedUser.fingerprint.map((f) => ({
+            ...f,
+            fingerprint: f.fingerprint.toString("base64"),
+          })),
+        }
+      : null;
+  },
   hostVerificationStatus: async (_: any, { id: requestId }: { id: string }) => {
     const status = await prisma.hostVerification.findUnique({
       where: { id: requestId },
@@ -121,7 +170,7 @@ export const Query = {
   listSubroles: async (
     _parent: any,
     _args: any,
-    { user }: { user: { id?: string } }
+    { user }: { user: { id?: string } },
   ) => {
     if (!verifyAuth(user, false, false)) {
       throw new UserInputError("Invalid Auth");
@@ -148,7 +197,7 @@ export const Query = {
   hostVerificationStatuses: async (
     _parent: any,
     _args: any,
-    { user }: { user: { id?: string } }
+    { user }: { user: { id?: string } },
   ) => {
     if (!verifyAuth(user)) {
       throw new UserInputError("Invalid Auth");

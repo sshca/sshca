@@ -16,7 +16,9 @@ model User {
   password  String
   roles     Role[]
 
-  fingerprint UserFingerprint[]
+  fingerprint       UserFingerprint[]
+  passkeys          PasskeyCredential[]
+  passkeyChallenges PasskeyChallenge[]
 }
 
 model Role {
@@ -53,6 +55,37 @@ model KeyLoginChallenge {
   fingerprint Bytes
 }
 
+model PasskeyCredential {
+  id                   String    @id @default(uuid())
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  lastUsedAt           DateTime?
+  credentialId         String    @unique
+  publicKey            Bytes
+  counter              Int
+  transports           String[]
+  name                 String?
+  credentialDeviceType String?
+  credentialBackedUp   Boolean?
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String
+
+  @@index([userId])
+}
+
+model PasskeyChallenge {
+  id        String               @id @default(uuid())
+  createdAt DateTime             @default(now())
+  expiresAt DateTime
+  challenge String               @unique
+  type      PasskeyChallengeType
+  user      User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+
+  @@index([type, challenge])
+  @@index([expiresAt])
+}
+
 model Subrole {
   id             String      @id @default(uuid())
   createdAt      DateTime    @default(now())
@@ -80,4 +113,9 @@ enum Extension {
   permit_port_forwarding
   permit_pty
   permit_user_rc
+}
+
+enum PasskeyChallengeType {
+  REGISTRATION
+  AUTHENTICATION
 }

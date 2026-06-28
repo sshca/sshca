@@ -21,6 +21,8 @@ const pluginConfig: Cypress.PluginConfig = (on, config) => {
   on("task", {
     "db:teardown": () => {
       return (async () => {
+        await prisma.passkeyChallenge.deleteMany();
+        await prisma.passkeyCredential.deleteMany();
         await prisma.subrole.deleteMany();
         await prisma.hostVerification.deleteMany();
         await prisma.host.deleteMany();

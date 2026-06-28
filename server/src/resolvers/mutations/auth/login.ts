@@ -1,14 +1,13 @@
 import { AuthenticationError } from "apollo-server-express";
 import { compareSync } from "bcrypt";
 import { Response } from "express";
-import jwt from "jsonwebtoken";
-import { authCookieOptions } from "../../../cookies";
+import { setFullLoginCookie } from "../../../auth";
 import prisma from "../../../prisma";
 
 export const login = async (
   _: any,
   { email, password }: { email: string; password: string },
-  { res }: { res: Response }
+  { res }: { res: Response },
 ) => {
   const userData = await prisma.user.findFirst({
     where: { email },
@@ -17,18 +16,7 @@ export const login = async (
   if (userData) {
     if (compareSync(password, userData.password)) {
       const admin = Boolean(userData.roles.find((role) => role.id === "Admin"));
-      res.cookie(
-        "token",
-        jwt.sign(
-          { id: userData.id, fullLogin: true },
-          process.env.JWT_PRIVATE,
-          {
-            expiresIn: "2 days",
-            algorithm: "RS256",
-          }
-        ),
-        authCookieOptions()
-      );
+      setFullLoginCookie(res, userData.id);
       return { id: userData.id, admin };
     }
   }
