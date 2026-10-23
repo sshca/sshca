@@ -33,12 +33,13 @@
     "@types/sshpk": "^1.17.5",
     "concurrently": "^10.0.6",
     "esbuild": "^0.28.2",
+    "nodemon": "^3.1.14",
     "prisma": "^7.10.1",
     "typescript": "^7.0.2"
   },
   "scripts": {
     "build": "node build.js",
-    "dev": "concurrently \"node dev.js\" \"nodemon dist/server\"",
+    "dev": "concurrently \"node dev.js\" \"nodemon dist/server.js\"",
     "start": "node dist/server",
     "prisma:generate": "prisma generate"
   }
