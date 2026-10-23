@@ -1,8 +1,9 @@
-import { ApolloError, gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   IconButton,
   ListItem,
-  ListItemSecondaryAction,
+  ListItemButton,
   ListItemText,
   Snackbar,
 } from "@mui/material";
@@ -10,7 +11,7 @@ import { Delete } from "@mui/icons-material";
 import { Alert } from "@mui/material";
 import React from "react";
 import { useCookies } from "react-cookie";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { DELETE_USER } from "./__generated__/DELETE_USER";
 
 const DELETE_USER_MUTATION = gql`
@@ -28,7 +29,7 @@ const User = ({
   user: { email: string; id: string };
   remove(): void;
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [cookies] = useCookies();
   const [selfDeleted, setSelfDeleted] = React.useState(false);
   const [deleteUser] = useMutation<DELETE_USER>(DELETE_USER_MUTATION, {
@@ -46,10 +47,10 @@ const User = ({
           You cannot delete yourself.
         </Alert>
       </Snackbar>
-      <ListItem button onClick={() => history.push(`/user/${user.id}`)}>
-        <ListItemText primary={user.email} />
-        {user.id.toString() !== cookies.id && (
-          <ListItemSecondaryAction>
+      <ListItem
+        disablePadding
+        secondaryAction={
+          user.id.toString() !== cookies.id && (
             <IconButton
               edge="end"
               aria-label="delete"
@@ -57,7 +58,7 @@ const User = ({
                 try {
                   await deleteUser();
                 } catch (error) {
-                  if (error instanceof ApolloError) {
+                  if (error instanceof Error) {
                     if (error.message === "Cannot delete yourself") {
                       setSelfDeleted(true);
                     }
@@ -70,8 +71,12 @@ const User = ({
             >
               <Delete />
             </IconButton>
-          </ListItemSecondaryAction>
-        )}
+          )
+        }
+      >
+        <ListItemButton onClick={() => navigate(`/user/${user.id}`)}>
+          <ListItemText primary={user.email} />
+        </ListItemButton>
       </ListItem>
     </>
   );

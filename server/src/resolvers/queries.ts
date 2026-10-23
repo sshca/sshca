@@ -1,4 +1,4 @@
-import { UserInputError } from "apollo-server-express";
+import { UserInputError } from "../errors";
 import sshpk from "sshpk";
 import prisma from "../prisma";
 import { verifyAuth } from "../verifyauth";
@@ -36,7 +36,9 @@ export const Query = {
     }
     return (await prisma.host.findMany()).map((host) => ({
       ...host,
-      fingerprint: host.fingerprint?.toString("base64"),
+      fingerprint: host.fingerprint
+        ? Buffer.from(host.fingerprint).toString("base64")
+        : undefined,
     }));
   },
   allUsers: async (
@@ -57,7 +59,7 @@ export const Query = {
     ).map((user) => ({
       ...formatPasskeys(user),
       fingerprint: user.fingerprint.map((f) => ({
-        fingerprint: f.fingerprint.toString("base64"),
+        fingerprint: Buffer.from(f.fingerprint).toString("base64"),
       })),
     }));
   },
@@ -81,7 +83,7 @@ export const Query = {
       ...formatPasskeys(fetchedUser!),
       fingerprint: fetchedUser!.fingerprint.map((f) => ({
         ...f,
-        fingerprint: f.fingerprint.toString("base64"),
+        fingerprint: Buffer.from(f.fingerprint).toString("base64"),
       })),
     };
   },
@@ -124,7 +126,9 @@ export const Query = {
     return host
       ? {
           ...host,
-          fingerprint: host.fingerprint?.toString("base64"),
+          fingerprint: host.fingerprint
+            ? Buffer.from(host.fingerprint).toString("base64")
+            : undefined,
           caPub: sshpk.parsePrivateKey(host.caKey).toPublic().toString("ssh"),
         }
       : null;
@@ -156,7 +160,7 @@ export const Query = {
           ...formatPasskeys(fetchedUser),
           fingerprint: fetchedUser.fingerprint.map((f) => ({
             ...f,
-            fingerprint: f.fingerprint.toString("base64"),
+            fingerprint: Buffer.from(f.fingerprint).toString("base64"),
           })),
         }
       : null;
@@ -165,7 +169,12 @@ export const Query = {
     const status = await prisma.hostVerification.findUnique({
       where: { id: requestId },
     });
-    return { ...status, fingerprint: status?.fingerprint.toString("base64") };
+    return {
+      ...status,
+      fingerprint: status
+        ? Buffer.from(status.fingerprint).toString("base64")
+        : undefined,
+    };
   },
   listSubroles: async (
     _parent: any,
@@ -204,7 +213,9 @@ export const Query = {
     }
     return (await prisma.hostVerification.findMany()).map((verification) => ({
       ...verification,
-      fingerprint: verification.fingerprint?.toString("base64"),
+      fingerprint: verification.fingerprint
+        ? Buffer.from(verification.fingerprint).toString("base64")
+        : undefined,
     }));
   },
 };

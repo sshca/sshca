@@ -1,17 +1,13 @@
-import {
-  ApolloClient,
-  ApolloProvider,
-  InMemoryCache,
-  createHttpLink,
-  from,
-} from "@apollo/client";
+import { ApolloClient, InMemoryCache, createHttpLink, from } from "@apollo/client";
+import { CombinedGraphQLErrors } from "@apollo/client/errors";
+import { ApolloProvider } from "@apollo/client/react";
 import { onError } from "@apollo/client/link/error";
 import { Card, CircularProgress, CssBaseline, Typography } from "@mui/material";
 import { Components, ThemeProvider, createTheme } from "@mui/material/styles";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React, { Suspense, lazy, useState } from "react";
-import { Route, Switch, useHistory } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router";
 import Header from "./components/Header";
 
 const Dash = lazy(() => import("./pages/Dash"));
@@ -79,82 +75,37 @@ function App() {
     darkThemeMq.addEventListener("change", listener);
     return () => darkThemeMq.removeEventListener("change", listener);
   }, []);
-  const history = useHistory();
+  const navigate = useNavigate();
   React.useEffect(() => {
-    const errorLink = onError(({ graphQLErrors }) => {
-      if (graphQLErrors)
-        graphQLErrors.forEach(({ message }) => {
-          if (message === "Invalid Auth") {
-            history.push("/");
-          }
+    const errorLink = onError(({ error }) => {
+      if (CombinedGraphQLErrors.is(error)) {
+        error.errors.forEach(({ message }) => {
+          if (message === "Invalid Auth") navigate("/");
         });
+      }
     });
 
     client.setLink(from([errorLink, link]));
-  }, [history]);
+  }, [navigate]);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ApolloProvider client={client}>
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
           <CssBaseline />
           <Header />
-          <Switch>
-            <Route exact path="/">
-              <Suspense fallback={<Loading />}>
-                <Login />
-              </Suspense>
-            </Route>
-            <Route exact path="/dash">
-              <Suspense fallback={<Loading />}>
-                <Dash />
-              </Suspense>
-            </Route>
-            <Route exact path="/roles">
-              <Suspense fallback={<Loading />}>
-                <Roles />
-              </Suspense>
-            </Route>
-            <Route exact path="/hosts">
-              <Suspense fallback={<Loading />}>
-                <Hosts />
-              </Suspense>
-            </Route>
-            <Route exact path="/users">
-              <Suspense fallback={<Loading />}>
-                <UsersPage />
-              </Suspense>
-            </Route>
-            <Route exact path="/host/:id">
-              <Suspense fallback={<Loading />}>
-                <Host />
-              </Suspense>
-            </Route>
-            <Route exact path="/user/:id">
-              <Suspense fallback={<Loading />}>
-                <User />
-              </Suspense>
-            </Route>
-            <Route exact path="/role/:id">
-              <Suspense fallback={<Loading />}>
-                <Role />
-              </Suspense>
-            </Route>
-            <Route exact path="/verifyHost/:id">
-              <Suspense fallback={<Loading />}>
-                <VerifyHostCode />
-              </Suspense>
-            </Route>
-            <Route exact path="/custom">
-              <Suspense fallback={<Loading />}>
-                <CustomCertificate />
-              </Suspense>
-            </Route>
-            <Route exact path="/verify">
-              <Suspense fallback={<Loading />}>
-                <ViewHostRequests />
-              </Suspense>
-            </Route>
-          </Switch>
+          <Routes>
+            <Route path="/" element={<Suspense fallback={<Loading />}><Login /></Suspense>} />
+            <Route path="/dash" element={<Suspense fallback={<Loading />}><Dash /></Suspense>} />
+            <Route path="/roles" element={<Suspense fallback={<Loading />}><Roles /></Suspense>} />
+            <Route path="/hosts" element={<Suspense fallback={<Loading />}><Hosts /></Suspense>} />
+            <Route path="/users" element={<Suspense fallback={<Loading />}><UsersPage /></Suspense>} />
+            <Route path="/host/:id" element={<Suspense fallback={<Loading />}><Host /></Suspense>} />
+            <Route path="/user/:id" element={<Suspense fallback={<Loading />}><User /></Suspense>} />
+            <Route path="/role/:id" element={<Suspense fallback={<Loading />}><Role /></Suspense>} />
+            <Route path="/verifyHost/:id" element={<Suspense fallback={<Loading />}><VerifyHostCode /></Suspense>} />
+            <Route path="/custom" element={<Suspense fallback={<Loading />}><CustomCertificate /></Suspense>} />
+            <Route path="/verify" element={<Suspense fallback={<Loading />}><ViewHostRequests /></Suspense>} />
+          </Routes>
         </ThemeProvider>
       </ApolloProvider>
     </LocalizationProvider>

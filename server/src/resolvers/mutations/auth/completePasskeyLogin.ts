@@ -1,4 +1,4 @@
-import { AuthenticationError, UserInputError } from "apollo-server-express";
+import { AuthenticationError, UserInputError } from "../../../errors";
 import {
   AuthenticationResponseJSON,
   verifyAuthenticationResponse,

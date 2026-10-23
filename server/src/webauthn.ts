@@ -1,4 +1,4 @@
-import type { AuthenticatorTransportFuture } from "@simplewebauthn/server";
+import type { AuthenticatorTransport } from "@simplewebauthn/server";
 
 export const PASSKEY_CHALLENGE_TTL_MS = 5 * 60 * 1000;
 
@@ -21,9 +21,7 @@ export const handleToUserId = (handle: string) =>
 
 export const parseTransports = (
   transports: string[],
-): AuthenticatorTransportFuture[] =>
-  transports.filter((transport): transport is AuthenticatorTransportFuture =>
-    ["ble", "cable", "hybrid", "internal", "nfc", "smart-card", "usb"].includes(
-      transport,
-    ),
+): AuthenticatorTransport[] =>
+  transports.filter((transport): transport is AuthenticatorTransport =>
+    ["ble", "hybrid", "internal", "nfc", "usb"].includes(transport),
   );

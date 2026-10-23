@@ -1,4 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client/react";
 import {
   Autocomplete,
   Button,
@@ -7,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { FormEvent, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 import { HOST_VERIFICATION } from "./__generated__/HOST_VERIFICATION";
 import {
   VERIFICATION_COMPLETION,
@@ -38,8 +39,8 @@ const VERIFICATION_COMPLETION_MUTATION = gql`
 `;
 
 const VerifyHostCode = () => {
-  const history = useHistory();
-  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { id = "" } = useParams<{ id: string }>();
   const [hostId, setHostId] = useState("");
 
   const { data, loading, error } = useQuery<HOST_VERIFICATION>(
@@ -58,9 +59,9 @@ const VerifyHostCode = () => {
       variables: { id, hostId: accepted ? hostId : null, accepted },
     });
     if (response.data?.completeHostVerification) {
-      history.push(`/host/${response.data.completeHostVerification}`);
+      navigate(`/host/${response.data.completeHostVerification}`);
     } else {
-      history.push("/dash");
+      navigate("/dash");
     }
   }
 

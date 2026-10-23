@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { AuthenticationError } from "apollo-server-express";
+import { AuthenticationError } from "../../../errors";
 import sshpk from "sshpk";
 import prisma from "../../../prisma";
 
@@ -10,7 +10,7 @@ export const beginKeyLogin = async (_: any, { key }: { key: string }) => {
   } catch (e) {
     throw new AuthenticationError("Invalid key");
   }
-  const fingerprint = userKey.fingerprint("sha256").hash;
+  const fingerprint = Uint8Array.from(userKey.fingerprint("sha256").hash);
   const enrolledKey = await prisma.userFingerprint.findUnique({
     where: { fingerprint },
     select: { fingerprint: true },

@@ -1,14 +1,15 @@
-import { ApolloError, gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   Alert,
   IconButton,
   ListItem,
-  ListItemSecondaryAction,
+  ListItemButton,
   ListItemText,
   Snackbar,
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { DELETE_ROLE } from "./__generated__/DELETE_ROLE";
 import { useState } from "react";
 
@@ -27,7 +28,7 @@ const Role = ({
   role: { name: string; id: string };
   remove(): void;
 }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const [deleteRole] = useMutation<DELETE_ROLE>(DELETE_ROLE_MUTATION, {
     variables: { id: role.id },
   });
@@ -44,9 +45,9 @@ const Role = ({
       >
         <Alert severity="error">{error}</Alert>
       </Snackbar>
-      <ListItem button onClick={() => history.push(`/role/${role.id}`)}>
-        <ListItemText primary={role.name} />
-        <ListItemSecondaryAction>
+      <ListItem
+        disablePadding
+        secondaryAction={
           <IconButton
             edge="end"
             aria-label="delete"
@@ -55,7 +56,7 @@ const Role = ({
                 await deleteRole();
                 remove();
               } catch (e) {
-                if (e instanceof ApolloError) {
+                if (e instanceof Error) {
                   setError(e.message);
                 } else {
                   throw e;
@@ -65,7 +66,11 @@ const Role = ({
           >
             <Delete />
           </IconButton>
-        </ListItemSecondaryAction>
+        }
+      >
+        <ListItemButton onClick={() => navigate(`/role/${role.id}`)}>
+          <ListItemText primary={role.name} />
+        </ListItemButton>
       </ListItem>
     </>
   );

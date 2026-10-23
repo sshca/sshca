@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Button as IconButton, List, Paper, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import React from "react";

@@ -1,4 +1,4 @@
-import { AuthenticationError, ForbiddenError } from "apollo-server-express";
+import { AuthenticationError, ForbiddenError } from "../../../errors";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
 

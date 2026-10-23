@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server-express";
+import { AuthenticationError } from "../../../errors";
 import { hashSync } from "bcrypt";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";

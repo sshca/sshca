@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server-express";
+import { AuthenticationError } from "../../../errors";
 import sshpk from "sshpk";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
@@ -33,11 +33,12 @@ export const generateKey = async (
   }
   const privateKey = sshpk.parsePrivateKey(subrole.host.caKey, "ssh");
   const userKey = sshpk.parseKey(key, "ssh");
+  const fingerprint = Uint8Array.from(userKey.fingerprint("sha256").hash);
   await prisma.userFingerprint.upsert({
-    where: { fingerprint: userKey.fingerprint("sha256").hash },
+    where: { fingerprint },
     update: {},
     create: {
-      fingerprint: userKey.fingerprint("sha256").hash,
+      fingerprint,
       userId: user.id,
     },
   });

@@ -1,4 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { Delete } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -6,7 +7,6 @@ import {
   IconButton,
   List,
   ListItem,
-  ListItemSecondaryAction,
   ListItemText,
   Paper,
   TextField,
@@ -141,21 +141,10 @@ const User = () => {
       {data.user.passkeys.length > 0 ? (
         <List>
           {data.user.passkeys.map((passkey) => (
-            <ListItem key={passkey.id}>
-              <ListItemText
-                primary={passkey.name || "Passkey"}
-                secondary={`Created: ${new Date(
-                  passkey.createdAt,
-                ).toLocaleString()}${
-                  passkey.lastUsedAt
-                    ? ` Last used: ${new Date(
-                        passkey.lastUsedAt,
-                      ).toLocaleString()}`
-                    : ""
-                }`}
-              />
-              {data.me?.id === id && (
-                <ListItemSecondaryAction>
+            <ListItem
+              key={passkey.id}
+              secondaryAction={
+                data.me?.id === id && (
                   <IconButton
                     edge="end"
                     aria-label="delete passkey"
@@ -168,8 +157,21 @@ const User = () => {
                   >
                     <Delete />
                   </IconButton>
-                </ListItemSecondaryAction>
-              )}
+                )
+              }
+            >
+              <ListItemText
+                primary={passkey.name || "Passkey"}
+                secondary={`Created: ${new Date(
+                  passkey.createdAt,
+                ).toLocaleString()}${
+                  passkey.lastUsedAt
+                    ? ` Last used: ${new Date(
+                        passkey.lastUsedAt,
+                      ).toLocaleString()}`
+                    : ""
+                }`}
+              />
             </ListItem>
           ))}
         </List>

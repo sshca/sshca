@@ -1,8 +1,9 @@
-import { ApolloError, gql, useMutation, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { Button, Paper, TextField, Typography } from "@mui/material";
 import { startAuthentication } from "@simplewebauthn/browser";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { BEGIN_PASSKEY_LOGIN } from "./__generated__/BEGIN_PASSKEY_LOGIN";
 import {
   COMPLETE_PASSKEY_LOGIN,
@@ -51,7 +52,7 @@ const Login = () => {
     email: string;
     password: string;
   }>({ email: "", password: "" });
-  const history = useHistory();
+  const navigate = useNavigate();
   const [error, setError] = React.useState<null | string>(null);
 
   const [login] = useMutation<LOGIN>(LOGIN_MUTATION, {
@@ -72,7 +73,7 @@ const Login = () => {
     result?: COMPLETE_PASSKEY_LOGIN_completePasskeyLogin | null,
   ) {
     if (result?.admin) {
-      history.push("/dash");
+      navigate("/dash");
     } else {
       setError("Only admins may login to management interface");
     }
@@ -83,9 +84,9 @@ const Login = () => {
     if (data?.isFirstUser) {
       try {
         await signup();
-        history.push("/dash");
+        navigate("/dash");
       } catch (e) {
-        if (e instanceof ApolloError) {
+        if (e instanceof Error) {
           setError(e.message);
         } else {
           throw e;
@@ -95,12 +96,12 @@ const Login = () => {
       try {
         const { data } = await login();
         if (data?.login?.admin) {
-          history.push("/dash");
+          navigate("/dash");
         } else {
           setError("Only admins may login to management interface");
         }
       } catch (e) {
-        if (e instanceof ApolloError) {
+        if (e instanceof Error) {
           setError(e.message);
         } else {
           throw e;
@@ -126,7 +127,7 @@ const Login = () => {
       });
       handleLoginResult(data?.completePasskeyLogin);
     } catch (e) {
-      if (e instanceof ApolloError || e instanceof Error) {
+      if (e instanceof Error) {
         setError(e.message);
       } else {
         throw e;

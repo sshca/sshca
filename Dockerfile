@@ -1,7 +1,7 @@
-FROM node:24 as base
+FROM node:26 as base
 WORKDIR /app
 
-RUN yarn set version stable
+RUN yarn set version 4.18.1
 RUN yarn config set nodeLinker node-modules
 RUN yarn config set enableScripts true
 COPY package.json ./

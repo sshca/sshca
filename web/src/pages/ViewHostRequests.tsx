@@ -1,6 +1,7 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Button, Paper, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { HOST_VERIFICATIONS } from "./__generated__/HOST_VERIFICATIONS";
 
 const HOST_VERIFICATIONS_QUERY = gql`

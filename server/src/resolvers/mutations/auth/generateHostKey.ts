@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server-express";
+import { AuthenticationError } from "../../../errors";
 import sshpk from "sshpk";
 import prisma from "../../../prisma";
 
@@ -12,7 +12,9 @@ export const generateHostKey = async (
 ) => {
   const host = await prisma.host.findFirst({
     where: {
-      fingerprint: sshpk.parseKey(key, "ssh").fingerprint("sha256").hash,
+      fingerprint: Uint8Array.from(
+        sshpk.parseKey(key, "ssh").fingerprint("sha256").hash,
+      ),
     },
   });
   if (!host) {

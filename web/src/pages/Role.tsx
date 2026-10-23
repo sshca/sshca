@@ -1,4 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { Edit } from "@mui/icons-material";
 import {
   Autocomplete,
@@ -51,7 +52,7 @@ const EDIT_ROLE_USERS_MUTATION = gql`
 `;
 
 const Role = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id = "" } = useParams<{ id: string }>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const { loading, error, data, refetch } = useQuery<GET_ROLE_USERS_DETAILS>(
     GET_ROLE_QUERY,

@@ -12,17 +12,18 @@ export const requestHostVerification = async (
 ) => {
   const hostKey = sshpk.parseKey(key, "ssh");
   const hostFingerprint = hostKey.fingerprint();
+  const fingerprint = Uint8Array.from(hostFingerprint.hash);
   if (
     (await prisma.host.findFirst({
-      where: { fingerprint: hostFingerprint.hash },
+      where: { fingerprint },
     })) !== null
   ) {
     return { finished: true };
   }
   const id = randomInt(100000, 999999);
   await prisma.hostVerification.upsert({
-    where: { fingerprint: hostFingerprint.hash },
-    create: { fingerprint: hostFingerprint.hash, id: id.toString() },
+    where: { fingerprint },
+    create: { fingerprint, id: id.toString() },
     update: {},
   });
   return { id, finished: false };

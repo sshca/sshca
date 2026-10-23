@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import {
   Autocomplete,
   Checkbox,
@@ -146,7 +147,7 @@ const SubroleCreator = ({
               style={{ margin: 0 }}
               control={
                 <Checkbox
-                  inputProps={{ "aria-label": "controlled" }}
+                  slotProps={{ input: { "aria-label": "controlled" } }}
                   defaultChecked={subrole.extensions.includes(extension)}
                   value={subrole.extensions.includes(extension)}
                   onChange={(e) =>

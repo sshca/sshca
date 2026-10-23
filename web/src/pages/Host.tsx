@@ -1,4 +1,5 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Paper, Typography } from "@mui/material";
 import { useParams } from "react-router";
 import { GET_HOST_KEY } from "./__generated__/GET_HOST_KEY";

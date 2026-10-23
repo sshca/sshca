@@ -1,15 +1,19 @@
 import React from "react";
 import { CookiesProvider } from "react-cookie";
-import ReactDOM from "react-dom";
-import { BrowserRouter as Router } from "react-router-dom";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter as Router } from "react-router";
 import App from "./App";
 import "./index.css";
 
-ReactDOM.render(
-  <CookiesProvider>
-    <Router>
-      <App />
-    </Router>
-  </CookiesProvider>,
-  document.getElementById("root")
+const root = document.getElementById("root");
+if (!root) throw new Error("Missing root element");
+
+createRoot(root).render(
+  <React.StrictMode>
+    <CookiesProvider>
+      <Router>
+        <App />
+      </Router>
+    </CookiesProvider>
+  </React.StrictMode>,
 );

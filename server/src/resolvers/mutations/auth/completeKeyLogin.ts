@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server-express";
+import { AuthenticationError } from "../../../errors";
 import { Response } from "express";
 import jwt from "jsonwebtoken";
 import sshpk from "sshpk";
@@ -49,8 +49,7 @@ export const completeKeyLogin = async (
     const verifier = userKey.createVerify(
       parsedSignature.hashAlgorithm || undefined
     );
-    verifier.write(challenge.nonce);
-    verifier.end();
+    verifier.update(challenge.nonce);
     verified = verifier.verify(parsedSignature);
   } catch (e) {
     verified = false;
@@ -60,7 +59,7 @@ export const completeKeyLogin = async (
   }
 
   const enrolledKey = await prisma.userFingerprint.findUnique({
-    where: { fingerprint },
+    where: { fingerprint: Uint8Array.from(fingerprint) },
     select: { userId: true },
   });
   if (!enrolledKey) {

@@ -1,4 +1,5 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { SubroleInput } from "../../__generated__/globalTypes";
 import RoleSubrolesDiaglog from "./RoleSubrolesDialog";
 import { CREATE_ROLE } from "./__generated__/CREATE_ROLE";

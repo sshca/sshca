@@ -15,19 +15,19 @@ import {
   Drawer,
   IconButton,
   List,
-  ListItem,
   ListItemIcon,
+  ListItemButton,
   ListItemText,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const theme = useTheme();
   return (
     <div>
@@ -60,12 +60,12 @@ const Header = () => {
         </div>
         <List>
           <Divider />
-          <ListItem button onClick={() => history.push("/dash")}>
+          <ListItemButton onClick={() => navigate("/dash")}>
             <ListItemIcon>
               <Dashboard />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
-          </ListItem>
+          </ListItemButton>
           <Divider />
           {[
             { name: "Users", icon: Person, link: "/users" },
@@ -78,16 +78,15 @@ const Header = () => {
               link: "/verify",
             },
           ].map((item) => (
-            <ListItem
-              button
+            <ListItemButton
               key={item.name}
-              onClick={() => history.push(item.link)}
+              onClick={() => navigate(item.link)}
             >
               <ListItemIcon>
                 <item.icon />
               </ListItemIcon>
               <ListItemText primary={item.name} />
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
       </Drawer>

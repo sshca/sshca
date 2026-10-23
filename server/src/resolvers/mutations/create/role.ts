@@ -1,5 +1,5 @@
-import { Extension } from "@prisma/client";
-import { AuthenticationError } from "apollo-server-express";
+import { Extension } from "../../../generated";
+import { AuthenticationError } from "../../../errors";
 import prisma from "../../../prisma";
 import { verifyAuth } from "../../../verifyauth";
 

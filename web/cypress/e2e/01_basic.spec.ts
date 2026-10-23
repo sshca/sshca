@@ -86,6 +86,13 @@ describe("Normal Interaction", () => {
     cy.contains("Host 1").should("be.visible");
     cy.contains("Role 1").should("be.visible");
     cy.contains("test2@example.com").should("be.visible");
-    cy.get('[aria-label="delete"]').each((el) => cy.wrap(el).click());
+    const deleteItem = (label: string) => {
+      cy.contains(label).closest("li").find('[aria-label="delete"]').click();
+      cy.contains(label).should("not.exist");
+    };
+
+    deleteItem("Role 1");
+    deleteItem("Host 1");
+    deleteItem("test2@example.com");
   });
 });

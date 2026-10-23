@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server-express";
+import { AuthenticationError } from "../../../errors";
 import { compareSync } from "bcrypt";
 import { Response } from "express";
 import { setFullLoginCookie } from "../../../auth";
