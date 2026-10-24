@@ -1,6 +1,7 @@
 FROM node:26 as base
 WORKDIR /app
 
+RUN npm install --global corepack@0.36.0 && corepack enable
 RUN yarn set version 4.18.1
 RUN yarn config set nodeLinker node-modules
 RUN yarn config set enableScripts true
